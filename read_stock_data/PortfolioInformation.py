@@ -60,15 +60,11 @@ class PortolfioInformation:
         attributeDataForRow = {}
         #-1 because last cell in row is 'endrow'
         while (col < len(rowCells)-1):
-            print(col)
-            print(len(rowCells))
             if (self.checkIfSelected(col)):
                 data = self.getDataPoint(rowCells[col])
                 dataType = (col%self.numberOfAttributes)
-                print("date: " + str(rowCells[0]) + " col: " + str(col) + " datatype: " + str(dataType) + " data: " + str(data) + " step: " + str(self.nextCellStepMap[col%self.numberOfAttributes]))
                 attributeDataForRow.setdefault(dataType, []).append(data)
                 col += self.nextCellStepMap[col%self.numberOfAttributes]
-                print("col after: " + str(col))
             else:
                 col+=self.numberOfAttributes
         for key in attributeDataForRow.keys():
