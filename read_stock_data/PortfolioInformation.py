@@ -1,5 +1,6 @@
 import os
 import time
+import re
 from collections import defaultdict
 
 class PortolfioInformation:
@@ -57,7 +58,7 @@ class PortolfioInformation:
         attributeDataForRow = {}
         while (col < len(rowCells)):
             if (self.checkIfSelected(col)):
-                data = rowCells[col]
+                data = self.getDataPoint(rowCells[col])
                 dataType = col%self.numberOfAttributes
                 attributeDataForRow.setdefault(dataType, []).append(data)
             col+=self.nextCellStepMap[col%self.numberOfAttributes]
@@ -65,6 +66,12 @@ class PortolfioInformation:
             list = attributeDataForRow[key]
             self.attributeData.setdefault(key, []).append(list)
 
+    def getDataPoint(self, rowCell):
+        output = self.convertDigitWithoutComma(rowCell)
+        if (output != "" and re.match("^\d+?\.\d+?$", output) is not None):
+            return float(output)
+        else:
+            return -1.0
 
     def checkIfSelected(self, col):
         if (self.selectedStocks[col%self.numberOfAttributes] == 0):
@@ -81,6 +88,15 @@ class PortolfioInformation:
             return True
         else:
             return False
+
+    def convertDigitWithoutComma(self, input):
+        output = ""
+        for c in input:
+            if (c == ','):
+                output += '.'
+            else:
+                output +=c
+        return output
 
     def defineGlobalAttributes(self):
         self.OPEN_PRICE = 0
