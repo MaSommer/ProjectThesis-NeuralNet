@@ -8,6 +8,5 @@ def Main():
     selectedSP500 = ssr.readSelectedStocks("S&P500v2.txt")
     sp500 = pi.PortolfioInformation(selectedSP500, attributes, fromDate, toDate, "S&P500.txt")
     print(sp500.attributeData)
-    print(len(sp500.attributeData[0]))
 
 Main()
