@@ -25,21 +25,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ReadFile.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/read_stock_data/ReadFile.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="PortfolioInformation.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/read_stock_data/PortfolioInformation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="75" column="35" lean-forward="false" selection-start-line="75" selection-start-column="35" selection-end-line="75" selection-end-column="35" />
+            <state relative-caret-position="307">
+              <caret line="22" column="22" lean-forward="true" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -50,8 +40,8 @@
       <file leaf-file-name="Main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/read_stock_data/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" column="26" lean-forward="false" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
+            <state relative-caret-position="180">
+              <caret line="12" column="6" lean-forward="true" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -62,8 +52,8 @@
       <file leaf-file-name="selectedS&amp;P500v2.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/target/selectedS&amp;P500v2.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" column="1" lean-forward="false" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
+            <state relative-caret-position="645">
+              <caret line="504" column="1" lean-forward="false" selection-start-line="504" selection-start-column="1" selection-end-line="504" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -82,8 +72,8 @@
       <file leaf-file-name="selectedS&amp;P500.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/target/selectedS&amp;P500.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="623">
-              <caret line="499" column="1" lean-forward="false" selection-start-line="499" selection-start-column="1" selection-end-line="499" selection-end-column="1" />
+            <state relative-caret-position="645">
+              <caret line="504" column="1" lean-forward="false" selection-start-line="504" selection-start-column="1" selection-end-line="504" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -98,6 +88,11 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>checkIfSelected</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -107,10 +102,10 @@
         <option value="$PROJECT_DIR$/read_stock_data/StockReader.py" />
         <option value="$PROJECT_DIR$/read_stock_data/__init__.py" />
         <option value="$PROJECT_DIR$/read_stock_data/ReadFile.py" />
-        <option value="$PROJECT_DIR$/target/selectedS&amp;P500.txt" />
         <option value="$PROJECT_DIR$/read_stock_data/SelectedStockReader.py" />
-        <option value="$PROJECT_DIR$/target/selectedS&amp;P500v2.txt" />
         <option value="$PROJECT_DIR$/read_stock_data/Main.py" />
+        <option value="$PROJECT_DIR$/target/selectedS&amp;P500v2.txt" />
+        <option value="$PROJECT_DIR$/target/selectedS&amp;P500.txt" />
         <option value="$PROJECT_DIR$/read_stock_data/PortfolioInformation.py" />
       </list>
     </option>
@@ -118,7 +113,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-334" />
     <option name="y" value="-1177" />
-    <option name="width" value="1105" />
+    <option name="width" value="1166" />
     <option name="height" value="1177" />
   </component>
   <component name="ProjectView">
@@ -249,10 +244,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-334" y="-1177" width="1105" height="1177" extended-state="0" />
+    <frame x="-334" y="-1177" width="1166" height="1177" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27469426" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2597865" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33641404" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -288,26 +283,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/read_stock_data/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/target/selectedS&amp;P500.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="623">
-          <caret line="499" column="1" lean-forward="false" selection-start-line="499" selection-start-column="1" selection-end-line="499" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/ReadFile.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/read_stock_data/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -320,18 +307,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/target/selectedS&amp;P500.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="645">
+          <caret line="504" column="1" lean-forward="false" selection-start-line="504" selection-start-column="1" selection-end-line="504" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/target/selectedS&amp;P500v2.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="1" lean-forward="false" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
+        <state relative-caret-position="645">
+          <caret line="504" column="1" lean-forward="false" selection-start-line="504" selection-start-column="1" selection-end-line="504" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="26" lean-forward="false" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
+        <state relative-caret-position="180">
+          <caret line="12" column="6" lean-forward="true" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
           <folding>
             <element signature="e#0#33#0" expanded="true" />
           </folding>
@@ -340,8 +335,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/PortfolioInformation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="75" column="35" lean-forward="false" selection-start-line="75" selection-start-column="35" selection-end-line="75" selection-end-column="35" />
+        <state relative-caret-position="307">
+          <caret line="22" column="22" lean-forward="true" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
