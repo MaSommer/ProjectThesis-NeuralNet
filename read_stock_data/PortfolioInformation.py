@@ -71,13 +71,13 @@ class PortolfioInformation:
             list = attributeDataForRow[key]
             self.attributeData.setdefault(key, []).append(list)
 
-#returns the float of the number of -1 if it is not a float or a digit
+#returns the float of the number of 0.0 if it is not a float or a digit
     def getDataPoint(self, rowCell):
         output = self.convertDigitWithoutComma(rowCell)
         if (output != "" and (re.match("^\d+?\.\d+?$", output) is not None or output.isdigit())):
             return float(output)
         else:
-            return -1.0
+            return 0.0
 
 #checks if the cell is a part of the selected stock
     def checkIfSelected(self, col):
