@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76155914-202e-4882-b1f8-be9aca9fe002" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/FlowTools.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/neural_net/CaseManager.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/neural_net/Layer.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/neural_net/NeuralNet.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/read_stock_data/Main.py" afterPath="$PROJECT_DIR$/read_stock_data/Main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/read_stock_data/PortfolioInformation.py" afterPath="$PROJECT_DIR$/read_stock_data/PortfolioInformation.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/neural_net/NeuralNet.py" afterPath="$PROJECT_DIR$/neural_net/NeuralNet.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,8 +19,8 @@
             <file leaf-file-name="NeuralNet.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/neural_net/NeuralNet.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="44">
-                    <caret line="124" column="29" lean-forward="false" selection-start-line="124" selection-start-column="29" selection-end-line="124" selection-end-column="29" />
+                  <state relative-caret-position="539">
+                    <caret line="157" column="21" lean-forward="true" selection-start-line="157" selection-start-column="21" selection-end-line="157" selection-end-column="21" />
                     <folding>
                       <element signature="e#0#23#0" expanded="true" />
                     </folding>
@@ -66,8 +60,8 @@
       <file leaf-file-name="Main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/read_stock_data/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="42" lean-forward="false" selection-start-line="19" selection-start-column="42" selection-end-line="19" selection-end-column="42" />
+            <state relative-caret-position="330">
+              <caret line="22" column="6" lean-forward="false" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -103,7 +97,7 @@
         <entry file="file://$PROJECT_DIR$/neural_net/CaseManager.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="270">
-              <caret line="18" column="58" lean-forward="true" selection-start-line="18" selection-start-column="58" selection-end-line="18" selection-end-column="58" />
+              <caret line="18" column="58" lean-forward="false" selection-start-line="18" selection-start-column="58" selection-end-line="18" selection-end-column="58" />
               <folding />
             </state>
           </provider>
@@ -416,15 +410,15 @@
     <entry file="file://$PROJECT_DIR$/neural_net/CaseManager.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
-          <caret line="18" column="58" lean-forward="true" selection-start-line="18" selection-start-column="58" selection-end-line="18" selection-end-column="58" />
+          <caret line="18" column="58" lean-forward="false" selection-start-line="18" selection-start-column="58" selection-end-line="18" selection-end-column="58" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="42" lean-forward="false" selection-start-line="19" selection-start-column="42" selection-end-line="19" selection-end-column="42" />
+        <state relative-caret-position="330">
+          <caret line="22" column="6" lean-forward="false" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
           <folding>
             <element signature="e#0#33#0" expanded="true" />
           </folding>
@@ -433,8 +427,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/neural_net/NeuralNet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="124" column="29" lean-forward="false" selection-start-line="124" selection-start-column="29" selection-end-line="124" selection-end-column="29" />
+        <state relative-caret-position="539">
+          <caret line="157" column="21" lean-forward="true" selection-start-line="157" selection-start-column="21" selection-end-line="157" selection-end-column="21" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
