@@ -159,7 +159,7 @@ class NeuralNet():
         for i, v in enumerate(grabbed_vals):
             if names: print("   " + names[i] + " = ", "\n")
             if type(v) == np.ndarray and len(v.shape) > 1: # If v is a matrix, use hinton plotting
-                TFT.hinton_plot(v,fig=self.grabvar_figures[fig_index],title= names[i]+ ' at step '+ str(step))
+                flt.hinton_plot(v,fig=self.grabvar_figures[fig_index],title= names[i]+ ' at step '+ str(step))
                 fig_index += 1
             else:
                 print(v, "\n")
