@@ -168,4 +168,3 @@ class InputPortolfioInformation:
             self.nextCellStepMap[attInteger] = (self.numberOfAttributes - self.attributeIntegerMap[attributes[len(attributes)-1]])
         else:
             self.nextCellStepMap[attInteger] = self.numberOfAttributes
-        print(self.nextCellStepMap)
