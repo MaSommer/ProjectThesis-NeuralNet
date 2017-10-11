@@ -1,7 +1,8 @@
-import SelectedStockReader as ssr
-import InputPortfolioInformation as pi
-import CaseGenerator as cg
+import read_stock_data.SelectedStockReader as ssr
+import read_stock_data.InputPortfolioInformation as pi
+import read_stock_data.CaseGenerator as cg
 import neural_net.CaseManager as cm
+import neural_net.NeuralNet as nn
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
@@ -47,7 +48,15 @@ def Main():
     time_lags = 2
     cost_function = "cross_entropy"
     learning_method = "gradient_decent"
-    validation_interval =
+    validation_interval = None
+    show_interval = None
+    softmax=True
+
+    neural_net = nn.NeuralNet(layer_dimension, activation_functions, learning_rate,
+                              minibatch_size, initial_weight_range, initial_bias_weight_range,
+                              time_lags, cost_function, learning_method, case_manager, validation_interval,
+                              show_interval, softmax)
+
 
 
 

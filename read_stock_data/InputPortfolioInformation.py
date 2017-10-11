@@ -18,11 +18,11 @@ class InputPortolfioInformation:
 #attributeDate is a hashMap that maps attribute description to list where index is the day number and value are the value for the selected stocks
 
     def __init__(self, selectedStocks, attributes, fromDate, toDate, filename, number_of_attributes, one_hot_vector_interval=[0,0], is_output=False):
+        self.is_output = is_output
         self.selectedStocks = selectedStocks
         self.numberOfAttributes = number_of_attributes
         self.createNextCellMap(attributes)
         self.portfolio_data = defaultdict(list)
-        self.is_output = is_output
         self.one_hot_vector_interval = one_hot_vector_interval
         for i in range(len(attributes)):
             self.portfolio_data[self.attributeIntegerMap[attributes[i]]] = []
@@ -60,7 +60,7 @@ class InputPortolfioInformation:
         col = 0
         attributeDataForRow = {}
         #-1 because last cell in row is 'endrow'
-        while (col < len(rowCells)-1):
+        while (col < len(rowCells)):
             if (self.checkIfSelected(col)):
                 if (self.is_output):
                     float_data = self.getDataPoint(rowCells[col])
@@ -94,7 +94,7 @@ class InputPortolfioInformation:
         output = self.convertDigitWithoutComma(rowCell)
         if (output != "" and (re.match("^\d+?\.\d+?$", output) is not None or output.isdigit())):
             return float(output)
-        elif(output[0] == "-"):
+        elif(len(output) > 0 and output[0] == "-"):
             if (output[1:len(output)] != "" and (re.match("^\d+?\.\d+?$", output[1:len(output)]) is not None or output[1:len(output)].isdigit())):
                 return float(output)
         else:
@@ -155,8 +155,17 @@ class InputPortolfioInformation:
     def createNextCellMap(self, attributes):
         self.nextCellStepMap = {}
         self.attributeIntegerMap = {}
-        for i in range (0, len(attributes)):
-            self.attributeIntegerMap[attributes[i]] = i
+        if (not self.is_output):
+            self.attributeIntegerMap["op"] = 0
+            self.attributeIntegerMap["cp"] = 1
+            self.attributeIntegerMap["tv"] = 2
+            self.attributeIntegerMap["hp"] = 3
+            self.attributeIntegerMap["lp"] = 4
+            self.attributeIntegerMap["edd"] = 5
+            self.attributeIntegerMap["mc"] = 6
+        else:
+            for i in range (0, len(attributes)):
+                self.attributeIntegerMap[attributes[i]] = i
 
         attInteger = self.attributeIntegerMap[attributes[0]]
         nextAttInteger = -1
