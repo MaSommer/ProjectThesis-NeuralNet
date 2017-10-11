@@ -15,5 +15,5 @@ def readSelectedStocks(filename):
         if (line == "1"):
             number_of_selected+=1
         line = f.readline()
-    return outputList, number_of_selected
+    return outputList
 
