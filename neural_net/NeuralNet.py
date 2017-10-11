@@ -169,7 +169,7 @@ class NeuralNet():
         self.probes = tf.summary.merge_all()
 
     def get_activation_function(self, layer_index):
-        return self.activation_functions[layer_index]
+        return self.activation_functions[layer_index-1]
 
     def get_initial_weight_range(self):
         return self.initial_weight_range

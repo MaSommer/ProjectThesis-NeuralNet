@@ -3,7 +3,7 @@ import time
 import re
 from collections import defaultdict
 
-class PortolfioInformation:
+class InputPortolfioInformation:
 
 #Attribute description:
 # - op - day to open price - 0
@@ -13,18 +13,19 @@ class PortolfioInformation:
 # - lp - day to low price - 4
 # - edd - day to ex dividend day - 5
 # - mc - day to market cap - 6
-    numberOfAttributes = 7
 
-
+#one_hot_vector_interval keeps [low, high] of returns which categorizes the return as no change
 #attributeDate is a hashMap that maps attribute description to list where index is the day number and value are the value for the selected stocks
 
-    def __init__(self, selectedStocks, attributes, fromDate, toDate, filename):
+    def __init__(self, selectedStocks, attributes, fromDate, toDate, filename, number_of_attributes, one_hot_vector_interval=[0,0], is_output=False):
         self.selectedStocks = selectedStocks
-        global numberOfAttributes
+        self.numberOfAttributes = number_of_attributes
         self.createNextCellMap(attributes)
-        self.attributeData = defaultdict(list)
+        self.portfolio_data = defaultdict(list)
+        self.is_output = is_output
+        self.one_hot_vector_interval = one_hot_vector_interval
         for i in range(len(attributes)):
-            self.attributeData[self.attributeIntegerMap[attributes[i]]] = []
+            self.portfolio_data[self.attributeIntegerMap[attributes[i]]] = []
 
         self.fromDate = self.createIntegerOfDate(fromDate)
         self.toDate = self.createIntegerOfDate(toDate)
@@ -61,21 +62,44 @@ class PortolfioInformation:
         #-1 because last cell in row is 'endrow'
         while (col < len(rowCells)-1):
             if (self.checkIfSelected(col)):
-                data = self.getDataPoint(rowCells[col])
-                dataType = (col%self.numberOfAttributes)
-                attributeDataForRow.setdefault(dataType, []).append(data)
+                if (self.is_output):
+                    float_data = self.getDataPoint(rowCells[col])
+                    one_hot_data = self.generate_one_hot_vector(float_data)
+                    dataType = (col%self.numberOfAttributes)
+                    for i in range(0, len(one_hot_data)):
+                        attributeDataForRow.setdefault(dataType, []).append(one_hot_data[i])
+                else:
+                    float_data = self.getDataPoint(rowCells[col])
+                    dataType = (col%self.numberOfAttributes)
+                    attributeDataForRow.setdefault(dataType, []).append(float_data)
                 col += self.nextCellStepMap[col%self.numberOfAttributes]
             else:
                 col+=self.numberOfAttributes
         for key in attributeDataForRow.keys():
             list = attributeDataForRow[key]
-            self.attributeData.setdefault(key, []).append(list)
+            self.portfolio_data.setdefault(key, []).append(list)
+
+#returns one_hot_vector [decrease, no change, increase]
+    def generate_one_hot_vector(self, data):
+        if (data < self.one_hot_vector_interval[0]):
+            print("-1 ", data)
+            return [1, 0, 0]
+        elif (data > self.one_hot_vector_interval[1]):
+            print("1 ", data)
+            return [0, 0, 1]
+        else:
+            print("0 ", data)
+            return [0, 1, 0]
 
 #returns the float of the number of 0.0 if it is not a float or a digit
+#TODO: concider not using 0.0 as value when NA. Check out encode-decoder framework!
     def getDataPoint(self, rowCell):
         output = self.convertDigitWithoutComma(rowCell)
         if (output != "" and (re.match("^\d+?\.\d+?$", output) is not None or output.isdigit())):
             return float(output)
+        elif(output[0] == "-"):
+            if (output[1:len(output)] != "" and (re.match("^\d+?\.\d+?$", output[1:len(output)]) is not None or output[1:len(output)].isdigit())):
+                return float(output)
         else:
             return 0.0
 
@@ -134,13 +158,9 @@ class PortolfioInformation:
     def createNextCellMap(self, attributes):
         self.nextCellStepMap = {}
         self.attributeIntegerMap = {}
-        self.attributeIntegerMap["op"] = 0
-        self.attributeIntegerMap["cp"] = 1
-        self.attributeIntegerMap["tv"] = 2
-        self.attributeIntegerMap["hp"] = 3
-        self.attributeIntegerMap["lp"] = 4
-        self.attributeIntegerMap["edd"] = 5
-        self.attributeIntegerMap["mc"] = 6
+        for i in range (0, len(attributes)):
+            self.attributeIntegerMap[attributes[i]] = i
+
         attInteger = self.attributeIntegerMap[attributes[0]]
         nextAttInteger = -1
         for i in range(1,len(attributes)):

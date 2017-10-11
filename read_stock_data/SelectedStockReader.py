@@ -9,9 +9,11 @@ def readSelectedStocks(filename):
     line = f.readline()
 
     outputList = []
-    c = 1
+    number_of_selected = 0
     while (line != ""):
         outputList.append(int(line))
+        if (line == "1"):
+            number_of_selected+=1
         line = f.readline()
-    return outputList
+    return outputList, number_of_selected
 
