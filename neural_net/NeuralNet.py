@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import CaseManager as cm
-import Layer as layer
+import Layer as l
 import FlowTools as flt
 import matplotlib.pyplot as PLT
 import math
@@ -18,10 +18,11 @@ class NeuralNet():
 #time_lags is number of steps in previous states in the reccurent network
 #learning_method as a string, example "gradient_decent"
 #number_of_target_possibilities is [down, same, up] or [-inf to -1, -1 to 1, 1 to 5, 5 to inf]
+#validation_interval is how often
 
     def __init__(self, layer_dimensions, activation_functions, learning_rate, minibatch_size,
                  initial_weight_range, initial_bias_weight_range, time_lags, cost_function,
-                 learning_method, case_manager, validation_interval, show_interval, softmax=True):
+                 learning_method, case_manager, validation_interval=None, show_interval=None, softmax=True):
         self.layer_dimensions = layer_dimensions
         self.learning_rate = learning_rate
         self.minibatch_size = minibatch_size
@@ -54,8 +55,8 @@ class NeuralNet():
         # Build all of the modules
         #layer_size = [input, h1, h2, h3, output]
         # i er layer nr i og outsize er storrelsen paa layer nr i
-        for layer_index,output_size in enumerate(self.layer_sizes[1:]):
-            layer = layer.Layer(self, layer_index, input_variables, input_size, output_size)
+        for layer_index,output_size in enumerate(self.layer_dimensions[1:]):
+            layer = l.Layer(self, layer_index, input_variables, input_size, output_size, self.time_lags)
             act_func = layer.get_act_function()
             num_units = layer.get_output_size()
             self.layers.append(layer)
