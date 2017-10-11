@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76155914-202e-4882-b1f8-be9aca9fe002" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/read_stock_data/CaseGenerator.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/read_stock_data/PortfolioInformation.py" afterPath="$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ProjectThesis-NeuralNet.iml" afterPath="$PROJECT_DIR$/.idea/ProjectThesis-NeuralNet.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/neural_net/NeuralNet.py" afterPath="$PROJECT_DIR$/neural_net/NeuralNet.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/read_stock_data/Main.py" afterPath="$PROJECT_DIR$/read_stock_data/Main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/read_stock_data/SelectedStockReader.py" afterPath="$PROJECT_DIR$/read_stock_data/SelectedStockReader.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py" afterPath="$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,11 +16,11 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file leaf-file-name="NeuralNet.py" pinned="false" current-in-tab="true">
+            <file leaf-file-name="NeuralNet.py" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/neural_net/NeuralNet.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-81">
-                    <caret line="77" column="30" lean-forward="false" selection-start-line="77" selection-start-column="17" selection-end-line="77" selection-end-column="30" />
+                  <state relative-caret-position="579">
+                    <caret line="121" column="34" lean-forward="false" selection-start-line="121" selection-start-column="34" selection-end-line="121" selection-end-column="34" />
                     <folding>
                       <element signature="e#0#23#0" expanded="true" />
                     </folding>
@@ -34,11 +28,11 @@
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="InputPortfolioInformation.py" pinned="false" current-in-tab="false">
+            <file leaf-file-name="InputPortfolioInformation.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="702">
-                    <caret line="90" column="20" lean-forward="false" selection-start-line="90" selection-start-column="20" selection-end-line="90" selection-end-column="20" />
+                  <state relative-caret-position="514">
+                    <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
                     <folding>
                       <element signature="e#0#9#0" expanded="true" />
                     </folding>
@@ -66,8 +60,8 @@
       <file leaf-file-name="Main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/read_stock_data/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+            <state relative-caret-position="555">
+              <caret line="37" column="26" lean-forward="false" selection-start-line="37" selection-start-column="26" selection-end-line="37" selection-end-column="26" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -79,7 +73,7 @@
         <entry file="file://$PROJECT_DIR$/read_stock_data/CaseGenerator.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="225">
-              <caret line="15" column="23" lean-forward="true" selection-start-line="15" selection-start-column="23" selection-end-line="15" selection-end-column="23" />
+              <caret line="15" column="23" lean-forward="false" selection-start-line="15" selection-start-column="23" selection-end-line="15" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -99,7 +93,7 @@
         <entry file="file://$PROJECT_DIR$/neural_net/Layer.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="255">
-              <caret line="17" column="37" lean-forward="true" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+              <caret line="17" column="37" lean-forward="false" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -152,8 +146,8 @@
     <findStrings>
       <find>checkIfSelected</find>
       <find>mbs</find>
-      <find>cost_function</find>
       <find>numberOfAttributes</find>
+      <find>cost_function</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -174,9 +168,9 @@
         <option value="$PROJECT_DIR$/read_stock_data/SelectedStockReader.py" />
         <option value="$PROJECT_DIR$/neural_net/NeuralNet.py" />
         <option value="$PROJECT_DIR$/read_stock_data/OuputPortofolioInformation.py" />
-        <option value="$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py" />
-        <option value="$PROJECT_DIR$/read_stock_data/Main.py" />
         <option value="$PROJECT_DIR$/read_stock_data/CaseGenerator.py" />
+        <option value="$PROJECT_DIR$/read_stock_data/Main.py" />
+        <option value="$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py" />
       </list>
     </option>
   </component>
@@ -499,20 +493,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="702">
-          <caret line="90" column="20" lean-forward="false" selection-start-line="90" selection-start-column="20" selection-end-line="90" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/neural_net/Layer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
-          <caret line="17" column="37" lean-forward="true" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
+          <caret line="17" column="37" lean-forward="false" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -527,28 +511,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/read_stock_data/CaseGenerator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="23" lean-forward="false" selection-start-line="15" selection-start-column="23" selection-end-line="15" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/neural_net/NeuralNet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-81">
-          <caret line="77" column="30" lean-forward="false" selection-start-line="77" selection-start-column="17" selection-end-line="77" selection-end-column="30" />
+        <state relative-caret-position="579">
+          <caret line="121" column="34" lean-forward="false" selection-start-line="121" selection-start-column="34" selection-end-line="121" selection-end-column="34" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/read_stock_data/CaseGenerator.py">
+    <entry file="file://$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="23" lean-forward="true" selection-start-line="15" selection-start-column="23" selection-end-line="15" selection-end-column="23" />
-          <folding />
+        <state relative-caret-position="514">
+          <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+        <state relative-caret-position="555">
+          <caret line="37" column="26" lean-forward="false" selection-start-line="37" selection-start-column="26" selection-end-line="37" selection-end-column="26" />
           <folding>
             <element signature="e#0#33#0" expanded="true" />
           </folding>
