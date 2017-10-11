@@ -82,13 +82,10 @@ class InputPortolfioInformation:
 #returns one_hot_vector [decrease, no change, increase]
     def generate_one_hot_vector(self, data):
         if (data < self.one_hot_vector_interval[0]):
-            print("-1 ", data)
             return [1, 0, 0]
         elif (data > self.one_hot_vector_interval[1]):
-            print("1 ", data)
             return [0, 0, 1]
         else:
-            print("0 ", data)
             return [0, 1, 0]
 
 #returns the float of the number of 0.0 if it is not a float or a digit
