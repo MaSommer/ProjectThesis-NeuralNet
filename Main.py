@@ -30,6 +30,7 @@ def Main():
     print("LONDON")
     print(lftse100.portfolio_data)
 
+    time_lags = 1
     case_generator = cg.CaseGenerator(sp500.portfolio_data, lftse100.portfolio_data)
     cases = case_generator.cases
 
@@ -45,7 +46,6 @@ def Main():
     activation_functions = ["relu", "relu", "relu"]
     initial_weight_range = [-1.0, 1.0]
     initial_bias_weight_range = [0.0, 0.0]
-    time_lags = 2
     cost_function = "cross_entropy"
     learning_method = "gradient_decent"
     validation_interval = None
@@ -58,7 +58,7 @@ def Main():
                               show_interval, softmax)
 
 
-
+    neural_net.run(epochs=1, sess=None, continued=None)
 
 
 #TODO: make method for reading target file

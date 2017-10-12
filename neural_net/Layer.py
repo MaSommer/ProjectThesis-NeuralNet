@@ -12,7 +12,7 @@ class Layer():
         self.output_size = output_size
         self.name = "Layer-"+str(self.layer_index)
         self.time_lags = time_lags
-        self.build()
+        #self.build()
 
 
     def build(self):

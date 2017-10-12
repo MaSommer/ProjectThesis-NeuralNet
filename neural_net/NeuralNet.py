@@ -47,7 +47,7 @@ class NeuralNet():
     def build_network(self):
         tf.reset_default_graph()  # This is essential for doing multiple runs!!
         num_inputs = self.layer_dimensions[0]
-        self.inputs = tf.placeholder(tf.float64, shape=(None, self.time_lags, num_inputs), name='Input')
+        self.inputs = tf.placeholder(tf.float32, shape=(None, self.time_lags, num_inputs), name='Input')
         input_variables = self.inputs
         input_size = num_inputs
         self.layers = []
@@ -55,22 +55,22 @@ class NeuralNet():
         # Build all of the modules
         #layer_size = [input, h1, h2, h3, output]
         # i er layer nr i og outsize er storrelsen paa layer nr i
-        for layer_index,output_size in enumerate(self.layer_dimensions[1:]):
-            layer = l.Layer(self, layer_index, input_variables, input_size, output_size, self.time_lags)
-            act_func = layer.get_act_function()
-            num_units = layer.get_output_size()
+        for layer_index,number_of_neurons in enumerate(self.layer_dimensions[1:]):
+            layer = l.Layer(self, layer_index, input_variables, input_size, number_of_neurons, self.time_lags)
+            act_func = self.get_activation_function(layer_index)
+            num_units = number_of_neurons
             self.layers.append(layer)
 
             cell = tf.contrib.rnn.BasicRNNCell(num_units, activation=act_func)
             self.cells.append(cell)
 
-            input_variables = layer.output_variables
-            input_size = layer.output_size
+            #input_variables = layer.output_variables
+            #input_size = layer.output_size
 
         multi_layer_cell = tf.contrib.rnn.MultiRNNCell(self.cells)
-        self.output_variables, self.states = tf.nn.dynamic_rnn(multi_layer_cell, self.inputs)
+        self.output_variables, self.states = tf.nn.dynamic_rnn(multi_layer_cell, self.inputs, dtype=tf.float32)
 
-        self.targets = tf.placeholder(tf.float64, shape=(None, layer.output_size), name='Target')
+        self.targets = tf.placeholder(tf.float32, shape=(None, layer.output_size), name='Target')
 
         self.configure_learning()
 
@@ -170,7 +170,15 @@ class NeuralNet():
         self.probes = tf.summary.merge_all()
 
     def get_activation_function(self, layer_index):
-        return self.activation_functions[layer_index-1]
+        act = self.activation_functions[layer_index]
+        if (act == "relu"):
+            return tf.nn.relu
+        elif (act == "sigmoid"):
+            return tf.nn.sigmoid
+        elif (act == "tanh"):
+            return tf.nn.tanh
+        else:
+            raise ValueError("Wrong activation function")
 
     def get_initial_weight_range(self):
         return self.initial_weight_range
