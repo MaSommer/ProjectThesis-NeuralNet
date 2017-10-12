@@ -8,7 +8,10 @@ class CaseManager():
         self.validation_fraction = validation_fraction
         self.test_fraction = test_fraction
         self.training_fraction = 1 - (validation_fraction+test_fraction)
-        self.organize_cases()
+        self.training_cases = cases
+        self.validation_cases = []
+        self.testing_cases = []
+        #self.organize_cases()
 
 #this method defines what is training_cases, test_cases and validation_cases
     def organize_cases(self):

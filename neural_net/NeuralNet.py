@@ -47,7 +47,7 @@ class NeuralNet():
     def build_network(self):
         tf.reset_default_graph()  # This is essential for doing multiple runs!!
         num_inputs = self.layer_dimensions[0]
-        self.inputs = tf.placeholder(tf.float32, shape=(None, self.time_lags, num_inputs), name='Input')
+        self.inputs = tf.placeholder(tf.float32, shape=(None, self.time_lags+1, num_inputs), name='Input')
         input_variables = self.inputs
         input_size = num_inputs
         self.layers = []
@@ -70,7 +70,7 @@ class NeuralNet():
         multi_layer_cell = tf.contrib.rnn.MultiRNNCell(self.cells)
         self.output_variables, self.states = tf.nn.dynamic_rnn(multi_layer_cell, self.inputs, dtype=tf.float32)
 
-        self.targets = tf.placeholder(tf.float32, shape=(None, layer.output_size), name='Target')
+        self.targets = tf.placeholder(tf.float32, shape=(None, self.time_lags+1,layer.output_size), name='Target')
 
         self.configure_learning()
 

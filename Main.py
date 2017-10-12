@@ -38,8 +38,8 @@ def Main():
     print("CASES:")
     print(cases)
 
-    input_size = len(cases[0][0])
-    output_size = len(cases[0][1])
+    input_size = len(cases[0][0][0])
+    output_size = len(cases[0][1][0])
     layer_dimension = [input_size, 10, 4, output_size]
     learning_rate = 0.99
     minibatch_size = 10

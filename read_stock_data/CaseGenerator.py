@@ -1,4 +1,4 @@
-
+import numpy as np
 
 
 class CaseGenerator():
@@ -13,6 +13,6 @@ class CaseGenerator():
                 day_input_data.extend(input_data[key][day_nr])
 
             day_output_data = output_data[0][day_nr]
-            case = [day_input_data, day_output_data]
+            case = [[day_input_data, day_input_data], [day_output_data, day_output_data]]
             day_nr += 1
             self.cases.append(case)
