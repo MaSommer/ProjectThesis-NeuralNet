@@ -16,7 +16,7 @@ import neural_net.NeuralNet as nn
 def Main():
     fromDate = "01.01.2017"
     toDate = "02.01.2017"
-    attributes_input = ["op", "cp", "hp"]
+    attributes_input = ["op", "cp"]
     attributes_output = ["ret"]
     one_hot_vector_interval = [-0.005, 0.005]
     selectedSP500 = ssr.readSelectedStocks("TestInput.txt")
@@ -30,22 +30,22 @@ def Main():
     print("LONDON")
     print(lftse100.portfolio_data)
 
-    case_generator = cg.CaseGenerator(sp500.portfolio_data, lftse100.portfolio_data)
+    time_lags = 1
+    case_generator = cg.CaseGenerator(sp500.portfolio_data, lftse100.portfolio_data, time_lags)
     cases = case_generator.cases
 
     case_manager = cm.CaseManager(cases, validation_fraction=0.1, test_fraction=0.1)
     print("CASES:")
     print(cases)
 
-    input_size = len(cases[0][0])
-    output_size = len(cases[0][1])
+    input_size = len(cases[0][0][0])
+    output_size = len(cases[0][1][0])
     layer_dimension = [input_size, 10, 4, output_size]
     learning_rate = 0.99
     minibatch_size = 10
     activation_functions = ["relu", "relu", "relu"]
     initial_weight_range = [-1.0, 1.0]
     initial_bias_weight_range = [0.0, 0.0]
-    time_lags = 2
     cost_function = "cross_entropy"
     learning_method = "gradient_decent"
     validation_interval = None
@@ -56,7 +56,7 @@ def Main():
                               minibatch_size, initial_weight_range, initial_bias_weight_range,
                               time_lags, cost_function, learning_method, case_manager, validation_interval,
                               show_interval, softmax)
-
+    neural_net.run(epochs=1, sess=None, continued=False)
 
 
 
