@@ -6,6 +6,11 @@ class CaseGenerator():
 
     def __init__(self, input_data, output_data, time_lags):
         self.cases = []
+
+
+
+    def __init__2(self, input_data, output_data, time_lags):
+        self.cases = []
         days_input_data = []
         days_output_data = []
         for i in range(time_lags):
