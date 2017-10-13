@@ -15,7 +15,7 @@ class CaseManager():
 
 #this method defines what is training_cases, test_cases and validation_cases
     def organize_cases(self):
-        ca = np.array(self.cases)
+        ca = np.array(self.cases, dtype=object)
         separator1 = int(round(len(self.cases) * self.training_fraction))
         separator2 = int(separator1 + round(len(self.cases) * self.validation_fraction))
         self.training_cases = ca[0:separator1]

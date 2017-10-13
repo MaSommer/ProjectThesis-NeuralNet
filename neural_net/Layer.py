@@ -36,6 +36,8 @@ class Layer():
         else:
             raise ValueError('Activation function does not exist')
 
+    def getvar(self,type):  # type = (in,out,wgt,bias)
+        return {'in': self.input, 'out': self.output, 'wgt': self.weights, 'bias': self.biases}[type]
 
     def get_layer_variables(self,type):  # type = (in,out,wgt,bias)
         return {'input': self.input_variables, 'output': self.output_variables, 'weigth': self.weights, 'bias': self.biases}[type]

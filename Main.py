@@ -16,7 +16,7 @@ import neural_net.NeuralNet as nn
 def Main():
     fromDate = "01.01.2017"
     toDate = "02.01.2017"
-    attributes_input = ["op", "cp", "hp"]
+    attributes_input = ["op", "cp"]
     attributes_output = ["ret"]
     one_hot_vector_interval = [-0.005, 0.005]
     selectedSP500 = ssr.readSelectedStocks("TestInput.txt")
@@ -31,7 +31,7 @@ def Main():
     print(lftse100.portfolio_data)
 
     time_lags = 1
-    case_generator = cg.CaseGenerator(sp500.portfolio_data, lftse100.portfolio_data)
+    case_generator = cg.CaseGenerator(sp500.portfolio_data, lftse100.portfolio_data, time_lags)
     cases = case_generator.cases
 
     case_manager = cm.CaseManager(cases, validation_fraction=0.1, test_fraction=0.1)
@@ -56,6 +56,7 @@ def Main():
                               minibatch_size, initial_weight_range, initial_bias_weight_range,
                               time_lags, cost_function, learning_method, case_manager, validation_interval,
                               show_interval, softmax)
+    neural_net.run(epochs=1, sess=None, continued=False)
 
 
     neural_net.run(epochs=1, sess=None, continued=None)
