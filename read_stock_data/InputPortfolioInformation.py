@@ -19,7 +19,7 @@ class InputPortolfioInformation:
 #one_hot_vector_interval keeps [low, high] of returns which categorizes the return as no change
 #attributeDate is a hashMap that maps attribute description to list where index is the day number and value are the value for the selected stocks
 
-    def __init__(self, selectedStocks, attributes, fromDate, toDate, filename, number_of_attributes, one_hot_vector_interval=[0,0], is_output=False):
+    def __init__(self, selectedStocks, attributes, fromDate, filename, number_of_attributes, number_of_trading_days, one_hot_vector_interval=[0,0], is_output=False):
         self.is_output = is_output
         self.selectedStocks = selectedStocks
         self.numberOfAttributes = number_of_attributes
@@ -31,7 +31,7 @@ class InputPortolfioInformation:
             self.portfolio_data[self.attributeIntegerMap[attributes[i]]] = []
 
         self.fromDate = self.createIntegerOfDate(fromDate)
-        self.toDate = self.createIntegerOfDate(toDate)
+        self.number_of_trading_days = number_of_trading_days
 
         self.defineGlobalAttributes()
 
@@ -50,12 +50,22 @@ class InputPortolfioInformation:
         start_time = time.time()
         #iterates over all lines in the .txt file
         previous_attribute_data_for_row = {}
+        #this method makes sure that the output dates are being read two days after input
+        #   - one day because input use returns from the day before
+        #   - and one day because returns are compared to the input the day before
+        skipedDatesForOutput = 0
+        self.number_of_days_included = 0
         while (line != ""):
             rowCells = line.split("\t")
             # last statement is to make sure that we don't include the first date for output values
-            if (row != 0 and self.checkIfDateIsWithinIntervall(rowCells[0]) and not (self.is_output and row == 1)):
+            if (row != 0 and self.checkIfDateIsWithinIntervall(rowCells[0])):
+                if (skipedDatesForOutput < 2 and self.is_output):
+                    skipedDatesForOutput += 1
+                    row += 1
+                    line = f.readline()
+                    continue
                 previous_attribute_data_for_row = self.addColDataFromRow(rowCells[1:len(rowCells)], previous_attribute_data_for_row)
-                #self.addColDataFromRow2(rowCells[1:len(rowCells)])
+
             if (row%200 == 0):
                 print("--- %s seconds ---" % (time.time() - start_time) + " after row " + str(row))
             row+=1
@@ -96,10 +106,13 @@ class InputPortolfioInformation:
                 col+=self.numberOfAttributes
             stock_nr = int(col/self.numberOfAttributes)
         if (self.is_output):
+            self.number_of_days_included += 1
             for key in attributeDataForRow.keys():
                 list1 = attributeDataForRow[key]
                 self.portfolio_data.setdefault(key, []).append(list1)
         else:
+            if (previous_attribute_data_for_row):
+                self.number_of_days_included+=1
             for key in normalized_data.keys():
                 list1 = normalized_data[key]
                 #list1 = attributeDataForRow[key]
@@ -177,7 +190,7 @@ class InputPortolfioInformation:
 #checks if date is between fromdate and todate
     def checkIfDateIsWithinIntervall(self, date):
         date = self.createIntegerOfDate(date)
-        if (date >= self.fromDate and date <= self.toDate):
+        if (date >= self.fromDate and self.number_of_days_included < self.number_of_trading_days):
             return True
         else:
             return False

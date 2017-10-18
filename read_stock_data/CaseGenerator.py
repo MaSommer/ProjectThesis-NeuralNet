@@ -18,6 +18,8 @@ class CaseGenerator():
             days_output_data.append(empty_day_list_output)
         day_nr = 0
         number_of_days = len(output_data[0])
+        print("Output len: " + str(len(output_data[0])))
+        print("Input len: " + str(len(input_data[0])))
         for i in range(0, number_of_days):
             day_input_data = []
             for key in input_data:
@@ -33,5 +35,4 @@ class CaseGenerator():
             days_output_data = copy.deepcopy(days_output_data)
             del days_input_data[0]
             del days_output_data[0]
-        a = 1
 
