@@ -56,10 +56,8 @@ def Main():
                               minibatch_size, initial_weight_range, initial_bias_weight_range,
                               time_lags, cost_function, learning_method, case_manager, validation_interval,
                               show_interval, softmax)
-    neural_net.run(epochs=50, sess=None, continued=False)
+    neural_net.run(epochs=50, sess=None, continued=None)
 
-
-    neural_net.run(epochs=1, sess=None, continued=None)
 
 
 #TODO: make method for reading target file
