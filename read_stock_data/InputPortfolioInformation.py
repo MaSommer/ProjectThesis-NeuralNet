@@ -2,6 +2,8 @@ import os
 import time
 import re
 from collections import defaultdict
+import DataNormalizer as normalizer
+import sys
 
 class InputPortolfioInformation:
 
@@ -21,6 +23,7 @@ class InputPortolfioInformation:
         self.is_output = is_output
         self.selectedStocks = selectedStocks
         self.numberOfAttributes = number_of_attributes
+        self.attributes = attributes
         self.createNextCellMap(attributes)
         self.portfolio_data = defaultdict(list)
         self.one_hot_vector_interval = one_hot_vector_interval
@@ -46,17 +49,65 @@ class InputPortolfioInformation:
         line = f.readline()
         start_time = time.time()
         #iterates over all lines in the .txt file
+        previous_attribute_data_for_row = {}
         while (line != ""):
             rowCells = line.split("\t")
-            if (row != 0 and self.checkIfDateIsWithinIntervall(rowCells[0])):
-                self.addColDataFromRow(rowCells[1:len(rowCells)])
+            # last statement is to make sure that we don't include the first date for output values
+            if (row != 0 and self.checkIfDateIsWithinIntervall(rowCells[0]) and not (self.is_output and row == 1)):
+                previous_attribute_data_for_row = self.addColDataFromRow(rowCells[1:len(rowCells)], previous_attribute_data_for_row)
+                #self.addColDataFromRow2(rowCells[1:len(rowCells)])
             if (row%200 == 0):
                 print("--- %s seconds ---" % (time.time() - start_time) + " after row " + str(row))
             row+=1
             line = f.readline()
 
 #add all cells from a row to attributeData-hashmap
-    def addColDataFromRow(self, rowCells):
+    def addColDataFromRow(self, rowCells, previous_attribute_data_for_row):
+        col = 0
+        stock_nr = 0
+        selected_stocks = 0
+        attributeDataForRow = {}
+        normalized_data = {}
+        #-1 because last cell in row is 'endrow'
+        while (col < len(rowCells)):
+            if (self.checkIfSelected(col)):
+                if (self.is_output):
+                    float_data = self.getDataPoint(rowCells[col])
+                    one_hot_data = self.generate_one_hot_vector(float_data)
+                    dataType = (col%self.numberOfAttributes)
+                    for i in range(0, len(one_hot_data)):
+                        attributeDataForRow.setdefault(dataType, []).append(one_hot_data[i])
+                # if working with the input file
+                else:
+                    float_data = self.getDataPoint(rowCells[col])
+                    dataType = (col%self.numberOfAttributes)
+                    self.update_avg_min_and_max_for_datatype(float_data, dataType)
+                    attributeDataForRow.setdefault(dataType, []).append(float_data)
+                    # checking if prev is not empty, it will be empty the first round
+                    if (previous_attribute_data_for_row):
+                        normalized_data_point = normalizer.normailize_regular(self, attributeDataForRow, previous_attribute_data_for_row,
+                                                      dataType, float_data, selected_stocks)
+                        normalized_data.setdefault(dataType, []).append(normalized_data_point)
+                col += self.nextCellStepMap[col%self.numberOfAttributes]
+                #checks if the iteration over this stock is over and we are ready for a new stock
+                if (int(col/self.numberOfAttributes) != stock_nr):
+                    selected_stocks += 1
+            else:
+                col+=self.numberOfAttributes
+            stock_nr = int(col/self.numberOfAttributes)
+        if (self.is_output):
+            for key in attributeDataForRow.keys():
+                list1 = attributeDataForRow[key]
+                self.portfolio_data.setdefault(key, []).append(list1)
+        else:
+            for key in normalized_data.keys():
+                list1 = normalized_data[key]
+                #list1 = attributeDataForRow[key]
+                self.portfolio_data.setdefault(key, []).append(list1)
+
+        return attributeDataForRow
+
+    def addColDataFromRow2(self, rowCells):
         col = 0
         attributeDataForRow = {}
         #-1 because last cell in row is 'endrow'
@@ -78,6 +129,16 @@ class InputPortolfioInformation:
         for key in attributeDataForRow.keys():
             list = attributeDataForRow[key]
             self.portfolio_data.setdefault(key, []).append(list)
+
+    def update_avg_min_and_max_for_datatype(self, float_data, datatype):
+        if (self.global_data_max[datatype] < float_data):
+            self.global_data_max[datatype] = float_data
+        if (self.global_data_min > float_data):
+            self.global_data_min = float_data
+        if (datatype == self.TURNOVER_VOLUME):
+            total = self.global_avg_conuter*self.global_avg_volume
+            self.global_avg_conuter += 1
+            self.global_avg_volume = total/self.global_avg_conuter
 
 #returns one_hot_vector [decrease, no change, increase]
     def generate_one_hot_vector(self, data):
@@ -140,6 +201,18 @@ class InputPortolfioInformation:
         return output
 
 
+    def initialize_global_min_and_max(self):
+        # maps data type to the min and max that is found
+        self.global_data_min = {}
+        self.global_data_max = {}
+        self.global_avg_volume = 0
+        #conuts how many already calculated in the averages
+        self.global_avg_conuter = 0
+        for attribute in self.attributes:
+            key = self.attributeIntegerMap[attribute]
+            self.global_data_max[key] = -float("inf")
+            self.global_data_min[key] = float("inf")
+
     def defineGlobalAttributes(self):
         self.OPEN_PRICE = 0
         self.CLOSING_PRICE = 1
@@ -148,6 +221,7 @@ class InputPortolfioInformation:
         self.LOW_PRICE = 4
         self.EX_DIV_DAY = 5
         self.MARKET_CAP = 6
+        self.initialize_global_min_and_max()
 
 #creates the nextCellStepMap which tells how many step the col should move when iterating. It depends on how
 #many attributes are selected.

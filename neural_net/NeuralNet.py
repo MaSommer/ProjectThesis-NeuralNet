@@ -41,13 +41,16 @@ class NeuralNet():
         self.show_interval = show_interval
         self.monitored_variables = []  # Variables to be monitored (by gann code) during a run.
 
+        self.global_training_step = 0 # Enables coherent data-storage during extra training runs (see runmore).
+        self.validation_history = []
+
         self.build_network()
 
 
     def build_network(self):
         tf.reset_default_graph()  # This is essential for doing multiple runs!!
         num_inputs = self.layer_dimensions[0]
-        self.inputs = tf.placeholder(tf.float64, shape=(None, self.time_lags, num_inputs), name='Input')
+        self.inputs = tf.placeholder(tf.float32, shape=(None, self.time_lags+1, num_inputs), name='Input')
         input_variables = self.inputs
         input_size = num_inputs
         self.layers = []
@@ -55,22 +58,23 @@ class NeuralNet():
         # Build all of the modules
         #layer_size = [input, h1, h2, h3, output]
         # i er layer nr i og outsize er storrelsen paa layer nr i
-        for layer_index,output_size in enumerate(self.layer_dimensions[1:]):
-            layer = l.Layer(self, layer_index, input_variables, input_size, output_size, self.time_lags)
-            act_func = layer.get_act_function()
-            num_units = layer.get_output_size()
+        for layer_index,number_of_neurons in enumerate(self.layer_dimensions[1:]):
+            layer = l.Layer(self, layer_index, input_variables, input_size, number_of_neurons, self.time_lags)
+            #act_func = layer.get_act_function()
+            #num_units = layer.get_output_size()
+            act_func = self.get_activation_function(layer_index)
+            num_units = number_of_neurons
             self.layers.append(layer)
 
             cell = tf.contrib.rnn.BasicRNNCell(num_units, activation=act_func)
             self.cells.append(cell)
 
-            input_variables = layer.output_variables
-            input_size = layer.output_size
+            #input_variables = layer.output_variables
+            #input_size = layer.output_size
 
         multi_layer_cell = tf.contrib.rnn.MultiRNNCell(self.cells)
-        self.output_variables, self.states = tf.nn.dynamic_rnn(multi_layer_cell, self.inputs)
-
-        self.targets = tf.placeholder(tf.float64, shape=(None, layer.output_size), name='Target')
+        self.output_variables, self.states = tf.nn.dynamic_rnn(multi_layer_cell, self.inputs, dtype=tf.float32)
+        self.targets = tf.placeholder(tf.float32, shape=(None, self.time_lags+1, layer.output_size), name='Target')
 
         self.configure_learning()
 
@@ -96,7 +100,7 @@ class NeuralNet():
     def run(self,epochs=100,sess=None,continued=False):
         PLT.ion()
         self.training_session(epochs,sess=sess,continued=continued)
-        self.test_on_trains(sess=self.current_session) #tst on trainning set
+        self.test_on_training_set(sess=self.current_session) #tst on trainning set
         self.testing_session(sess=self.current_session)
         self.close_current_session()
         PLT.ioff()
@@ -107,11 +111,21 @@ class NeuralNet():
         self.current_session = session
         self.do_training(session,self.case_manager.get_training_cases(),epochs,continued=continued)
 
+    def testing_session(self,sess):
+        cases = self.case_manager.get_testing_cases()
+        if len(cases) > 0:
+            self.do_testing(sess,cases,msg='Final Testing')
+
+    #test on training set
+    def test_on_training_set(self, sess):
+        self.do_testing(sess, self.case_manager.get_training_cases(), msg='Total Training')
+
     #Continued means not first session with training
     def do_training(self, sess, cases, epochs=100, continued=False):
         if not(continued): self.error_history = []
         for epoch in range(epochs):
             error = 0
+            step = self.global_training_step + epoch
             #step = self.global_training_step + epoch (har med lagring av treningsdata og gjoere og continued sessions)
             grabbed_variables = [self.loss] + self.monitored_variables
             mbs = self.minibatch_size
@@ -120,11 +134,11 @@ class NeuralNet():
             for case_start in range(0,ncases,mbs):  # Loop through cases, one minibatch at a time.
                 case_end = min(ncases, case_start+mbs)
                 minibatch = cases[case_start:case_end]
-                inputs = [case[0] for case in minibatch]
-                targets = [case[1] for case in minibatch]
+                inputs = ([case[0] for case in minibatch])
+                targets = ([case[1] for case in minibatch])
                 feeder = {self.inputs: inputs, self.targets: targets}
                 _,grabvals,_ = self.run_one_step([self.trainer], grabbed_variables, self.probes, session=sess,
-                                         feed_dict=feeder, step=epoch, show_interval=self.show_interval)
+                                         feed_dict=feeder, step=step, show_interval=self.show_interval)
                 error += grabvals[0]
             self.error_history.append((epoch, error/number_of_batches))
             self.consider_validation_testing(epoch,sess)
@@ -144,6 +158,13 @@ class NeuralNet():
             self.display_grabvars(results[1], grabbed_vars, step=step)
         return results[0], results[1], sess
 
+    def do_testing(self,sess,cases,msg='Testing'):
+        inputs = [c[0] for c in cases]; targets = [c[1] for c in cases]
+        feeder = {self.inputs: inputs, self.targets: targets}
+        loss, grabvals, _ = self.run_one_step(self.loss, self.monitored_variables, self.probes, session=sess,
+                                           feed_dict=feeder,  show_interval=None)
+        print('%s Set Error = %f ' % (msg, loss))
+        return loss
 
     def consider_validation_testing(self,epoch,sess):
         if self.validation_interval and (epoch % self.validation_interval == 0):
@@ -166,11 +187,50 @@ class NeuralNet():
                 print(v, "\n")
 
 
+    def runmore(self,epochs=100):
+        self.reopen_current_session()
+        self.run(epochs,sess=self.current_session,continued=True)
+
+    def save_session_params(self, spath='netsaver/my_saved_session', sess=None, step=0):
+        session = sess if sess else self.current_session
+        state_vars = []
+        for m in self.layers:
+            vars = [m.getvar('wgt'), m.getvar('bias')]
+            state_vars = state_vars + vars
+        self.state_saver = tf.train.Saver(state_vars)
+        self.saved_state_path = self.state_saver.save(session, spath, global_step=step)
+
+    def reopen_current_session(self):
+        self.current_session = flt.copy_session(self.current_session)  # Open a new session with same tensorboard stuff
+        self.current_session.run(tf.global_variables_initializer())
+        self.restore_session_params()  # Reload old weights and biases to continued from where we last left off
+
+    def restore_session_params(self, path=None, sess=None):
+        spath = path if path else self.saved_state_path
+        session = sess if sess else self.current_session
+        self.state_saver.restore(session, spath)
+
+    def close_current_session(self):
+        self.save_session_params(sess=self.current_session)
+        flt.close_session(self.current_session, view=True)
+
     def roundup_probes(self):
         self.probes = tf.summary.merge_all()
 
+    def add_monitored_variables(self, module_index, type='wgt'):
+        self.monitored_variables.append(self.layers[module_index].getvar(type))
+        self.grabvar_figures.append(PLT.figure())
+
     def get_activation_function(self, layer_index):
-        return self.activation_functions[layer_index-1]
+        act = self.activation_functions[layer_index]
+        if (act == "relu"):
+            return tf.nn.relu
+        elif (act == "sigmoid"):
+            return tf.nn.sigmoid
+        elif (act == "tanh"):
+            return tf.nn.tanh
+        else:
+            raise ValueError("Wrong activation function")
 
     def get_initial_weight_range(self):
         return self.initial_weight_range
