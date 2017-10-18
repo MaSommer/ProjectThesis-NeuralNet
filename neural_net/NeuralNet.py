@@ -80,8 +80,10 @@ class NeuralNet():
 
 #not finished this method
     def configure_learning(self):
+        trans_output = (tf.transpose(self.output_variables, [1, 0, 2]))
+        trans_target = (tf.transpose(self.targets, [1, 0, 2]))
         if (self.cost_function == "cross_entropy"):
-            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.targets[-1], logits=self.output_variables[-1]),
+            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=trans_target[-1], logits=trans_output[-1]),
                                        name="CrossEntropy")
 
         elif (self.cost_function == "mean_square"):
@@ -159,15 +161,24 @@ class NeuralNet():
         return results[0], results[1], sess
 
     def do_testing(self,sess,cases,msg='Testing'):
-        correct_pred = tf.equal(tf.argmax(self.output_variables[-1], 1), tf.argmax(self.targets[-1], 1))
+        trans_output = (tf.transpose(self.output_variables, [1, 0, 2]))
+        trans_target = (tf.transpose(self.targets, [1, 0, 2]))
+        print(self.output_variables)
+        print(trans_output[-1])
+        correct_pred = tf.equal(tf.argmax(trans_output[-1], 1), tf.argmax(trans_target[-1], 1))
         accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+        print("Testing size: " + str(len(cases)))
+        print("Correct_pred: ")
 
         inputs = [c[0] for c in cases]
         targets = [c[1] for c in cases]
         feeder = {self.inputs: inputs, self.targets: targets}
-        acc, grabvals, _ = self.run_one_step(accuracy, self.monitored_variables, self.probes, session=sess,
+        acc_and_correct_pred, grabvals, _ = self.run_one_step([accuracy, correct_pred], self.monitored_variables, self.probes, session=sess,
                                            feed_dict=feeder,  show_interval=None)
-        print('%s Set Accuracy = %f ' % (msg, acc))
+        print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]))
+        print("Correct_pred: " + str(acc_and_correct_pred[1]))
+
         return accuracy
 
     def consider_validation_testing(self,epoch,sess):

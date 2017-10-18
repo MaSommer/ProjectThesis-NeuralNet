@@ -14,15 +14,19 @@ import neural_net.NeuralNet as nn
 #Standarized names for learningn method:        "gradient_decent" - Gradient decent
 
 def Main():
-    fromDate = "01.06.2016"
+    fromDate = "01.01.2015"
     number_of_trading_days = 328
     attributes_input = ["op", "cp", "tv", "hp", "lp"]
     attributes_output = ["ret"]
-    one_hot_vector_interval = [-0.005, 0.005]
-    selectedSP500 = ssr.readSelectedStocks("TestInput.txt")
-    selectedFTSE100 = ssr.readSelectedStocks("TestOutput.txt")
-    sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, fromDate, "testInput.txt", 7, number_of_trading_days)
-    lftse100 = pi.InputPortolfioInformation(selectedFTSE100, attributes_output, fromDate, "testOutput.txt", 1, number_of_trading_days, one_hot_vector_interval, is_output=True)
+    one_hot_vector_interval = [-0.0000, 0.0000]
+    #selectedSP500 = ssr.readSelectedStocks("TestInput.txt")
+    #selectedFTSE100 = ssr.readSelectedStocks("TestOutput.txt")
+    #sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, fromDate, "testInput.txt", 7, number_of_trading_days)
+    #lftse100 = pi.InputPortolfioInformation(selectedFTSE100, attributes_output, fromDate, "testOutput.txt", 1, number_of_trading_days, one_hot_vector_interval, is_output=True)
+    selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+    selectedFTSE100 = ssr.readSelectedStocks("FTSE100.txt")
+    sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, fromDate, "S&P500.txt", 7, number_of_trading_days)
+    lftse100 = pi.InputPortolfioInformation(selectedFTSE100, attributes_output, fromDate, "outputReturnsLFTSE100.txt", 1, number_of_trading_days, one_hot_vector_interval, is_output=True)
 
     print("S&P")
     #print(sp500.portfolio_data)
@@ -30,7 +34,7 @@ def Main():
     print("LONDON")
     #print(lftse100.portfolio_data)
 
-    time_lags = 0
+    time_lags = 1
     case_generator = cg.CaseGenerator(sp500.portfolio_data, lftse100.portfolio_data, time_lags)
     cases = case_generator.cases
 
@@ -40,10 +44,10 @@ def Main():
 
     input_size = len(cases[0][0][0])
     output_size = len(cases[0][1][0])
-    layer_dimension = [input_size, 50, 10, output_size]
+    layer_dimension = [input_size, 800, 50, 10, output_size]
     learning_rate = 0.1
     minibatch_size = 10
-    activation_functions = ["relu", "relu", "relu"]
+    activation_functions = ["relu", "relu", "relu", "relu"]
     initial_weight_range = [-1.0, 1.0]
     initial_bias_weight_range = [0.0, 0.0]
     cost_function = "cross_entropy"
@@ -56,11 +60,8 @@ def Main():
                               minibatch_size, initial_weight_range, initial_bias_weight_range,
                               time_lags, cost_function, learning_method, case_manager, validation_interval,
                               show_interval, softmax)
-    neural_net.run(epochs=50, sess=None, continued=None)
+    neural_net.run(epochs=100, sess=None, continued=None)
 
 
-
-#TODO: make method for reading target file
-#TODO: make method for generating cases
 
 Main()
