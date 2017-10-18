@@ -14,7 +14,8 @@ def normailize_regular(inputPortfolioInformation, attributeDataForRow, previous_
 
     elif datatype == inputPortfolioInformation.TURNOVER_VOLUME:
         data2 = inputPortfolioInformation.global_avg_volume
-
+    if (data2 == 0):
+        return 0
     return float((data1/data2)-1)
 
 

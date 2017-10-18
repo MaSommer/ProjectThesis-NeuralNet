@@ -81,11 +81,11 @@ class NeuralNet():
 #not finished this method
     def configure_learning(self):
         if (self.cost_function == "cross_entropy"):
-            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.targets, logits=self.output_variables),
+            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.targets[-1], logits=self.output_variables[-1]),
                                        name="CrossEntropy")
 
         elif (self.cost_function == "mean_square"):
-            self.loss = tf.reduce_mean(tf.square(self.targets - self.output_variables), name='MSE')
+            self.loss = tf.reduce_mean(tf.square(self.targets[-1] - self.output_variables)[-1], name='MSE')
         else:
             raise ValueError('Cost function does not exist')
 
@@ -102,7 +102,7 @@ class NeuralNet():
         self.training_session(epochs,sess=sess,continued=continued)
         self.test_on_training_set(sess=self.current_session) #tst on trainning set
         self.testing_session(sess=self.current_session)
-        self.close_current_session()
+        #self.close_current_session()
         PLT.ioff()
 
     def training_session(self,epochs,sess=None,dir="probeview",continued=False):
@@ -159,16 +159,20 @@ class NeuralNet():
         return results[0], results[1], sess
 
     def do_testing(self,sess,cases,msg='Testing'):
-        inputs = [c[0] for c in cases]; targets = [c[1] for c in cases]
+        correct_pred = tf.equal(tf.argmax(self.output_variables[-1], 1), tf.argmax(self.targets[-1], 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+        inputs = [c[0] for c in cases]
+        targets = [c[1] for c in cases]
         feeder = {self.inputs: inputs, self.targets: targets}
-        loss, grabvals, _ = self.run_one_step(self.loss, self.monitored_variables, self.probes, session=sess,
+        acc, grabvals, _ = self.run_one_step(accuracy, self.monitored_variables, self.probes, session=sess,
                                            feed_dict=feeder,  show_interval=None)
-        print('%s Set Error = %f ' % (msg, loss))
-        return loss
+        print('%s Set Accuracy = %f ' % (msg, acc))
+        return accuracy
 
     def consider_validation_testing(self,epoch,sess):
         if self.validation_interval and (epoch % self.validation_interval == 0):
-            cases = self.caseman.get_validation_cases()
+            cases = self.case_manager.get_validation_cases()
             if len(cases) > 0:
                 error = self.do_testing(sess,cases,msg='Validation Testing')
                 self.validation_history.append((epoch,error))
@@ -194,8 +198,8 @@ class NeuralNet():
     def save_session_params(self, spath='netsaver/my_saved_session', sess=None, step=0):
         session = sess if sess else self.current_session
         state_vars = []
-        for m in self.layers:
-            vars = [m.getvar('wgt'), m.getvar('bias')]
+        for layer in self.layers:
+            vars = [layer.getvar('wgt'), layer.getvar('bias')]
             state_vars = state_vars + vars
         self.state_saver = tf.train.Saver(state_vars)
         self.saved_state_path = self.state_saver.save(session, spath, global_step=step)
@@ -210,8 +214,9 @@ class NeuralNet():
         session = sess if sess else self.current_session
         self.state_saver.restore(session, spath)
 
+#TODO: Fix the save session_params method. Currently an error is occurring.
     def close_current_session(self):
-        self.save_session_params(sess=self.current_session)
+        #self.save_session_params(sess=self.current_session)
         flt.close_session(self.current_session, view=True)
 
     def roundup_probes(self):
