@@ -5,6 +5,8 @@ import Layer as l
 import FlowTools as flt
 import matplotlib.pyplot as PLT
 import math
+import time
+
 
 
 
@@ -22,7 +24,8 @@ class NeuralNet():
 
     def __init__(self, layer_dimensions, activation_functions, learning_rate, minibatch_size,
                  initial_weight_range, initial_bias_weight_range, time_lags, cost_function,
-                 learning_method, case_manager, validation_interval=None, show_interval=None, softmax=True):
+                 learning_method, case_manager, validation_interval=None, show_interval=None,
+                 softmax=True, start_time=time.time()):
         self.layer_dimensions = layer_dimensions
         self.learning_rate = learning_rate
         self.minibatch_size = minibatch_size
@@ -43,6 +46,8 @@ class NeuralNet():
 
         self.global_training_step = 0 # Enables coherent data-storage during extra training runs (see runmore).
         self.validation_history = []
+
+        self.start_time = start_time
 
         self.build_network()
 
@@ -101,7 +106,10 @@ class NeuralNet():
 
     def run(self,epochs=100,sess=None,continued=False):
         PLT.ion()
+        print ("\n--- TRAINING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
         self.training_session(epochs,sess=sess,continued=continued)
+        print ("\n--- TESTING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
+
         self.test_on_training_set(sess=self.current_session) #tst on trainning set
         self.testing_session(sess=self.current_session)
         #self.close_current_session()
@@ -138,12 +146,16 @@ class NeuralNet():
                 minibatch = cases[case_start:case_end]
                 inputs = ([case[0] for case in minibatch])
                 targets = ([case[1] for case in minibatch])
+
                 feeder = {self.inputs: inputs, self.targets: targets}
                 _,grabvals,_ = self.run_one_step([self.trainer], grabbed_variables, self.probes, session=sess,
                                          feed_dict=feeder, step=step, show_interval=self.show_interval)
                 error += grabvals[0]
+                #accuracy = trainer_and_accuracy[1]
             self.error_history.append((epoch, error/number_of_batches))
             self.consider_validation_testing(epoch,sess)
+            if (epoch%10 == 0):
+                print("--- Epoch " + str(epoch) + " out of " + str(epochs) + " after \t %s seconds ---" % (time.time() - self.start_time))
         self.global_training_step += epochs
         flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
                                   title="",fig=not(continued))
