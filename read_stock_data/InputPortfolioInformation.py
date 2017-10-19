@@ -19,8 +19,9 @@ class InputPortolfioInformation:
 #one_hot_vector_interval keeps [low, high] of returns which categorizes the return as no change
 #attributeDate is a hashMap that maps attribute description to list where index is the day number and value are the value for the selected stocks
 
-    def __init__(self, selectedStocks, attributes, fromDate, filename, number_of_attributes, number_of_trading_days, one_hot_vector_interval=[0,0], is_output=False):
+    def __init__(self, selectedStocks, attributes, fromDate, filename, number_of_attributes, number_of_trading_days, one_hot_vector_interval=[0,0], is_output=False, start_time=time.time()):
         self.is_output = is_output
+        self.start_time = start_time
         self.selectedStocks = selectedStocks
         self.numberOfAttributes = number_of_attributes
         self.attributes = attributes
@@ -47,7 +48,6 @@ class InputPortolfioInformation:
 
         row = 0
         line = f.readline()
-        start_time = time.time()
         #iterates over all lines in the .txt file
         previous_attribute_data_for_row = {}
         #this method makes sure that the output dates are being read two days after input
@@ -66,8 +66,8 @@ class InputPortolfioInformation:
                     continue
                 previous_attribute_data_for_row = self.addColDataFromRow(rowCells[1:len(rowCells)], previous_attribute_data_for_row)
 
-            if (row%200 == 0):
-                print("--- %s seconds ---" % (time.time() - start_time) + " after row " + str(row))
+            if (row%500 == 0):
+                print("--- Row " + str(row) + " takes \t %s seconds ---" % (time.time() - self.start_time))
             row+=1
             line = f.readline()
 

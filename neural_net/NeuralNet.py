@@ -5,6 +5,8 @@ import Layer as l
 import FlowTools as flt
 import matplotlib.pyplot as PLT
 import math
+import time
+
 
 
 
@@ -22,7 +24,8 @@ class NeuralNet():
 
     def __init__(self, layer_dimensions, activation_functions, learning_rate, minibatch_size,
                  initial_weight_range, initial_bias_weight_range, time_lags, cost_function,
-                 learning_method, case_manager, validation_interval=None, show_interval=None, softmax=True):
+                 learning_method, case_manager, validation_interval=None, show_interval=None,
+                 softmax=True, start_time=time.time()):
         self.layer_dimensions = layer_dimensions
         self.learning_rate = learning_rate
         self.minibatch_size = minibatch_size
@@ -43,6 +46,8 @@ class NeuralNet():
 
         self.global_training_step = 0 # Enables coherent data-storage during extra training runs (see runmore).
         self.validation_history = []
+
+        self.start_time = start_time
 
         self.build_network()
 
@@ -80,8 +85,10 @@ class NeuralNet():
 
 #not finished this method
     def configure_learning(self):
+        trans_output = (tf.transpose(self.output_variables, [1, 0, 2]))
+        trans_target = (tf.transpose(self.targets, [1, 0, 2]))
         if (self.cost_function == "cross_entropy"):
-            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.targets[-1], logits=self.output_variables[-1]),
+            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=trans_target[-1], logits=trans_output[-1]),
                                        name="CrossEntropy")
 
         elif (self.cost_function == "mean_square"):
@@ -99,7 +106,10 @@ class NeuralNet():
 
     def run(self,epochs=100,sess=None,continued=False):
         PLT.ion()
+        print ("\n--- TRAINING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
         self.training_session(epochs,sess=sess,continued=continued)
+        print ("\n--- TESTING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
+
         self.test_on_training_set(sess=self.current_session) #tst on trainning set
         self.testing_session(sess=self.current_session)
         #self.close_current_session()
@@ -136,12 +146,16 @@ class NeuralNet():
                 minibatch = cases[case_start:case_end]
                 inputs = ([case[0] for case in minibatch])
                 targets = ([case[1] for case in minibatch])
+
                 feeder = {self.inputs: inputs, self.targets: targets}
                 _,grabvals,_ = self.run_one_step([self.trainer], grabbed_variables, self.probes, session=sess,
                                          feed_dict=feeder, step=step, show_interval=self.show_interval)
                 error += grabvals[0]
+                #accuracy = trainer_and_accuracy[1]
             self.error_history.append((epoch, error/number_of_batches))
             self.consider_validation_testing(epoch,sess)
+            if (epoch%10 == 0):
+                print("--- Epoch " + str(epoch) + " out of " + str(epochs) + " after \t %s seconds ---" % (time.time() - self.start_time))
         self.global_training_step += epochs
         flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
                                   title="",fig=not(continued))
@@ -159,15 +173,24 @@ class NeuralNet():
         return results[0], results[1], sess
 
     def do_testing(self,sess,cases,msg='Testing'):
-        correct_pred = tf.equal(tf.argmax(self.output_variables[-1], 1), tf.argmax(self.targets[-1], 1))
+        trans_output = (tf.transpose(self.output_variables, [1, 0, 2]))
+        trans_target = (tf.transpose(self.targets, [1, 0, 2]))
+        print(self.output_variables)
+        print(trans_output[-1])
+        correct_pred = tf.equal(tf.argmax(trans_output[-1], 1), tf.argmax(trans_target[-1], 1))
         accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+        print("Testing size: " + str(len(cases)))
+        print("Correct_pred: ")
 
         inputs = [c[0] for c in cases]
         targets = [c[1] for c in cases]
         feeder = {self.inputs: inputs, self.targets: targets}
-        acc, grabvals, _ = self.run_one_step(accuracy, self.monitored_variables, self.probes, session=sess,
+        acc_and_correct_pred, grabvals, _ = self.run_one_step([accuracy, correct_pred], self.monitored_variables, self.probes, session=sess,
                                            feed_dict=feeder,  show_interval=None)
-        print('%s Set Accuracy = %f ' % (msg, acc))
+        print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]))
+        print("Correct_pred: " + str(acc_and_correct_pred[1]))
+
         return accuracy
 
     def consider_validation_testing(self,epoch,sess):
