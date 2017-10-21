@@ -27,3 +27,11 @@ def normalize_with_min_max(data, min, max):
     if (max-min == 0):
         return 0
     return (data-min)/(max-min)
+
+def normalize_with_max_and_seperate_neg_and_pos(data, min, max):
+    if (max == 0):
+        return 0
+    if (data < 0):
+        return -data/min
+    else:
+        return data/max

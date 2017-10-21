@@ -48,7 +48,7 @@ class CaseGenerator():
             one_hot_vector = self.generate_one_hot_vector(output_data[0][day_nr][0])
             self.days_output_data.append(one_hot_vector)
             # day_output_data = output_data[0][day_nr]
-            case = [self.days_input_data, self.days_output_data]
+            case = [self.days_input_data, self.days_output_data, output_data[0][day_nr][0]]
 
             day_nr += 1
             self.cases.append(case)

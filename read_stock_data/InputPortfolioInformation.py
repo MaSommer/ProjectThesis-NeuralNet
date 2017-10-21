@@ -139,9 +139,10 @@ class InputPortolfioInformation:
                 for attributedata in range(0, len(self.portfolio_data[datatype][daydata])):
                     data = copy.deepcopy(self.portfolio_data[datatype][daydata][attributedata])
                     key = "" + str(datatype) + str(attributedata)
-                    min = self.global_data_min[key]
-                    max = self.global_data_max[key]
-                    norm_data = normalizer.normalize_with_min_max(copy.deepcopy(data), min, max)
+
+                    min, max = self.find_min_and_max(data, key)
+                    #norm_data = normalizer.normalize_with_min_max(copy.deepcopy(data), min, max)
+                    norm_data = normalizer.normalize_with_max_and_seperate_neg_and_pos(copy.deepcopy(data), min, max)
                     self.portfolio_data[datatype][daydata][attributedata] = data
                     self.normalized_portfolio_data[datatype][daydata][attributedata] = norm_data
 
@@ -159,11 +160,28 @@ class InputPortolfioInformation:
 
     def update_min_max(self, float_data, datatype, stock_nr):
         key = "" + str(datatype) + str(stock_nr)
-        if (self.global_data_max[key] < float_data):
-            self.global_data_max[key] = float_data
-        if (self.global_data_min[key] > float_data):
-            self.global_data_min[key] = float_data
+        if (float_data < 0):
+            if (self.global_data_max["neg"][key] < float_data):
+                self.global_data_max["neg"][key] = float_data
+            if (self.global_data_min["neg"][key] > float_data):
+                self.global_data_min["neg"][key] = float_data
+        else:
+            if (self.global_data_max["pos"][key] < float_data):
+                self.global_data_max["pos"][key] = float_data
+            if (self.global_data_min["pos"][key] > float_data):
+                self.global_data_min["pos"][key] = float_data
 
+    def find_min_and_max(self, data, key):
+        if (data < 0):
+            min = self.global_data_min["neg"][key]
+            max = self.global_data_max["neg"][key]
+            return min, max
+        elif (data > 0):
+            min = self.global_data_min["pos"][key]
+            max = self.global_data_max["pos"][key]
+            return min, max
+        else:
+            return 0,0
 
 #returns one_hot_vector [decrease, no change, increase]
     def generate_one_hot_vector(self, data):
@@ -233,11 +251,17 @@ class InputPortolfioInformation:
         self.global_avg_volume = 0
         #conuts how many already calculated in the averages
         self.global_avg_conuter = 0
+        self.global_data_min["neg"] = {}
+        self.global_data_min["pos"] = {}
+        self.global_data_max["neg"] = {}
+        self.global_data_max["pos"] = {}
         for attribute in self.attributes:
             for stock_nr in range(0, len(self.selectedStocks)):
                 key = "" + str(self.attributeIntegerMap[attribute]) + str(stock_nr)
-                self.global_data_max[key] = -float("inf")
-                self.global_data_min[key] = float("inf")
+                self.global_data_max["neg"][key] = -float("inf")
+                self.global_data_min["neg"][key] = float("inf")
+                self.global_data_max["pos"][key] = -float("inf")
+                self.global_data_min["pos"][key] = float("inf")
 
     def defineGlobalAttributes(self):
         self.OPEN_PRICE = 0
