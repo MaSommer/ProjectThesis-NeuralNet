@@ -19,8 +19,11 @@ class InputPortolfioInformation:
 #one_hot_vector_interval keeps [low, high] of returns which categorizes the return as no change
 #attributeDate is a hashMap that maps attribute description to list where index is the day number and value are the value for the selected stocks
 
-    def __init__(self, selectedStocks, attributes, fromDate, filename, number_of_attributes, number_of_trading_days, one_hot_vector_interval=[0,0], is_output=False, start_time=time.time()):
+    def __init__(self, selectedStocks, attributes, fromDate, filename, number_of_attributes,
+                 number_of_trading_days, normalize_method=None, one_hot_vector_interval=[0,0], is_output=False,
+                 start_time=time.time()):
         self.is_output = is_output
+        self.normalize_method = normalize_method
         self.start_time = start_time
         self.selectedStocks = selectedStocks
         self.numberOfAttributes = number_of_attributes
@@ -28,8 +31,7 @@ class InputPortolfioInformation:
         self.createNextCellMap(attributes)
         self.portfolio_data = defaultdict(list)
         self.one_hot_vector_interval = one_hot_vector_interval
-        for i in range(len(attributes)):
-            self.portfolio_data[self.attributeIntegerMap[attributes[i]]] = []
+        self.initialize_portfolio_data()
 
         self.fromDate = self.createIntegerOfDate(fromDate)
         self.number_of_trading_days = number_of_trading_days
@@ -65,11 +67,14 @@ class InputPortolfioInformation:
                     line = f.readline()
                     continue
                 previous_attribute_data_for_row = self.addColDataFromRow(rowCells[1:len(rowCells)], previous_attribute_data_for_row)
-
             if (row%500 == 0):
                 print("--- Row " + str(row) + " takes \t %s seconds ---" % (time.time() - self.start_time))
             row+=1
             line = f.readline()
+        if(self.normalize_method == "minmax" and not self.is_output):
+            self.min_max_normalize()
+
+
 
 #add all cells from a row to attributeData-hashmap
     def addColDataFromRow(self, rowCells, previous_attribute_data_for_row):
@@ -84,19 +89,21 @@ class InputPortolfioInformation:
                 if (self.is_output):
                     float_data = self.getDataPoint(rowCells[col])
                     one_hot_data = self.generate_one_hot_vector(float_data)
+                    #print("Rowcell: " + rowCells[0] +" Float: " + str(float_data) + " Onehot: " + str(one_hot_data))
                     dataType = (col%self.numberOfAttributes)
                     for i in range(0, len(one_hot_data)):
                         attributeDataForRow.setdefault(dataType, []).append(one_hot_data[i])
                 # if working with the input file
                 else:
                     float_data = self.getDataPoint(rowCells[col])
+                    #print("Rowcell: " + rowCells[0] +" Float: " + str(float_data))
                     dataType = (col%self.numberOfAttributes)
-                    self.update_avg_min_and_max_for_datatype(float_data, dataType)
+                    self.update_avg_turnover_volume(float_data, dataType)
                     attributeDataForRow.setdefault(dataType, []).append(float_data)
                     # checking if prev is not empty, it will be empty the first round
                     if (previous_attribute_data_for_row):
                         normalized_data_point = normalizer.normailize_regular(self, attributeDataForRow, previous_attribute_data_for_row,
-                                                      dataType, float_data, selected_stocks)
+                                                      dataType, float_data, selected_stocks, stock_nr)
                         normalized_data.setdefault(dataType, []).append(normalized_data_point)
                 col += self.nextCellStepMap[col%self.numberOfAttributes]
                 #checks if the iteration over this stock is over and we are ready for a new stock
@@ -107,51 +114,44 @@ class InputPortolfioInformation:
             stock_nr = int(col/self.numberOfAttributes)
         if (self.is_output):
             self.number_of_days_included += 1
-            for key in attributeDataForRow.keys():
-                list1 = attributeDataForRow[key]
-                self.portfolio_data.setdefault(key, []).append(list1)
+            self.addDataToAttributeMap(attributeDataForRow)
         else:
             if (previous_attribute_data_for_row):
                 self.number_of_days_included+=1
-            for key in normalized_data.keys():
-                list1 = normalized_data[key]
-                #list1 = attributeDataForRow[key]
-                self.portfolio_data.setdefault(key, []).append(list1)
-
+            self.addDataToAttributeMap(normalized_data)
         return attributeDataForRow
 
-    def addColDataFromRow2(self, rowCells):
-        col = 0
-        attributeDataForRow = {}
-        #-1 because last cell in row is 'endrow'
-        while (col < len(rowCells)):
-            if (self.checkIfSelected(col)):
-                if (self.is_output):
-                    float_data = self.getDataPoint(rowCells[col])
-                    one_hot_data = self.generate_one_hot_vector(float_data)
-                    dataType = (col%self.numberOfAttributes)
-                    for i in range(0, len(one_hot_data)):
-                        attributeDataForRow.setdefault(dataType, []).append(one_hot_data[i])
-                else:
-                    float_data = self.getDataPoint(rowCells[col])
-                    dataType = (col%self.numberOfAttributes)
-                    attributeDataForRow.setdefault(dataType, []).append(float_data)
-                col += self.nextCellStepMap[col%self.numberOfAttributes]
-            else:
-                col+=self.numberOfAttributes
-        for key in attributeDataForRow.keys():
-            list = attributeDataForRow[key]
-            self.portfolio_data.setdefault(key, []).append(list)
 
-    def update_avg_min_and_max_for_datatype(self, float_data, datatype):
-        if (self.global_data_max[datatype] < float_data):
-            self.global_data_max[datatype] = float_data
-        if (self.global_data_min > float_data):
-            self.global_data_min = float_data
+    def min_max_normalize(self):
+        for datatype in range(0, self.numberOfAttributes):
+            if (not datatype in self.portfolio_data):
+                continue
+            for daydata in range(0, len(self.portfolio_data[datatype])):
+                for attributedata in range(0, len(self.portfolio_data[datatype][daydata])):
+                    data = self.portfolio_data[datatype][daydata][attributedata]
+                    key = "" + str(datatype) + str(attributedata)
+                    min = self.global_data_min[key]
+                    max = self.global_data_max[key]
+                    self.portfolio_data[datatype][daydata][attributedata] = normalizer.normalize_with_min_max(data, min, max)
+
+    def addDataToAttributeMap(self, attributeData):
+        for key in attributeData.keys():
+            list1 = attributeData[key]
+            self.portfolio_data.setdefault(key, []).append(list1)
+
+    def update_avg_turnover_volume(self, float_data, datatype):
         if (datatype == self.TURNOVER_VOLUME):
-            total = self.global_avg_conuter*self.global_avg_volume
+            total = self.global_avg_conuter*self.global_avg_volume + float_data
             self.global_avg_conuter += 1
             self.global_avg_volume = total/self.global_avg_conuter
+
+    def update_min_max(self, float_data, datatype, stock_nr):
+        key = "" + str(datatype) + str(stock_nr)
+        if (self.global_data_max[key] < float_data):
+            self.global_data_max[key] = float_data
+        if (self.global_data_min[key] > float_data):
+            self.global_data_min[key] = float_data
+
 
 #returns one_hot_vector [decrease, no change, increase]
     def generate_one_hot_vector(self, data):
@@ -209,7 +209,7 @@ class InputPortolfioInformation:
         for c in input:
             if (c == ','):
                 output += '.'
-            else:
+            elif (c.isdigit() or c == "-"):
                 output +=c
         return output
 
@@ -222,9 +222,10 @@ class InputPortolfioInformation:
         #conuts how many already calculated in the averages
         self.global_avg_conuter = 0
         for attribute in self.attributes:
-            key = self.attributeIntegerMap[attribute]
-            self.global_data_max[key] = -float("inf")
-            self.global_data_min[key] = float("inf")
+            for stock_nr in range(0, len(self.selectedStocks)):
+                key = "" + str(self.attributeIntegerMap[attribute]) + str(stock_nr)
+                self.global_data_max[key] = -float("inf")
+                self.global_data_min[key] = float("inf")
 
     def defineGlobalAttributes(self):
         self.OPEN_PRICE = 0
@@ -235,6 +236,10 @@ class InputPortolfioInformation:
         self.EX_DIV_DAY = 5
         self.MARKET_CAP = 6
         self.initialize_global_min_and_max()
+
+    def initialize_portfolio_data(self):
+        for i in range(len(self.attributes)):
+            self.portfolio_data[self.attributeIntegerMap[self.attributes[i]]] = []
 
 #creates the nextCellStepMap which tells how many step the col should move when iterating. It depends on how
 #many attributes are selected.

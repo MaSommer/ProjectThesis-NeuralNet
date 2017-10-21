@@ -92,7 +92,7 @@ class NeuralNet():
                                        name="CrossEntropy")
 
         elif (self.cost_function == "mean_square"):
-            self.loss = tf.reduce_mean(tf.square(self.targets[-1] - self.output_variables)[-1], name='MSE')
+            self.loss = tf.reduce_mean(tf.square(trans_target[-1] - trans_output[-1]), name='MSE')
         else:
             raise ValueError('Cost function does not exist')
 
@@ -175,8 +175,6 @@ class NeuralNet():
     def do_testing(self,sess,cases,msg='Testing'):
         trans_output = (tf.transpose(self.output_variables, [1, 0, 2]))
         trans_target = (tf.transpose(self.targets, [1, 0, 2]))
-        print(self.output_variables)
-        print(trans_output[-1])
         correct_pred = tf.equal(tf.argmax(trans_output[-1], 1), tf.argmax(trans_target[-1], 1))
         accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
@@ -186,6 +184,7 @@ class NeuralNet():
         inputs = [c[0] for c in cases]
         targets = [c[1] for c in cases]
         feeder = {self.inputs: inputs, self.targets: targets}
+
         acc_and_correct_pred, grabvals, _ = self.run_one_step([accuracy, correct_pred], self.monitored_variables, self.probes, session=sess,
                                            feed_dict=feeder,  show_interval=None)
         print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]))
