@@ -18,7 +18,7 @@ def Main():
     print("--- READING DATA ---")
     start_time = time.time()
     fromDate = "01.01.2011"
-    number_of_trading_days = 1000
+    number_of_trading_days = 500
     attributes_input = ["op", "cp", "tv", "hp", "lp"]
     attributes_output = ["ret"]
     one_hot_vector_interval = [-0.0000, 0.0000]
@@ -32,24 +32,21 @@ def Main():
     sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, fromDate, "S&P500.txt", 7,
                                          number_of_trading_days, normalize_method="minmax", start_time=start_time)
     lftse100 = pi.InputPortolfioInformation(selectedFTSE100, attributes_output, fromDate, "LFTSE100wReturn.txt", 1,
-                                            number_of_trading_days, one_hot_vector_interval, is_output=True, start_time=start_time)
-
+                                            number_of_trading_days, normalize_method="minmax",
+                                            one_hot_vector_interval=one_hot_vector_interval, is_output=True,
+                                            start_time=start_time)
     # selectedSP500 = ssr.readSelectedStocks("TestInput.txt")
     # selectedFTSE100 = ssr.readSelectedStocks("TestOutput.txt")
     # sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, fromDate, "det-Input.txt", 7,
-    #                                      number_of_trading_days,normalize_method="minmax", start_time=start_time)
-    # lftse100 = pi.InputPortolfioInformation(selectedFTSE100, attributes_output, fromDate, "det-Output.txt",
-    #                                         1, number_of_trading_days, one_hot_vector_interval,
-    #                                         is_output=True, start_time=start_time)
+    #                                      number_of_trading_days, normalize_method="minmax", start_time=start_time)
+    # lftse100 = pi.InputPortolfioInformation(selectedFTSE100, attributes_output, fromDate, "det-Output.txt", 1,
+    #                                                 number_of_trading_days, normalize_method="minmax",
+    #                                                 one_hot_vector_interval=one_hot_vector_interval, is_output=True,
+    #                                                 start_time=start_time)
 
-    print("S&P")
-    #print(sp500.portfolio_data)
-
-    print("LONDON")
-    #print(lftse100.portfolio_data)
-
-    time_lags = 1
-    case_generator = cg.CaseGenerator(sp500.portfolio_data, lftse100.portfolio_data, time_lags)
+    time_lags = 2
+    one_hot_size = 3
+    case_generator = cg.CaseGenerator(sp500.normalized_portfolio_data, lftse100.portfolio_data, lftse100.normalized_portfolio_data,time_lags, one_hot_vector_interval, one_hot_size)
     cases = case_generator.cases
 
     case_manager = cm.CaseManager(cases, time_lags, validation_fraction=0.0, test_fraction=0.1)
@@ -59,8 +56,8 @@ def Main():
 
     input_size = len(cases[0][0][0])
     output_size = len(cases[0][1][0])
-    layer_dimension = [input_size, 800, 50, output_size]
-    learning_rate = 0.05
+    layer_dimension = [input_size, 800, 100, 20, output_size]
+    learning_rate = 0.1
     minibatch_size = 10
     activation_functions = ["relu", "relu", "relu", "relu", "relu", "relu", "relu", "relu", "relu", "relu"]
     initial_weight_range = [-1.0, 1.0]
@@ -76,7 +73,7 @@ def Main():
                               minibatch_size, initial_weight_range, initial_bias_weight_range,
                               time_lags, cost_function, learning_method, case_manager, validation_interval,
                               show_interval, softmax, start_time)
-    neural_net.run(epochs=100, sess=None, continued=None)
+    neural_net.run(epochs=30, sess=None, continued=None)
 
 
 def printCases(cases):

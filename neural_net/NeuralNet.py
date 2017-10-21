@@ -146,7 +146,6 @@ class NeuralNet():
                 minibatch = cases[case_start:case_end]
                 inputs = ([case[0] for case in minibatch])
                 targets = ([case[1] for case in minibatch])
-
                 feeder = {self.inputs: inputs, self.targets: targets}
                 _,grabvals,_ = self.run_one_step([self.trainer], grabbed_variables, self.probes, session=sess,
                                          feed_dict=feeder, step=step, show_interval=self.show_interval)

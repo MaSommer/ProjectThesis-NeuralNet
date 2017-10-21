@@ -4,6 +4,7 @@ import re
 from collections import defaultdict
 import DataNormalizer as normalizer
 import sys
+import copy
 
 class InputPortolfioInformation:
 
@@ -30,6 +31,7 @@ class InputPortolfioInformation:
         self.attributes = attributes
         self.createNextCellMap(attributes)
         self.portfolio_data = defaultdict(list)
+        self.normalized_portfolio_data = defaultdict(list)
         self.one_hot_vector_interval = one_hot_vector_interval
         self.initialize_portfolio_data()
 
@@ -71,7 +73,7 @@ class InputPortolfioInformation:
                 print("--- Row " + str(row) + " takes \t %s seconds ---" % (time.time() - self.start_time))
             row+=1
             line = f.readline()
-        if(self.normalize_method == "minmax" and not self.is_output):
+        if(self.normalize_method == "minmax"):
             self.min_max_normalize()
 
 
@@ -87,24 +89,10 @@ class InputPortolfioInformation:
         while (col < len(rowCells)):
             if (self.checkIfSelected(col)):
                 if (self.is_output):
-                    float_data = self.getDataPoint(rowCells[col])
-                    one_hot_data = self.generate_one_hot_vector(float_data)
-                    #print("Rowcell: " + rowCells[0] +" Float: " + str(float_data) + " Onehot: " + str(one_hot_data))
-                    dataType = (col%self.numberOfAttributes)
-                    for i in range(0, len(one_hot_data)):
-                        attributeDataForRow.setdefault(dataType, []).append(one_hot_data[i])
+                    self.set_attribute_one_hot_data(rowCells, col, attributeDataForRow, stock_nr)
                 # if working with the input file
                 else:
-                    float_data = self.getDataPoint(rowCells[col])
-                    #print("Rowcell: " + rowCells[0] +" Float: " + str(float_data))
-                    dataType = (col%self.numberOfAttributes)
-                    self.update_avg_turnover_volume(float_data, dataType)
-                    attributeDataForRow.setdefault(dataType, []).append(float_data)
-                    # checking if prev is not empty, it will be empty the first round
-                    if (previous_attribute_data_for_row):
-                        normalized_data_point = normalizer.normailize_regular(self, attributeDataForRow, previous_attribute_data_for_row,
-                                                      dataType, float_data, selected_stocks, stock_nr)
-                        normalized_data.setdefault(dataType, []).append(normalized_data_point)
+                    self.set_attribute_data_input(rowCells, col, attributeDataForRow, previous_attribute_data_for_row, normalized_data, selected_stocks, stock_nr)
                 col += self.nextCellStepMap[col%self.numberOfAttributes]
                 #checks if the iteration over this stock is over and we are ready for a new stock
                 if (int(col/self.numberOfAttributes) != stock_nr):
@@ -121,6 +109,27 @@ class InputPortolfioInformation:
             self.addDataToAttributeMap(normalized_data)
         return attributeDataForRow
 
+    def set_attribute_one_hot_data(self, rowCells, col, attributeDataForRow, stock_nr):
+        float_data = self.getDataPoint(rowCells[col])
+        #one_hot_data = self.generate_one_hot_vector(float_data)
+        dataType = (col % self.numberOfAttributes)
+        attributeDataForRow.setdefault(dataType, []).append(float_data)
+        self.update_min_max(float_data, dataType, stock_nr)
+        #for i in range(0, len(one_hot_data)):
+         #   attributeDataForRow.setdefault(dataType, []).append(one_hot_data[i])
+
+    def set_attribute_data_input(self, rowCells, col, attributeDataForRow, previous_attribute_data_for_row, normalized_data, selected_stocks, stock_nr):
+        float_data = self.getDataPoint(rowCells[col])
+        # print("Rowcell: " + rowCells[0] +" Float: " + str(float_data))
+        dataType = (col % self.numberOfAttributes)
+        self.update_avg_turnover_volume(float_data, dataType)
+        attributeDataForRow.setdefault(dataType, []).append(float_data)
+        # checking if prev is not empty, it will be empty the first round
+        if (previous_attribute_data_for_row):
+            normalized_data_point = normalizer.normailize_regular(self, attributeDataForRow, previous_attribute_data_for_row,
+                                                          dataType, float_data, selected_stocks, stock_nr)
+            normalized_data.setdefault(dataType, []).append(normalized_data_point)
+
 
     def min_max_normalize(self):
         for datatype in range(0, self.numberOfAttributes):
@@ -128,16 +137,19 @@ class InputPortolfioInformation:
                 continue
             for daydata in range(0, len(self.portfolio_data[datatype])):
                 for attributedata in range(0, len(self.portfolio_data[datatype][daydata])):
-                    data = self.portfolio_data[datatype][daydata][attributedata]
+                    data = copy.deepcopy(self.portfolio_data[datatype][daydata][attributedata])
                     key = "" + str(datatype) + str(attributedata)
                     min = self.global_data_min[key]
                     max = self.global_data_max[key]
-                    self.portfolio_data[datatype][daydata][attributedata] = normalizer.normalize_with_min_max(data, min, max)
+                    norm_data = normalizer.normalize_with_min_max(copy.deepcopy(data), min, max)
+                    self.portfolio_data[datatype][daydata][attributedata] = data
+                    self.normalized_portfolio_data[datatype][daydata][attributedata] = norm_data
 
     def addDataToAttributeMap(self, attributeData):
         for key in attributeData.keys():
             list1 = attributeData[key]
-            self.portfolio_data.setdefault(key, []).append(list1)
+            self.portfolio_data.setdefault(key, []).append(copy.deepcopy(list1))
+            self.normalized_portfolio_data.setdefault(key, []).append(copy.deepcopy(list1))
 
     def update_avg_turnover_volume(self, float_data, datatype):
         if (datatype == self.TURNOVER_VOLUME):
@@ -238,8 +250,11 @@ class InputPortolfioInformation:
         self.initialize_global_min_and_max()
 
     def initialize_portfolio_data(self):
+        self.portfolio_data = {}
+        self.normalized_portfolio_data = {}
         for i in range(len(self.attributes)):
             self.portfolio_data[self.attributeIntegerMap[self.attributes[i]]] = []
+            self.normalized_portfolio_data[self.attributeIntegerMap[self.attributes[i]]] = []
 
 #creates the nextCellStepMap which tells how many step the col should move when iterating. It depends on how
 #many attributes are selected.
