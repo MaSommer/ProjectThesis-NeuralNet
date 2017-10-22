@@ -3,7 +3,7 @@ import numpy as np
 
 
 def normailize_regular(inputPortfolioInformation, attributeDataForRow, previous_attribute_data_for_row,
-                       datatype, float_data, selected_stocks):
+                       datatype, float_data, selected_stocks, stock_nr):
     data1 = float_data
     if (datatype == inputPortfolioInformation.OPEN_PRICE):
         data2 = previous_attribute_data_for_row[inputPortfolioInformation.CLOSING_PRICE][selected_stocks]
@@ -16,9 +16,22 @@ def normailize_regular(inputPortfolioInformation, attributeDataForRow, previous_
         data2 = inputPortfolioInformation.global_avg_volume
     if (data2 == 0):
         return 0
-    return float((data1/data2)-1)
+
+    normalized_data = float((data1/data2)-1)
+    inputPortfolioInformation.update_min_max(normalized_data, datatype, stock_nr)
+    return normalized_data
 
 
 #TODO: implement the following function
-def normalize_with_min_and_max_value(data, min, max):
+def normalize_with_min_max(data, min, max):
+    if (max-min == 0):
+        return 0
     return (data-min)/(max-min)
+
+def normalize_with_max_and_seperate_neg_and_pos(data, min, max):
+    if (max == 0):
+        return 0
+    if (data < 0):
+        return -data/min
+    else:
+        return data/max
