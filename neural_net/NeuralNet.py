@@ -6,6 +6,7 @@ import FlowTools as flt
 import matplotlib.pyplot as PLT
 import math
 import time
+import Results as res
 import copy
 
 
@@ -188,14 +189,15 @@ class NeuralNet():
 
         feeder = {self.inputs: inputs, self.targets: targets}
 
-        acc_and_correct_pred, grabvals, _ = self.run_one_step([accuracy, correct_pred, trans_output_print, trans_target_print], self.monitored_variables, self.probes, session=sess,
-                                           feed_dict=feeder,  show_interval=None)
+        acc_and_correct_pred, grabvals, _ = self.run_one_step(
+            [accuracy, correct_pred, trans_output_print, trans_target_print], self.monitored_variables, self.probes,
+            session=sess,
+            feed_dict=feeder, show_interval=None)
         print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]) + " on test size: " + str(len(cases)))
         self.accuracy = float(str(acc_and_correct_pred[0]))
         self.testing_size = float((len(cases)))
-        predication_list = self.convert_tensor_list_to_list(acc_and_correct_pred[2])
-        target_list = self.convert_tensor_list_to_list(acc_and_correct_pred[3])
-        self.accuracy_information = self.generate_accuracy_information_and_overall_return(predication_list, target_list, returns)
+
+        self.results = res.Results(self, acc_and_correct_pred[2], acc_and_correct_pred[3], returns)
         return accuracy
 
     def convert_tensor_list_to_list(self, tensor_info):
@@ -213,14 +215,20 @@ class NeuralNet():
         true_false_counter = {}
         true_false_counter["true"] = 0
         true_false_counter["false"] = 0
+        correct_pred = True
+        self.number_of_correct_predication_beginning_streak = 0
+
         for i in range(0, len(predication_list)):
             pred = predication_list[i]
             target = target_list[i]
             return_that_day = returns[i]
             if (pred != target):
+                correct_pred = False
                 self.update_accuracy_counter(counter_dict, "false", true_false_counter, pred)
                 self.update_return(return_that_day, pred, "false", target)
             else:
+                if (correct_pred):
+                    self.number_of_correct_predication_beginning_streak+=1
                 self.update_accuracy_counter(counter_dict, "true", true_false_counter, pred)
                 self.update_return(return_that_day, pred, "true", target)
         for true_false in counter_dict:
@@ -256,6 +264,10 @@ class NeuralNet():
                 self.overall_return *= (1-return_that_day)
             elif(pred == 2 and target == 0):
                 self.overall_return * (1+return_that_day)
+            elif(pred == 0 and target == 1):
+                self.overall_return *= (1 - return_that_day)
+            elif(pred == 2 and target == 1):
+                self.overall_return *= (1 + return_that_day)
 
 
     def feed_accuracy_relevant_dictionaries(self):
