@@ -5,6 +5,10 @@ import Layer as l
 import FlowTools as flt
 import matplotlib.pyplot as PLT
 import math
+import time
+import Results as res
+import copy
+
 
 
 
@@ -22,7 +26,8 @@ class NeuralNet():
 
     def __init__(self, layer_dimensions, activation_functions, learning_rate, minibatch_size,
                  initial_weight_range, initial_bias_weight_range, time_lags, cost_function,
-                 learning_method, case_manager, validation_interval=None, show_interval=None, softmax=True):
+                 learning_method, case_manager, validation_interval=None, show_interval=None,
+                 softmax=True, start_time=time.time()):
         self.layer_dimensions = layer_dimensions
         self.learning_rate = learning_rate
         self.minibatch_size = minibatch_size
@@ -43,6 +48,8 @@ class NeuralNet():
 
         self.global_training_step = 0 # Enables coherent data-storage during extra training runs (see runmore).
         self.validation_history = []
+
+        self.start_time = start_time
 
         self.build_network()
 
@@ -80,12 +87,14 @@ class NeuralNet():
 
 #not finished this method
     def configure_learning(self):
+        trans_output = (tf.transpose(self.output_variables, [1, 0, 2]))
+        trans_target = (tf.transpose(self.targets, [1, 0, 2]))
         if (self.cost_function == "cross_entropy"):
-            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.targets, logits=self.output_variables),
+            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=trans_target[-1], logits=trans_output[-1]),
                                        name="CrossEntropy")
 
         elif (self.cost_function == "mean_square"):
-            self.loss = tf.reduce_mean(tf.square(self.targets - self.output_variables), name='MSE')
+            self.loss = tf.reduce_mean(tf.square(trans_target[-1] - trans_output[-1]), name='MSE')
         else:
             raise ValueError('Cost function does not exist')
 
@@ -99,10 +108,13 @@ class NeuralNet():
 
     def run(self,epochs=100,sess=None,continued=False):
         PLT.ion()
+        print ("\n--- TRAINING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
         self.training_session(epochs,sess=sess,continued=continued)
+        print ("\n--- TESTING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
+
         self.test_on_training_set(sess=self.current_session) #tst on trainning set
         self.testing_session(sess=self.current_session)
-        self.close_current_session()
+        #self.close_current_session()
         PLT.ioff()
 
     def training_session(self,epochs,sess=None,dir="probeview",continued=False):
@@ -140,8 +152,11 @@ class NeuralNet():
                 _,grabvals,_ = self.run_one_step([self.trainer], grabbed_variables, self.probes, session=sess,
                                          feed_dict=feeder, step=step, show_interval=self.show_interval)
                 error += grabvals[0]
+                #accuracy = trainer_and_accuracy[1]
             self.error_history.append((epoch, error/number_of_batches))
             self.consider_validation_testing(epoch,sess)
+            if (epoch%10 == 0):
+                print("\t--- Epoch " + str(epoch) + " out of " + str(epochs) + " after \t %s seconds ---" % (time.time() - self.start_time))
         self.global_training_step += epochs
         flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
                                   title="",fig=not(continued))
@@ -159,16 +174,119 @@ class NeuralNet():
         return results[0], results[1], sess
 
     def do_testing(self,sess,cases,msg='Testing'):
-        inputs = [c[0] for c in cases]; targets = [c[1] for c in cases]
+        trans_output = (tf.transpose(self.output_variables, [1, 0, 2]))
+        trans_target = (tf.transpose(self.targets, [1, 0, 2]))
+        correct_pred = tf.equal(tf.argmax(trans_output[-1], 1), tf.argmax(trans_target[-1], 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
+        trans_output_print = tf.argmax((trans_output)[-1], 1)
+        trans_target_print = tf.argmax((trans_target)[-1], 1)
+
+
+        inputs = [c[0] for c in cases]
+        targets = [c[1] for c in cases]
+        returns = [c[2] for c in cases]
+
         feeder = {self.inputs: inputs, self.targets: targets}
-        loss, grabvals, _ = self.run_one_step(self.loss, self.monitored_variables, self.probes, session=sess,
-                                           feed_dict=feeder,  show_interval=None)
-        print('%s Set Error = %f ' % (msg, loss))
-        return loss
+
+        acc_and_correct_pred, grabvals, _ = self.run_one_step(
+            [accuracy, correct_pred, trans_output_print, trans_target_print], self.monitored_variables, self.probes,
+            session=sess,
+            feed_dict=feeder, show_interval=None)
+        print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]) + " on test size: " + str(len(cases)))
+        self.accuracy = float(str(acc_and_correct_pred[0]))
+        self.testing_size = float((len(cases)))
+
+        self.results = res.Results(self, acc_and_correct_pred[2], acc_and_correct_pred[3], returns)
+        return accuracy
+
+    def convert_tensor_list_to_list(self, tensor_info):
+        tensor_string = str(tensor_info)
+        tensor_list_of_string = tensor_string.replace("[", "").replace("]", "").split(" ")
+        tensor_list_of_int = []
+        for i in range (0,len(tensor_list_of_string)):
+            tensor_list_of_int.append(int(tensor_list_of_string[i]))
+        return tensor_list_of_int
+
+    def generate_accuracy_information_and_overall_return(self, predication_list, target_list, returns):
+        self.overall_return = 1.0
+        counter_dict = self.feed_accuracy_relevant_dictionaries()
+        accuracy_info = self.feed_accuracy_relevant_dictionaries()
+        true_false_counter = {}
+        true_false_counter["true"] = 0
+        true_false_counter["false"] = 0
+        correct_pred = True
+        self.number_of_correct_predication_beginning_streak = 0
+
+        for i in range(0, len(predication_list)):
+            pred = predication_list[i]
+            target = target_list[i]
+            return_that_day = returns[i]
+            if (pred != target):
+                correct_pred = False
+                self.update_accuracy_counter(counter_dict, "false", true_false_counter, pred)
+                self.update_return(return_that_day, pred, "false", target)
+            else:
+                if (correct_pred):
+                    self.number_of_correct_predication_beginning_streak+=1
+                self.update_accuracy_counter(counter_dict, "true", true_false_counter, pred)
+                self.update_return(return_that_day, pred, "true", target)
+        for true_false in counter_dict:
+            for classification in counter_dict[true_false]:
+                current_count = counter_dict[true_false][classification]
+                if (true_false_counter[true_false] == 0):
+                    accuracy_info[true_false][classification] = 0
+                else:
+                    accuracy_info[true_false][classification] = float(float(current_count)/float(true_false_counter[true_false]))
+        return accuracy_info
+
+    def update_accuracy_counter(self, counter_dict, true_false, true_false_counter, pred):
+        true_false_counter[true_false] += 1
+        if (pred == 0):
+            current = counter_dict[true_false]["down"]
+            counter_dict[true_false]["down"] = current + 1
+        elif (pred == 1):
+            current = counter_dict[true_false]["stay"]
+            counter_dict[true_false]["stay"] = current + 1
+        else:
+            current = counter_dict[true_false]["up"]
+            counter_dict[true_false]["up"] = current + 1
+
+#updates the over all return, assume no transaction costs
+    def update_return(self, return_that_day, pred, true_false, target):
+        if (true_false == "true"):
+            if (pred == 0 and target == 0):
+                self.overall_return *= (-return_that_day+1)
+            elif(pred == 2 and target == 2):
+                self.overall_return *= (return_that_day+1)
+        else:
+            if (pred == 0 and target == 2):
+                self.overall_return *= (1-return_that_day)
+            elif(pred == 2 and target == 0):
+                self.overall_return * (1+return_that_day)
+            elif(pred == 0 and target == 1):
+                self.overall_return *= (1 - return_that_day)
+            elif(pred == 2 and target == 1):
+                self.overall_return *= (1 + return_that_day)
+
+
+    def feed_accuracy_relevant_dictionaries(self):
+        dictionary = {}
+        dictionary["false"] = {}
+        # the list is [number of false, number of false because up]
+        dictionary["false"]["up"] = 0
+        dictionary["false"]["stay"] = 0
+        dictionary["false"]["down"] = 0
+        dictionary["true"] = {}
+        dictionary["true"]["up"] = 0
+        dictionary["true"]["stay"] = 0
+        dictionary["true"]["down"] = 0
+        return dictionary
+
 
     def consider_validation_testing(self,epoch,sess):
         if self.validation_interval and (epoch % self.validation_interval == 0):
-            cases = self.caseman.get_validation_cases()
+            cases = self.case_manager.get_validation_cases()
             if len(cases) > 0:
                 error = self.do_testing(sess,cases,msg='Validation Testing')
                 self.validation_history.append((epoch,error))
@@ -194,8 +312,8 @@ class NeuralNet():
     def save_session_params(self, spath='netsaver/my_saved_session', sess=None, step=0):
         session = sess if sess else self.current_session
         state_vars = []
-        for m in self.layers:
-            vars = [m.getvar('wgt'), m.getvar('bias')]
+        for layer in self.layers:
+            vars = [layer.getvar('wgt'), layer.getvar('bias')]
             state_vars = state_vars + vars
         self.state_saver = tf.train.Saver(state_vars)
         self.saved_state_path = self.state_saver.save(session, spath, global_step=step)
@@ -210,8 +328,9 @@ class NeuralNet():
         session = sess if sess else self.current_session
         self.state_saver.restore(session, spath)
 
+#TODO: Fix the save session_params method. Currently an error is occurring.
     def close_current_session(self):
-        self.save_session_params(sess=self.current_session)
+        #self.save_session_params(sess=self.current_session)
         flt.close_session(self.current_session, view=True)
 
     def roundup_probes(self):
@@ -229,6 +348,8 @@ class NeuralNet():
             return tf.nn.sigmoid
         elif (act == "tanh"):
             return tf.nn.tanh
+        elif (act == "lin"):
+            return None
         else:
             raise ValueError("Wrong activation function")
 

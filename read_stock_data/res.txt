@@ -1,0 +1,72 @@
+REUSLT FOR 0
+Running time: 	 14.8537859917 seconds ---
+--- Over all accuracy: 0.5 ---
+--- Over all accuracies: [1.0, 0.0] ---
+--- Over all accuracy categorization: 
+	--- Total number of actual down: 0
+	--- Total number of actual up: 0
+	--- Total number of actual stay: 4
+		--- down-down-rate: 0.0
+		--- down-up-rate: 0.0
+		--- down-stay-rate: 0.5
+		--- up-down-rate: 0.0
+		--- up-up-rate: 0.0
+		--- up-stay-rate: 0.0
+		--- stay-down-rate: 0.0
+		--- stay-up-rate: 0.0
+		--- stay-stay-rate: 0.5
+--- Over all precision: 
+	--- Total number of estimated down: 2
+	--- Total number of estimated up: 0
+	--- Total number of estimated stay: 2
+		--- down-down-precision: 0.0
+		--- down-up-precision: 0.0
+		--- down-stay-precision: 0.5
+		--- up-down-precision: 0.0
+		--- up-up-precision: 0.0
+		--- up-stay-precision: 0.0
+		--- stay-down-precision: 0.0
+		--- stay-up-precision: 0.0
+		--- stay-stay-precision: 0.5
+--- Over all returns: [1.0, 1.0]
+--- Total return: 0.0000%
+--- Over all correct prediction beginning streak: [2, 0]
+--- Over all correct prediction beginning streak avg: 1
+
+
+REUSLT FOR 1
+Running time: 	 13.4918529987 seconds ---
+--- Over all accuracy: 0.5 ---
+--- Over all accuracies: [0.0, 1.0] ---
+--- Over all accuracy categorization: 
+	--- Total number of actual down: 2
+	--- Total number of actual up: 2
+	--- Total number of actual stay: 0
+		--- down-down-rate: 0.0
+		--- down-up-rate: 0.0
+		--- down-stay-rate: 0.0
+		--- up-down-rate: 0.5
+		--- up-up-rate: 0.5
+		--- up-stay-rate: 0.0
+		--- stay-down-rate: 0.0
+		--- stay-up-rate: 0.0
+		--- stay-stay-rate: 0.0
+--- Over all precision: 
+	--- Total number of estimated down: 0
+	--- Total number of estimated up: 4
+	--- Total number of estimated stay: 0
+		--- down-down-precision: 0.0
+		--- down-up-precision: 0.0
+		--- down-stay-precision: 0.0
+		--- up-down-precision: 0.5
+		--- up-up-precision: 0.5
+		--- up-stay-precision: 0.0
+		--- stay-down-precision: 0.0
+		--- stay-up-precision: 0.0
+		--- stay-stay-precision: 0.0
+--- Over all returns: [1.0, 1.0134708355767217]
+--- Total return: 1.3471%
+--- Over all correct prediction beginning streak: [0, 2]
+--- Over all correct prediction beginning streak avg: 1
+
+
