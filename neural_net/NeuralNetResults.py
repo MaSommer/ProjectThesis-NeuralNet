@@ -1,6 +1,6 @@
 import copy
 
-class Results():
+class NeuralNetResults():
 
     def __init__(self, neural_net, predication_tensor, target_tensor, actual_returns):
         self.neural_net = neural_net
