@@ -6,7 +6,7 @@ import FlowTools as flt
 import matplotlib.pyplot as PLT
 import math
 import time
-import Results as res
+import NeuralNetResults as res
 import copy
 
 
@@ -105,7 +105,7 @@ class NeuralNet():
             raise ValueError('Learning method does not exist')
 
     def run(self,epochs=100,sess=None,continued=False):
-        PLT.ion()
+        #PLT.ion()
         print ("--- TRAINING NEURAL NET NR " + str(self.network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
         self.training_session(epochs,sess=sess,continued=continued)
         print ("--- TESTING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
@@ -113,7 +113,7 @@ class NeuralNet():
         self.test_on_training_set(sess=self.current_session) #tst on trainning set
         self.testing_session(sess=self.current_session)
         #self.close_current_session()
-        PLT.ioff()
+        # PLT.ioff()
 
     def training_session(self,epochs,sess=None,dir="probeview",continued=False):
         self.roundup_probes()
@@ -156,8 +156,8 @@ class NeuralNet():
             if (epoch%10 == 0):
                 print("\t--- Epoch " + str(epoch) + " out of " + str(epochs) + " after \t %s seconds ---" % (time.time() - self.start_time))
         self.global_training_step += epochs
-        flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
-                                  title="",fig=not(continued))
+        # flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
+        #                           title="",fig=not(continued))
 
     def run_one_step(self, operators, grabbed_vars=None, probed_vars=None, dir='probeview',
                   session=None, feed_dict=None, step=1, show_interval=1):
@@ -189,13 +189,12 @@ class NeuralNet():
 
         acc_and_correct_pred, grabvals, _ = self.run_one_step(
             [accuracy, correct_pred, trans_output_print, trans_target_print], self.monitored_variables, self.probes,
-            session=sess,
-            feed_dict=feeder, show_interval=None)
+            session=sess, feed_dict=feeder, show_interval=None)
         print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]) + " on test size: " + str(len(cases)))
         self.accuracy = float(str(acc_and_correct_pred[0]))
         self.testing_size = float((len(cases)))
 
-        self.results = res.Results(self, acc_and_correct_pred[2], acc_and_correct_pred[3], returns)
+        self.results = res.NeuralNetResults(self, acc_and_correct_pred[2], acc_and_correct_pred[3], returns)
         return accuracy
 
     def convert_tensor_list_to_list(self, tensor_info):
@@ -336,7 +335,7 @@ class NeuralNet():
 
     def add_monitored_variables(self, module_index, type='wgt'):
         self.monitored_variables.append(self.layers[module_index].getvar(type))
-        self.grabvar_figures.append(PLT.figure())
+        #self.grabvar_figures.append(PLT.figure())
 
     def get_activation_function(self, layer_index):
         act = self.activation_functions[layer_index]

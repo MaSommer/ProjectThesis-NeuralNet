@@ -1,12 +1,13 @@
+import copy
 
-
-class Results():
+class NeuralNetResults():
 
     def __init__(self, neural_net, predication_tensor, target_tensor, actual_returns):
         self.neural_net = neural_net
         self.predication_list = self.convert_tensor_list_to_list(predication_tensor)
         self.target_list = self.convert_tensor_list_to_list(target_tensor)
 
+        self.day_returns = []
         # print("Prediction_list and target_list: ")
         # print(self.predication_list)
         # print(self.target_list)
@@ -95,6 +96,8 @@ class Results():
                 self.overall_return *= (1 - return_that_day)
             elif (pred == 2 and target == 1):
                 self.overall_return *= (1 + return_that_day)
+        day_return = copy.deepcopy(self.overall_return)
+        self.day_returns.append(day_return)
 
     def feed_accuracy_relevant_dictionaries(self):
         dictionary = {}

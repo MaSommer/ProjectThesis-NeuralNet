@@ -2,15 +2,19 @@ import numpy as np
 import time
 
 
-class Result():
+class StockResult():
 
-    def __init__(self, start_time):
+    def __init__(self, start_time, stock_nr):
+        self.stock_nr = stock_nr
         self.accuracies = []
         self.accuracy_info_list = []
         self.precision_info_list = []
         self.over_all_returns = []
         self.correct_pred_beg_streak_list = []
         self.actual_map_list = []
+
+        self.day_returns_list = []
+
         self.estimated_map_list = []
         self.total_accuracy_sum = 0.0
         self.total_testing_cases = 0.0
@@ -85,9 +89,19 @@ class Result():
         self.correct_pred_beg_streak_list.append((neural_net.results.number_of_correct_predication_beginning_streak))
         self.estimated_map_list.append(neural_net.results.estimated_map)
         self.actual_map_list.append(neural_net.results.actual_map)
+
+        self.update_day_returns(neural_net.results.day_returns)
+
         self.total_accuracy_sum += neural_net.accuracy * neural_net.testing_size
         self.total_testing_cases += neural_net.testing_size
 
+    def update_day_returns(self, day_returns):
+        current_return = 1.0
+        if (len(self.day_returns_list) > 0):
+            current_return = self.day_returns_list[-1]
+        for ret in day_returns:
+            ret *= current_return
+            self.day_returns_list.append(ret)
 
     def print_accuracy_info(self):
         print("Running time: " + "\t %s seconds ---" % (time.time() - self.start_time))
