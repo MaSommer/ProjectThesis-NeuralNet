@@ -3,7 +3,7 @@ class Stringformatter():
     def __init__(self):
         output_string = ""
 
-    def generate_result_string(self, result):
+    def generate_result_string(self, stock_result):
         stock_name = "Statoil"
 
         pred_total_return = 12.00           #result.get_total_return()
@@ -22,6 +22,8 @@ class Stringformatter():
 
         pred_periodic_returns_down = [1.00, 2.33, 1.44, -3.00]  # result.get_periodic_returns_down()
         pred_periodic_accuracies_down = [55.00, 43.00, 51.00, 52.33]  # result.get_periodic_accuracies_down()
+
+        pred_actual_counts = stock_result
 
         
 
