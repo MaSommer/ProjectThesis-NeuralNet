@@ -24,16 +24,14 @@ class NeuralNet():
 #number_of_target_possibilities is [down, same, up] or [-inf to -1, -1 to 1, 1 to 5, 5 to inf]
 #validation_interval is how often
 
-    def __init__(self, layer_dimensions, activation_functions, learning_rate, minibatch_size,
-                 initial_weight_range, initial_bias_weight_range, time_lags, cost_function,
+    def __init__(self, network_nr, layer_dimensions, activation_functions, learning_rate, minibatch_size, time_lags, cost_function,
                  learning_method, case_manager, validation_interval=None, show_interval=None,
                  softmax=True, start_time=time.time()):
+        self.network_nr = network_nr
         self.layer_dimensions = layer_dimensions
         self.learning_rate = learning_rate
         self.minibatch_size = minibatch_size
         self.activation_functions = activation_functions
-        self.initial_weight_range = initial_weight_range
-        self.initial_bias_weight_range = initial_bias_weight_range
         self.time_lags = time_lags
         self.cost_function = cost_function
         self.learning_method = learning_method
@@ -108,9 +106,9 @@ class NeuralNet():
 
     def run(self,epochs=100,sess=None,continued=False):
         PLT.ion()
-        print ("\n--- TRAINING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
+        print ("--- TRAINING NEURAL NET NR " + str(self.network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
         self.training_session(epochs,sess=sess,continued=continued)
-        print ("\n--- TESTING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
+        print ("--- TESTING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
 
         self.test_on_training_set(sess=self.current_session) #tst on trainning set
         self.testing_session(sess=self.current_session)
@@ -353,8 +351,3 @@ class NeuralNet():
         else:
             raise ValueError("Wrong activation function")
 
-    def get_initial_weight_range(self):
-        return self.initial_weight_range
-
-    def get_initial_bias_weigh_range(self):
-        return self.initial_bias_weight_range
