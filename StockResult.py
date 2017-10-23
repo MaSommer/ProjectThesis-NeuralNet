@@ -16,6 +16,7 @@ class StockResult():
         self.day_returns_list = []
 
         self.estimated_map_list = []
+        self.testing_sizes = []
         self.total_accuracy_sum = 0.0
         self.total_testing_cases = 0.0
         self.start_time = start_time
@@ -91,6 +92,7 @@ class StockResult():
         self.actual_map_list.append(neural_net.results.actual_map)
 
         self.update_day_returns(neural_net.results.day_returns)
+        self.testing_sizes.append(neural_net.testing_size)
 
         self.total_accuracy_sum += neural_net.accuracy * neural_net.testing_size
         self.total_testing_cases += neural_net.testing_size

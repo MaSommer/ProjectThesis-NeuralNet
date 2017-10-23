@@ -1,75 +1,75 @@
 REUSLT FOR 0
-Running time: 	 15.8936638832 seconds ---
---- Over all accuracy: 0.25 ---
---- Over all accuracies: [0.2, 0.3] ---
+Running time: 	 17.6756789684 seconds ---
+--- Over all accuracy: 0.35 ---
+--- Over all accuracies: [0.3, 0.4] ---
 --- Over all accuracy categorization: 
 	--- Total number of actual down: 9
 	--- Total number of actual up: 5
 	--- Total number of actual stay: 6
 		--- down-down-rate: 0.166666666667
-		--- down-up-rate: 0.333333333333
-		--- down-stay-rate: 0.0
-		--- up-down-rate: 0.5
-		--- up-up-rate: 0.666666666667
-		--- up-stay-rate: 1.0
-		--- stay-down-rate: 0.333333333333
+		--- down-up-rate: 0.166666666667
+		--- down-stay-rate: 0.1
+		--- up-down-rate: 0.666666666667
+		--- up-up-rate: 0.833333333333
+		--- up-stay-rate: 0.8
+		--- stay-down-rate: 0.166666666667
 		--- stay-up-rate: 0.0
-		--- stay-stay-rate: 0.0
+		--- stay-stay-rate: 0.1
 --- Over all precision: 
 	--- Total number of estimated down: 4
 	--- Total number of estimated up: 14
 	--- Total number of estimated stay: 2
-		--- down-down-precision: 0.25
-		--- down-up-precision: 0.25
-		--- down-stay-precision: 0.0
-		--- up-down-precision: 0.395833333333
-		--- up-up-precision: 0.208333333333
-		--- up-stay-precision: 0.395833333333
-		--- stay-down-precision: 0.5
+		--- down-down-precision: 0.333333333333
+		--- down-up-precision: 0.166666666667
+		--- down-stay-precision: 0.5
+		--- up-down-precision: 0.428571428571
+		--- up-up-precision: 0.285714285714
+		--- up-stay-precision: 0.285714285714
+		--- stay-down-precision: 0.25
 		--- stay-up-precision: 0.0
-		--- stay-stay-precision: 0.0
---- Over all returns: [1.0087744535077452, 0.9243786371636475]
---- Total return: -6.7510%
---- Over all correct prediction beginning streak: [0, 0]
+		--- stay-stay-precision: 0.25
+--- Over all returns: [0.9946285471824888, 0.9837384169065507]
+--- Total return: -2.1546%
+--- Over all correct prediction beginning streak: [0, 1]
 --- Over all correct prediction beginning streak avg: 0
 
 
 REUSLT FOR 1
-Running time: 	 17.4412951469 seconds ---
+Running time: 	 16.9249720573 seconds ---
 --- Over all accuracy: 0.25 ---
 --- Over all accuracies: [0.3, 0.2] ---
 --- Over all accuracy categorization: 
 	--- Total number of actual down: 12
 	--- Total number of actual up: 6
 	--- Total number of actual stay: 2
-		--- down-down-rate: 0.142857142857
-		--- down-up-rate: 0.375
+		--- down-down-rate: 0.242857142857
+		--- down-up-rate: 0.125
 		--- down-stay-rate: 0.5
-		--- up-down-rate: 0.442857142857
-		--- up-up-rate: 0.25
-		--- up-stay-rate: 0.0
-		--- stay-down-rate: 0.414285714286
-		--- stay-up-rate: 0.375
-		--- stay-stay-rate: 0.5
+		--- up-down-rate: 0.614285714286
+		--- up-up-rate: 0.375
+		--- up-stay-rate: 0.5
+		--- stay-down-rate: 0.142857142857
+		--- stay-up-rate: 0.5
+		--- stay-stay-rate: 0.0
 --- Over all precision: 
 	--- Total number of estimated down: 5
-	--- Total number of estimated up: 7
-	--- Total number of estimated stay: 8
-		--- down-down-precision: 0.333333333333
-		--- down-up-precision: 0.416666666667
-		--- down-stay-precision: 0.25
-		--- up-down-precision: 0.8
+	--- Total number of estimated up: 10
+	--- Total number of estimated stay: 5
+		--- down-down-precision: 0.666666666667
+		--- down-up-precision: 0.166666666667
+		--- down-stay-precision: 0.166666666667
+		--- up-down-precision: 0.7
 		--- up-up-precision: 0.2
-		--- up-stay-precision: 0.0
-		--- stay-down-precision: 0.633333333333
-		--- stay-up-precision: 0.266666666667
-		--- stay-stay-precision: 0.1
---- Over all returns: [0.9421450826810347, 0.9588578196741991]
---- Total return: -9.6617%
---- Over all correct prediction beginning streak: [1, 0]
+		--- up-stay-precision: 0.1
+		--- stay-down-precision: 0.333333333333
+		--- stay-up-precision: 0.666666666667
+		--- stay-stay-precision: 0.0
+--- Over all returns: [1.0237143767261814, 0.9693560169792268]
+--- Total return: -0.7656%
+--- Over all correct prediction beginning streak: [0, 0]
 --- Over all correct prediction beginning streak avg: 0
 
 
 
 
-OVER ALL PORTFOLIO RETURN: -8.20636328324
+OVER ALL PORTFOLIO RETURN: -1.46009984185
