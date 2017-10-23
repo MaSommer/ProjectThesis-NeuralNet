@@ -52,6 +52,8 @@ class Main():
         f = open("res.txt", "w");
         selected = self.generate_selected_list()
         number_of_stocks_to_test = 4
+        days = []
+        day_returns = []
 
         for stock_nr in range(0, number_of_stocks_to_test):
             selected[stock_nr] = 1

@@ -67,7 +67,9 @@ class NetworkManager():
 
             input_size = len(cases[0][0][0])
             output_size = len(cases[0][1][0])
-            layer_dimension = [input_size, 100, 60, 20, output_size]
+            layer_dimension = [input_size]
+            layer_dimension.extend(self.hidden_layer_dimensions)
+            layer_dimension.append(output_size)
 
             neural_net = nn.NeuralNet(network_nr, layer_dimension, self.activation_functions, self.learning_rate,
                                       self.minibatch_size,
