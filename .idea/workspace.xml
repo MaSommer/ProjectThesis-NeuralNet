@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/Main.py" line="119" mnemonic="7" />
+    <bookmark url="file://$PROJECT_DIR$/Main.py" line="75" mnemonic="7" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76155914-202e-4882-b1f8-be9aca9fe002" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Result.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/neural_net/Results.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/read_stock_data/probeview/events.out.tfevents.1508610999.dhcp-10-24-31-72.wlan.ntnu.no" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/NetworkManager.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/read_stock_data/probeview/events.out.tfevents.1508696043.dhcp-10-24-31-72.wlan.ntnu.no" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Main.py" afterPath="$PROJECT_DIR$/Main.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/neural_net/NeuralNet.py" afterPath="$PROJECT_DIR$/neural_net/NeuralNet.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/neural_net/Results.py" afterPath="$PROJECT_DIR$/neural_net/Results.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/read_stock_data/res.txt" afterPath="$PROJECT_DIR$/read_stock_data/res.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,11 +25,11 @@
       <content type="file-editors">
         <state>
           <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="NeuralNet.py" pinned="false" current-in-tab="false">
+            <file leaf-file-name="NeuralNet.py" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/neural_net/NeuralNet.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="690">
-                    <caret line="239" column="30" lean-forward="true" selection-start-line="239" selection-start-column="30" selection-end-line="239" selection-end-column="30" />
+                  <state relative-caret-position="340">
+                    <caret line="29" column="10" lean-forward="false" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="10" />
                     <folding>
                       <element signature="e#0#23#0" expanded="true" />
                     </folding>
@@ -46,11 +47,23 @@
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="InputPortfolioInformation.py" pinned="false" current-in-tab="true">
+            <file leaf-file-name="NetworkManager.py" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/NetworkManager.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="779">
+                    <caret line="72" column="57" lean-forward="false" selection-start-line="72" selection-start-column="57" selection-end-line="72" selection-end-column="57" />
+                    <folding>
+                      <element signature="e#0#49#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="InputPortfolioInformation.py" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="408">
-                    <caret line="46" column="8" lean-forward="false" selection-start-line="46" selection-start-column="8" selection-end-line="50" selection-end-column="92" />
+                  <state relative-caret-position="-919">
+                    <caret line="70" column="24" lean-forward="false" selection-start-line="70" selection-start-column="24" selection-end-line="70" selection-end-column="24" />
                     <folding>
                       <element signature="e#0#9#0" expanded="true" />
                     </folding>
@@ -71,8 +84,8 @@
             <file leaf-file-name="Results.py" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/neural_net/Results.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="885">
-                    <caret line="59" column="38" lean-forward="false" selection-start-line="59" selection-start-column="8" selection-end-line="59" selection-end-column="38" />
+                  <state relative-caret-position="523">
+                    <caret line="92" column="38" lean-forward="false" selection-start-line="92" selection-start-column="38" selection-end-line="92" selection-end-column="38" />
                     <folding />
                   </state>
                 </provider>
@@ -85,11 +98,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1164">
-              <caret line="19" column="29" lean-forward="false" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+            <state relative-caret-position="707">
+              <caret line="75" column="0" lean-forward="true" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
               <folding>
                 <element signature="e#0#49#0" expanded="true" />
               </folding>
@@ -97,7 +110,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="res.txt" pinned="false" current-in-tab="true">
+      <file leaf-file-name="res.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/read_stock_data/res.txt">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
@@ -107,63 +120,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="results.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/target/results.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Result.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Result.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
+            <state relative-caret-position="470">
               <caret line="127" column="33" lean-forward="false" selection-start-line="127" selection-start-column="33" selection-end-line="127" selection-end-column="33" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LFTSE100wReturn.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/target/LFTSE100wReturn.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="650">
-              <caret line="5196" column="19" lean-forward="false" selection-start-line="5196" selection-start-column="19" selection-end-line="5196" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="det-Output.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/target/det-Output.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="11">
-              <caret line="1" column="13" lean-forward="true" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="selectedS&amp;P500.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/target/selectedS&amp;P500.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="665">
-              <caret line="504" column="1" lean-forward="false" selection-start-line="504" selection-start-column="1" selection-end-line="504" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="S&amp;P500.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/target/S&amp;P500.txt">
-          <provider selected="true" editor-type-id="LargeFileEditor">
-            <state relative-caret-position="-1995">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
             </state>
           </provider>
         </entry>
@@ -182,7 +146,7 @@
         <entry file="file://$PROJECT_DIR$/read_stock_data/CaseGenerator.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="765">
-              <caret line="51" column="0" lean-forward="true" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+              <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -222,7 +186,6 @@
       <find>one_hot</find>
       <find>self.global_data_min</find>
       <find>2:</find>
-      <find>2:</find>
       <find>1:</find>
       <find>print</find>
       <find>self.is_inpu</find>
@@ -260,11 +223,12 @@
         <option value="$PROJECT_DIR$/read_stock_data/DataNormalizer.py" />
         <option value="$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py" />
         <option value="$PROJECT_DIR$/read_stock_data/CaseGenerator.py" />
-        <option value="$PROJECT_DIR$/neural_net/NeuralNet.py" />
-        <option value="$PROJECT_DIR$/neural_net/Results.py" />
         <option value="$PROJECT_DIR$/Result.py" />
         <option value="$PROJECT_DIR$/target/results.txt" />
         <option value="$PROJECT_DIR$/read_stock_data/res.txt" />
+        <option value="$PROJECT_DIR$/neural_net/Results.py" />
+        <option value="$PROJECT_DIR$/NetworkManager.py" />
+        <option value="$PROJECT_DIR$/neural_net/NeuralNet.py" />
         <option value="$PROJECT_DIR$/Main.py" />
       </list>
     </option>
@@ -411,7 +375,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32931355" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40538034" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33673468" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32931355" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -457,14 +421,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/neural_net/CaseManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/neural_net/NeuralNet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="705">
@@ -741,24 +697,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/read_stock_data/CaseGenerator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="51" column="0" lean-forward="true" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/target/LFTSE100wReturn.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="5196" column="19" lean-forward="false" selection-start-line="5196" selection-start-column="19" selection-end-line="5196" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/target/selectedS&amp;P500.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="665">
@@ -782,42 +720,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/target/det-Output.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11">
-          <caret line="1" column="13" lean-forward="true" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/neural_net/NeuralNet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="239" column="30" lean-forward="true" selection-start-line="239" selection-start-column="30" selection-end-line="239" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/neural_net/Results.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="885">
-          <caret line="59" column="38" lean-forward="false" selection-start-line="59" selection-start-column="8" selection-end-line="59" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Result.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="127" column="33" lean-forward="false" selection-start-line="127" selection-start-column="33" selection-end-line="127" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/ReadFile.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -826,30 +728,84 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/target/results.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/det-Output.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11">
+          <caret line="1" column="13" lean-forward="false" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Result.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="470">
+          <caret line="127" column="33" lean-forward="false" selection-start-line="127" selection-start-column="33" selection-end-line="127" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target/LFTSE100wReturn.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="5215" column="39" lean-forward="true" selection-start-line="5215" selection-start-column="39" selection-end-line="5215" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/read_stock_data/CaseGenerator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="46" column="8" lean-forward="false" selection-start-line="46" selection-start-column="8" selection-end-line="50" selection-end-column="92" />
+        <state relative-caret-position="-919">
+          <caret line="70" column="24" lean-forward="false" selection-start-line="70" selection-start-column="24" selection-end-line="70" selection-end-column="24" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/target/results.txt">
+    <entry file="file://$PROJECT_DIR$/neural_net/Results.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+        <state relative-caret-position="523">
+          <caret line="92" column="38" lean-forward="false" selection-start-line="92" selection-start-column="38" selection-end-line="92" selection-end-column="38" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Main.py">
+    <entry file="file://$PROJECT_DIR$/NetworkManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1164">
-          <caret line="19" column="29" lean-forward="false" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+        <state relative-caret-position="779">
+          <caret line="72" column="57" lean-forward="false" selection-start-line="72" selection-start-column="57" selection-end-line="72" selection-end-column="57" />
           <folding>
             <element signature="e#0#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/neural_net/NeuralNet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="29" column="10" lean-forward="false" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -859,6 +815,16 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="707">
+          <caret line="75" column="0" lean-forward="true" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#49#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
