@@ -6,6 +6,11 @@ class Results():
         self.neural_net = neural_net
         self.predication_list = self.convert_tensor_list_to_list(predication_tensor)
         self.target_list = self.convert_tensor_list_to_list(target_tensor)
+
+        # print("Prediction_list and target_list: ")
+        # print(self.predication_list)
+        # print(self.target_list)
+
         self.actual_returns = actual_returns
 
         #maps accuracy on number of times predicted true because up, true because stay... and false because up....
@@ -85,7 +90,7 @@ class Results():
             if (pred == 0 and target == 2):
                 self.overall_return *= (1 - return_that_day)
             elif (pred == 2 and target == 0):
-                self.overall_return * (1 + return_that_day)
+                self.overall_return *= (1 + return_that_day)
             elif (pred == 0 and target == 1):
                 self.overall_return *= (1 - return_that_day)
             elif (pred == 2 and target == 1):
