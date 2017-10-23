@@ -55,6 +55,7 @@ class Main():
         self.f = open("res.txt", "w");
         selectedFTSE100 = self.generate_selected_list()
         number_of_stocks_to_test = 2
+        testing_size = 0
         #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
             selectedFTSE100[stock_nr] = 1
@@ -77,10 +78,20 @@ class Main():
             self.write_portfolio_return(portolfio_day_returns[-1])
             day_list_without_jumps = self.make_day_list_without_day_jumps(len(self.day_list))
             plt.plot(day_list_without_jumps, portolfio_day_returns)
-
+            self.scatter_plot_to_mark_test_networks(portolfio_day_returns)
             plt.show()
         else:
             raise ValueError("No stocks in result list")
+
+    def scatter_plot_to_mark_test_networks(self, portolfio_day_returns):
+        testing_sizes = self.stock_results[0].testing_sizes
+        total_test = 0
+        print("Test: " + str(testing_sizes))
+        print("portolfio_day_returns: " + str(portolfio_day_returns))
+        for test_size in testing_sizes:
+            total_test += test_size
+            ret = portolfio_day_returns[int(total_test)-1]
+            plt.scatter(total_test-1, ret)
 
 
     def write_portfolio_return(self, over_all_portfolio_return):
