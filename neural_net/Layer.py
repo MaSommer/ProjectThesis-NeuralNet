@@ -3,7 +3,7 @@ import numpy as np
 
 class Layer():
 
-    def __init__(self, neural_net, layer_index, input_variables, input_size, output_size):
+    def __init__(self, neural_net, layer_index, input_variables, input_size, output_size, time_lags):
         self.neural_net = neural_net
         self.activation_function = neural_net.get_activation_function(layer_index)
         self.layer_index = layer_index
@@ -11,13 +11,18 @@ class Layer():
         self.input_size = input_size
         self.output_size = output_size
         self.name = "Layer-"+str(self.layer_index)
-        self.build()
+        self.time_lags = time_lags
+        #self.build()
+        #set as a empty list because build() function is not currently working with the rnn
+        self.output_variables = []
+        self.weights = []
+        self.biases = []
 
 
     def build(self):
         start_range_weights = self.neural_net.get_initial_weight_range()[0]
         end_range_weights = self.neural_net.get_initial_weight_range()[1]
-        self.weights = tf.Variable(np.random.uniform(start_range_weights, end_range_weights, size=(self.insize, self.output_size)),
+        self.weights = tf.Variable(np.random.uniform(start_range_weights, end_range_weights, size=(self.input_size, self.output_size)),
                                    name=self.name + '-weigths', trainable=True)
         start_range_bias_weights = self.neural_net.get_initial_bias_weigh_range()[0]
         end_range_bias_weights = self.neural_net.get_initial_bias_weigh_range()[1]
@@ -35,6 +40,8 @@ class Layer():
         else:
             raise ValueError('Activation function does not exist')
 
+    def getvar(self,type):  # type = (in,out,wgt,bias)
+        return {'in': self.input_variables, 'out': self.output_variables, 'wgt': self.weights, 'bias': self.biases}[type]
 
     def get_layer_variables(self,type):  # type = (in,out,wgt,bias)
         return {'input': self.input_variables, 'output': self.output_variables, 'weigth': self.weights, 'bias': self.biases}[type]
