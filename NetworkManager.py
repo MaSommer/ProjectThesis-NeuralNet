@@ -5,7 +5,7 @@ import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
 import os
-import Result as res
+import StockResult as res
 
 
 
@@ -32,6 +32,7 @@ class NetworkManager():
         self.show_interval = main.show_interval
         self.softmax = main.softmax
         self.hidden_layer_dimensions = main.hidden_layer_dimensions
+        self.day_list = []
 
 
 
@@ -56,7 +57,8 @@ class NetworkManager():
         cases = case_generator.cases
         fraction_of_cases_for_one_network = float(1.0 / float(number_of_networks))
         seperator0 = 0
-        self.result = res.Result(self.start_time)
+        self.stock_result = res.StockResult(self.start_time, self.stock_nr)
+        start_day_testing = 0
         for network_nr in range(0, number_of_networks):
             print ("\n--- BUILDING NEURAL NET NR " + str(network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
             separator1 = int(round(len(cases) * fraction_of_cases_for_one_network)) + seperator0
@@ -64,7 +66,9 @@ class NetworkManager():
                 separator1 = len(cases)
             case_manager = cm.CaseManager(cases[seperator0:separator1], self.time_lags, validation_fraction=0.0,
                                           test_fraction=0.17)
+            start_day_testing += len(case_manager.get_training_cases()) + len(case_manager.get_validation_cases())
 
+            end_day_testing = start_day_testing + len(case_manager.get_testing_cases())
             input_size = len(cases[0][0][0])
             output_size = len(cases[0][1][0])
             layer_dimension = [input_size]
@@ -73,14 +77,17 @@ class NetworkManager():
 
             neural_net = nn.NeuralNet(network_nr, layer_dimension, self.activation_functions, self.learning_rate,
                                       self.minibatch_size,
-                                      self.time_lags, self.cost_function, self.learning_method, case_manager, self.validation_interval,
+                                      self.time_lags, self.cost_function, self.learning_method, case_manager,
+                                      self.validation_interval,
                                       self.show_interval, self.softmax, self.start_time)
             neural_net.run(epochs=epochs, sess=None, continued=None)
 
-            self.result.add_to_result(neural_net)
+            self.stock_result.add_to_result(neural_net)
+            for day in range(start_day_testing, end_day_testing):
+                self.day_list.append(day)
 
+            start_day_testing = end_day_testing
             seperator0 = separator1
 
-        self.result.generate_final_result_info(number_of_networks)
-        result_string = self.result.genereate_result_string()
-        return self.result
+        self.stock_result.generate_final_result_info(number_of_networks)
+        return self.stock_result

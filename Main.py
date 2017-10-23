@@ -5,8 +5,10 @@ import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
 import os
-import Result as res
+import StockResult as res
 import NetworkManager as nm
+import matplotlib.pyplot as plt
+
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
@@ -47,28 +49,47 @@ class Main():
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
+        self.testing_days_list = []
+        self.stock_results = []
 
-    def run(self):
-        f = open("res.txt", "w");
-        selected = self.generate_selected_list()
-        number_of_stocks_to_test = 4
-        days = []
-        day_returns = []
-
+    def run_portfolio(self):
+        self.f = open("res.txt", "w");
+        selectedFTSE100 = self.generate_selected_list()
+        number_of_stocks_to_test = 2
+        #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
-            selected[stock_nr] = 1
-            selectedFTSE100 = selected
+            selectedFTSE100[stock_nr] = 1
             network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
-            result = network_manager.build_networks(number_of_networks=2, epochs=40)
-            result_string = result.genereate_result_string()
+            stock_result = network_manager.build_networks(number_of_networks=2, epochs=40)
+            result_string = stock_result.genereate_result_string()
+            self.stock_results.append(stock_result)
 
+            if (stock_nr == 0):
+                self.day_list = network_manager.day_list
             self.write_result_to_file(result_string, stock_nr)
-            selected[stock_nr] = 0
+            selectedFTSE100[stock_nr] = 0
+
+        self.print_portfolio_return_graph()
+        self.f.close()
+
+    def print_portfolio_return_graph(self):
+        if (len(self.stock_results) > 0):
+            portolfio_day_returns = self.find_portofolio_day_to_day_return(self.stock_results)
+            self.write_portfolio_return(portolfio_day_returns[-1])
+            day_list_without_jumps = self.make_day_list_without_day_jumps(len(self.day_list))
+            plt.plot(day_list_without_jumps, portolfio_day_returns)
+
+            plt.show()
+        else:
+            raise ValueError("No stocks in result list")
+
+
+    def write_portfolio_return(self, over_all_portfolio_return):
+        self.f.write("\n\nOVER ALL PORTFOLIO RETURN: " + str(over_all_portfolio_return))
 
     def write_result_to_file(self, result_string, stock):
-        f = open("res.txt", "a");
-        f.write("REUSLT FOR " + str(stock) + "\n" + str(result_string) + "\n\n")  # python will convert \n to os.linesep
-        f.close()
+        self.f = open("res.txt", "a");
+        self.f.write("REUSLT FOR " + str(stock) + "\n" + str(result_string) + "\n\n")  # python will convert \n to os.linesep
 
     def generate_selected_list(self):
         selected = []
@@ -76,6 +97,38 @@ class Main():
             selected.append(0)
         return selected
 
+    def find_portofolio_day_to_day_return(self, stock_results):
+        portfolio_day_returns = []
+        day = 0
+        for i in range(0, len(stock_results[0].day_returns_list)):
+            total_return_for_day = 0
+            for stock_result in stock_results:
+                total_return_for_day += stock_result.day_returns_list[day]
+            portfolio_day_returns.append(float(total_return_for_day)/float(len(stock_results)))
+            day += 1
+        return self.make_return_percentage(portfolio_day_returns)
+
+    def update_day_returns(self, day_returns):
+        current_return = 1.0
+        if (len(self.day_returns_list) > 0):
+            current_return = self.day_returns_list[-1]
+        for ret in range (0, len(day_returns)):
+            current_return *= ret
+            self.day_returns_list.append(current_return)
+
+    def make_return_percentage(self, return_list):
+        for i in range(0, len(return_list)):
+            ret = (return_list[i]-1)*100
+            return_list[i] = ret
+        return return_list
+
+    def make_day_list_without_day_jumps(self, length):
+        new_day_list = []
+        for i in range(0, length):
+            new_day_list.append(i)
+        return new_day_list
+
+
 
 main = Main()
-main.run()
+main.run_portfolio()

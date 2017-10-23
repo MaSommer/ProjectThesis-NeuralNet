@@ -1,5 +1,5 @@
 REUSLT FOR 0
-Running time: 	 16.781747818 seconds ---
+Running time: 	 15.8936638832 seconds ---
 --- Over all accuracy: 0.25 ---
 --- Over all accuracies: [0.2, 0.3] ---
 --- Over all accuracy categorization: 
@@ -7,30 +7,69 @@ Running time: 	 16.781747818 seconds ---
 	--- Total number of actual up: 5
 	--- Total number of actual stay: 6
 		--- down-down-rate: 0.166666666667
-		--- down-up-rate: 0.166666666667
+		--- down-up-rate: 0.333333333333
 		--- down-stay-rate: 0.0
-		--- up-down-rate: 0.666666666667
+		--- up-down-rate: 0.5
 		--- up-up-rate: 0.666666666667
 		--- up-stay-rate: 1.0
-		--- stay-down-rate: 0.166666666667
-		--- stay-up-rate: 0.166666666667
+		--- stay-down-rate: 0.333333333333
+		--- stay-up-rate: 0.0
 		--- stay-stay-rate: 0.0
 --- Over all precision: 
-	--- Total number of estimated down: 3
-	--- Total number of estimated up: 15
+	--- Total number of estimated down: 4
+	--- Total number of estimated up: 14
 	--- Total number of estimated stay: 2
-		--- down-down-precision: 0.333333333333
-		--- down-up-precision: 0.166666666667
+		--- down-down-precision: 0.25
+		--- down-up-precision: 0.25
 		--- down-stay-precision: 0.0
-		--- up-down-precision: 0.444444444444
-		--- up-up-precision: 0.194444444444
-		--- up-stay-precision: 0.361111111111
+		--- up-down-precision: 0.395833333333
+		--- up-up-precision: 0.208333333333
+		--- up-stay-precision: 0.395833333333
 		--- stay-down-precision: 0.5
-		--- stay-up-precision: 0.5
+		--- stay-up-precision: 0.0
 		--- stay-stay-precision: 0.0
---- Over all returns: [1.0005154808723262, 0.957115120852511]
---- Total return: -4.2392%
+--- Over all returns: [1.0087744535077452, 0.9243786371636475]
+--- Total return: -6.7510%
 --- Over all correct prediction beginning streak: [0, 0]
 --- Over all correct prediction beginning streak avg: 0
 
 
+REUSLT FOR 1
+Running time: 	 17.4412951469 seconds ---
+--- Over all accuracy: 0.25 ---
+--- Over all accuracies: [0.3, 0.2] ---
+--- Over all accuracy categorization: 
+	--- Total number of actual down: 12
+	--- Total number of actual up: 6
+	--- Total number of actual stay: 2
+		--- down-down-rate: 0.142857142857
+		--- down-up-rate: 0.375
+		--- down-stay-rate: 0.5
+		--- up-down-rate: 0.442857142857
+		--- up-up-rate: 0.25
+		--- up-stay-rate: 0.0
+		--- stay-down-rate: 0.414285714286
+		--- stay-up-rate: 0.375
+		--- stay-stay-rate: 0.5
+--- Over all precision: 
+	--- Total number of estimated down: 5
+	--- Total number of estimated up: 7
+	--- Total number of estimated stay: 8
+		--- down-down-precision: 0.333333333333
+		--- down-up-precision: 0.416666666667
+		--- down-stay-precision: 0.25
+		--- up-down-precision: 0.8
+		--- up-up-precision: 0.2
+		--- up-stay-precision: 0.0
+		--- stay-down-precision: 0.633333333333
+		--- stay-up-precision: 0.266666666667
+		--- stay-stay-precision: 0.1
+--- Over all returns: [0.9421450826810347, 0.9588578196741991]
+--- Total return: -9.6617%
+--- Over all correct prediction beginning streak: [1, 0]
+--- Over all correct prediction beginning streak avg: 0
+
+
+
+
+OVER ALL PORTFOLIO RETURN: -8.20636328324
