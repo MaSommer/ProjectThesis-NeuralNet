@@ -65,7 +65,7 @@ class NetworkManager():
             if (network_nr == number_of_networks - 1):
                 separator1 = len(cases)
             case_manager = cm.CaseManager(cases[seperator0:separator1], self.time_lags, validation_fraction=0.0,
-                                          test_fraction=0.17)
+                                          test_fraction=0.10)
             start_day_testing += len(case_manager.get_training_cases()) + len(case_manager.get_validation_cases())
 
             end_day_testing = start_day_testing + len(case_manager.get_testing_cases())

@@ -35,7 +35,7 @@ class Main():
 
         self.learning_rate = 0.3
         self.minibatch_size = 10
-        self.activation_functions = ["relu", "relu", "sigmoid", "relu", "relu", "relu", "relu", "relu", "relu", "relu"]
+        self.activation_functions = ["relu", "relu", "sigmoid", "relu", "sigmoid", "relu", "relu", "relu", "relu", "relu"]
         self.initial_weight_range = [-1.0, 1.0]
         self.initial_bias_weight_range = [0.0, 0.0]
         self.cost_function = "cross_entropy"
@@ -44,7 +44,7 @@ class Main():
         self.show_interval = None
         self.softmax = True
 
-        self.hidden_layer_dimensions = [400,50]
+        self.hidden_layer_dimensions = [500,50]
 
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
@@ -55,18 +55,20 @@ class Main():
     def run_portfolio(self):
         self.f = open("res.txt", "w");
         selectedFTSE100 = self.generate_selected_list()
-        number_of_stocks_to_test = 2
         testing_size = 0
+        number_of_stocks_to_test = 99
         #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
             selectedFTSE100[stock_nr] = 1
             network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
-            stock_result = network_manager.build_networks(number_of_networks=2, epochs=40)
+            stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
             result_string = stock_result.genereate_result_string()
+
             self.stock_results.append(stock_result)
 
             if (stock_nr == 0):
                 self.day_list = network_manager.day_list
+            print(result_string)
             self.write_result_to_file(result_string, stock_nr)
             selectedFTSE100[stock_nr] = 0
 
@@ -98,12 +100,15 @@ class Main():
 
 
     def write_portfolio_results(self, over_all_portfolio_return, standard_deviation_of_returns):
+        self.f = open("res.txt", "a")
         self.f.write("\n\nPORTFOLIO RETURN: " + "{0:.4f}%".format((over_all_portfolio_return - 1) * 100)+
                      "\n" + "PORTFOLIO STANDARD DEVIATION" + "{0:.4f}".format(standard_deviation_of_returns))
+        self.f.close()
 
     def write_result_to_file(self, result_string, stock):
-        self.f = open("res.txt", "a");
-        self.f.write("REUSLT FOR " + str(stock) + "\n" + str(result_string) + "\n\n")  # python will convert \n to os.linesep
+        self.f = open("res.txt", "a")
+        self.f.write(result_string + "\n\n") # python will convert \n to os.linesep
+        self.f.close()
 
     def generate_selected_list(self):
         selected = []
