@@ -8,6 +8,7 @@ import os
 import StockResult as res
 import NetworkManager as nm
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
@@ -43,9 +44,16 @@ class Main():
         self.show_interval = None
         self.softmax = True
 
-        self.hidden_layer_dimensions = [500,50]
+        self.hidden_layer_dimensions = [250,40]
+        self.selectedSP500 = []
+        #self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+        for i in range(510):
+            k= 0
+            if(i % 2 == 0):
+                k=1
+            self.selectedSP500.append(k)
+        #self.selectedSP500 = np.zeros()
 
-        self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
         self.testing_days_list = []
@@ -54,6 +62,7 @@ class Main():
     def run_portfolio(self):
         self.f = open("res.txt", "w");
         selectedFTSE100 = self.generate_selected_list()
+        testing_size = 0
         number_of_stocks_to_test = 99
         #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
@@ -79,10 +88,20 @@ class Main():
             self.write_portfolio_return(portolfio_day_returns[-1])
             day_list_without_jumps = self.make_day_list_without_day_jumps(len(self.day_list))
             plt.plot(day_list_without_jumps, portolfio_day_returns)
-
+            self.scatter_plot_to_mark_test_networks(portolfio_day_returns)
             plt.show()
         else:
             raise ValueError("No stocks in result list")
+
+    def scatter_plot_to_mark_test_networks(self, portolfio_day_returns):
+        testing_sizes = self.stock_results[0].testing_sizes
+        total_test = 0
+        print("Test: " + str(testing_sizes))
+        print("portolfio_day_returns: " + str(portolfio_day_returns))
+        for test_size in testing_sizes:
+            total_test += test_size
+            ret = portolfio_day_returns[int(total_test)-1]
+            plt.scatter(total_test-1, ret)
 
 
     def write_portfolio_return(self, over_all_portfolio_return):
