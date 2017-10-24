@@ -19,6 +19,8 @@ class StockResult():
         self.counter_dictionaries = []  #prediction_value pairs that maps the counts of each happening. uu, dd ss etc. list for each network
                                         # uu = counter_dictionaries["up"]["up"], other - "stay", "down"
 
+        self.estimated_map_list = []
+        self.testing_sizes = []
         self.total_accuracy_sum = 0.0
         self.total_testing_cases = 0.0
         self.start_time = start_time
@@ -125,6 +127,7 @@ class StockResult():
         self.counter_dictionaries.append(neural_net.results.counter_dict)
 
         self.update_day_returns(neural_net.results.day_returns)
+        self.testing_sizes.append(neural_net.testing_size)
 
         self.total_accuracy_sum += neural_net.accuracy * neural_net.testing_size
         self.total_testing_cases += neural_net.testing_size
