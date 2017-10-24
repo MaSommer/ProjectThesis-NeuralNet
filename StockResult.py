@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import Stringformatter as string_formatter
 
 
 class StockResult():
@@ -21,6 +22,36 @@ class StockResult():
         self.total_accuracy_sum = 0.0
         self.total_testing_cases = 0.0
         self.start_time = start_time
+
+    def get_counter_dictionaries(self):
+        return self.counter_dictionaries
+
+    def get_stock_name(self):
+        return self.stock_nr
+
+    def get_pred_accuracies(self):
+        return self.accuracies
+
+    def get_total_pred_accuracy(self):
+        return self.accuracy
+
+    def get_number_of_days(self):
+        return len(self.day_returns_list)
+
+    def get_actual_map_list(self):
+        return self.actual_map_list
+
+    def get_estimated_map_list(self):
+        return self.estimated_map_list
+
+    def get_periodic_returns(self):
+        return self.over_all_returns
+
+    def get_over_all_return(self):
+        return self.over_all_return
+
+    def get_periodic_returns(self):
+        return self.over_all_returns
 
     def generate_final_result_info(self, number_of_networks):
         self.accuracy = self.total_accuracy_sum / self.total_testing_cases
@@ -117,6 +148,8 @@ class StockResult():
         print("--- Over all correct prediction beginning streak: " + str(self.correct_pred_beg_streak_list))
         print("--- Over all correct prediction beginning streak avg: " + str(self.over_all_correct_pred_beg_streak_avg))
 
+        print("\n\n")
+
 
     def print_sequence(self, name, map_to_print, spesification ,estimated_actual, spec_name):
         print("--- Over all accuracy " + name + ": ")
@@ -138,7 +171,8 @@ class StockResult():
         result += "--- Total return: " + "{0:.4f}%".format((self.over_all_return - 1) * 100) + "\n"
         result += "--- Over all correct prediction beginning streak: " + str(self.correct_pred_beg_streak_list) + "\n"
         result += "--- Over all correct prediction beginning streak avg: " + str(self.over_all_correct_pred_beg_streak_avg) + "\n"
-        return result
+        sf = string_formatter.Stringformatter()
+        return sf.generate_stock_result_string(self)
 
     def generate_sequence(self, name, map_to_print, spesification ,estimated_actual, spec_name):
         sequence = ""
