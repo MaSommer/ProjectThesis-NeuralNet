@@ -1,36 +1,44 @@
-REUSLT FOR 0
-Running time: 	 17.6539368629 seconds ---
---- Over all accuracy: 0.5625 ---
---- Over all accuracies: [0.375, 0.75] ---
---- Over all accuracy categorization: 
-	--- Total number of actual down: 10
-	--- Total number of actual up: 6
-	--- Total number of actual stay: 0
-		--- down-down-rate: 0.666666666667
-		--- down-up-rate: 0.625
-		--- down-stay-rate: 0.0
-		--- up-down-rate: 0.333333333333
-		--- up-up-rate: 0.375
-		--- up-stay-rate: 0.0
-		--- stay-down-rate: 0.0
-		--- stay-up-rate: 0.0
-		--- stay-stay-rate: 0.0
---- Over all precision: 
-	--- Total number of estimated down: 11
-	--- Total number of estimated up: 5
-	--- Total number of estimated stay: 0
-		--- down-down-precision: 0.616666666667
-		--- down-up-precision: 0.383333333333
-		--- down-stay-precision: 0.0
-		--- up-down-precision: 0.583333333333
-		--- up-up-precision: 0.416666666667
-		--- up-stay-precision: 0.0
-		--- stay-down-precision: 0.0
-		--- stay-up-precision: 0.0
-		--- stay-stay-precision: 0.0
---- Over all returns: [0.9294044809459235, 1.0701145555051081]
---- Total return: -0.5431%
---- Over all correct prediction beginning streak: [1, 0]
---- Over all correct prediction beginning streak avg: 0
+0 | Trading days: 10
+--------------------------------------------------------------------------------------------------------------
+Return:		-2.15%	
+Accuracy:	30.00%	
+--------------------------------------------------------------------------------------------------------------
+Returns per period:			['0.96', '1.02']
+Accuracies per period:		['0.00', '0.60']
+
+					Actual values
+					  |	U	S	D	|
+                   --------------------
+					U |	0	0	2	| 2
+Predicted values	S |	0	0	0	| 0
+					D |	5	0	3	| 8
+                   --------------------
+					  |	5	0	5	|
 
 
+
+
+1 | Trading days: 10
+--------------------------------------------------------------------------------------------------------------
+Return:		-7.13%	
+Accuracy:	30.00%	
+--------------------------------------------------------------------------------------------------------------
+Returns per period:			['0.91', '1.02']
+Accuracies per period:		['0.00', '0.60']
+
+					Actual values
+					  |	U	S	D	|
+                   --------------------
+					U |	1	0	6	| 7
+Predicted values	S |	0	0	0	| 0
+					D |	1	0	2	| 3
+                   --------------------
+					  |	2	0	8	|
+
+
+
+
+
+
+PORTFOLIO RETURN: -564.2751%
+PORTFOLIO STANDARD DEVIATION: 0.1451
