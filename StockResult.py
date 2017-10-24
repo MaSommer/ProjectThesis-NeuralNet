@@ -14,6 +14,8 @@ class StockResult():
         self.correct_pred_beg_streak_list = []
         self.actual_map_list = []       #list with target dicts for each network.
         self.estimated_map_list = []
+        self.returns_up  = []
+        self.returns_down = []
 
         self.day_returns_list = []      #accumulated returns from day to day investment.
         self.counter_dictionaries = []  #prediction_value pairs that maps the counts of each happening. uu, dd ss etc. list for each network

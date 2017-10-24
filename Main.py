@@ -9,6 +9,8 @@ import numpy as np
 import StockResult as res
 import NetworkManager as nm
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
@@ -24,8 +26,8 @@ class Main():
 
     def __init__(self):
         self.start_time = time.time()
-        self.fromDate = "01.01.2014"
-        self.number_of_trading_days = 100
+        self.fromDate = "01.01.2008"
+        self.number_of_trading_days = 2000
         self.attributes_input = ["op", "cp"]
         self.attributes_output = ["ret"]
         self.one_hot_vector_interval = [-0.000, 0.000]
@@ -33,7 +35,9 @@ class Main():
         self.time_lags = 3
         self.one_hot_size = 3
 
-        self.learning_rate = 0.3
+        self.keep_probability_for_dropout = 0.80
+
+        self.learning_rate = 0.1
         self.minibatch_size = 10
         self.activation_functions = ["relu", "relu", "sigmoid", "relu", "sigmoid", "relu", "relu", "relu", "relu", "relu"]
         self.initial_weight_range = [-1.0, 1.0]
@@ -45,8 +49,9 @@ class Main():
         self.softmax = True
 
         self.hidden_layer_dimensions = [500,50]
-
+        self.selectedSP500 = []
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
         self.testing_days_list = []
@@ -56,12 +61,12 @@ class Main():
         self.f = open("res.txt", "w");
         selectedFTSE100 = self.generate_selected_list()
         testing_size = 0
-        number_of_stocks_to_test = 2
+        number_of_stocks_to_test = 5
         #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
             selectedFTSE100[stock_nr] = 1
             network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
-            stock_result = network_manager.build_networks(number_of_networks=2, epochs=40)
+            stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
             result_string = stock_result.genereate_result_string()
 
             self.stock_results.append(stock_result)
@@ -100,7 +105,7 @@ class Main():
 
     def write_portfolio_results(self, over_all_portfolio_return, standard_deviation_of_returns):
         self.f = open("res.txt", "a")
-        self.f.write("\n\nPORTFOLIO RETURN: " + "{0:.4f}%".format((over_all_portfolio_return - 1) * 100)+
+        self.f.write("\n\nPORTFOLIO RETURN: " + "{0:.4f}%".format(over_all_portfolio_return)+
                      "\n" + "PORTFOLIO STANDARD DEVIATION: " + "{0:.4f}".format(standard_deviation_of_returns))
         self.f.close()
 
@@ -152,6 +157,7 @@ class Main():
         for i in range(1, len(accumulated_returns)):
             day_return = accumulated_returns[i]/accumulated_returns[i-1]
             day_returns.append(day_return)
+        print("Day returns: " + accumulated_returns)
         return day_returns
 
 main = Main()
