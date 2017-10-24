@@ -25,9 +25,10 @@ class NeuralNet():
 #validation_interval is how often
 
     def __init__(self, network_nr, layer_dimensions, activation_functions, learning_rate, minibatch_size, time_lags, cost_function,
-                 learning_method, case_manager, validation_interval=None, show_interval=None,
+                 learning_method, case_manager, keep_probability_for_dropout, validation_interval=None, show_interval=None,
                  softmax=True, start_time=time.time()):
         self.network_nr = network_nr
+        self.keep_probability_for_dropout = keep_probability_for_dropout
         self.layer_dimensions = layer_dimensions
         self.learning_rate = learning_rate
         self.minibatch_size = minibatch_size
@@ -60,24 +61,27 @@ class NeuralNet():
         input_size = num_inputs
         self.layers = []
         self.cells = []
+        self.drop_cells = []
         # Build all of the modules
         #layer_size = [input, h1, h2, h3, output]
         # i er layer nr i og outsize er storrelsen paa layer nr i
         for layer_index,number_of_neurons in enumerate(self.layer_dimensions[1:]):
             layer = l.Layer(self, layer_index, input_variables, input_size, number_of_neurons, self.time_lags)
-            #act_func = layer.get_act_function()
-            #num_units = layer.get_output_size()
+
             act_func = self.get_activation_function(layer_index)
             num_units = number_of_neurons
             self.layers.append(layer)
 
             cell = tf.contrib.rnn.BasicRNNCell(num_units, activation=act_func)
+            drop_cell = tf.contrib.rnn.DropoutWrapper(cell, input_keep_prob=self.keep_probability_for_dropout)
+
             self.cells.append(cell)
+            self.drop_cells.append(drop_cell)
 
             #input_variables = layer.output_variables
             #input_size = layer.output_size
 
-        multi_layer_cell = tf.contrib.rnn.MultiRNNCell(self.cells)
+        multi_layer_cell = tf.contrib.rnn.MultiRNNCell(self.drop_cells)
         self.output_variables, self.states = tf.nn.dynamic_rnn(multi_layer_cell, self.inputs, dtype=tf.float32)
         self.targets = tf.placeholder(tf.float32, shape=(None, self.time_lags+1, layer.output_size), name='Target')
 
