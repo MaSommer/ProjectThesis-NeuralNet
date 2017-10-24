@@ -34,6 +34,8 @@ class NetworkManager():
         self.hidden_layer_dimensions = main.hidden_layer_dimensions
         self.day_list = []
 
+        self.keep_probability_for_dropout = main.keep_probability_for_dropout
+
 
 
 
@@ -78,8 +80,8 @@ class NetworkManager():
             neural_net = nn.NeuralNet(network_nr, layer_dimension, self.activation_functions, self.learning_rate,
                                       self.minibatch_size,
                                       self.time_lags, self.cost_function, self.learning_method, case_manager,
-                                      self.validation_interval,
-                                      self.show_interval, self.softmax, self.start_time)
+                                      self.keep_probability_for_dropout,
+                                      self.validation_interval, self.show_interval, self.softmax, self.start_time,)
             neural_net.run(epochs=epochs, sess=None, continued=None)
 
             self.stock_result.add_to_result(neural_net)

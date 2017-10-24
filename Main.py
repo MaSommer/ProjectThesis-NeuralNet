@@ -5,10 +5,12 @@ import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
 import os
+import numpy as np
 import StockResult as res
 import NetworkManager as nm
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
@@ -33,7 +35,9 @@ class Main():
         self.time_lags = 3
         self.one_hot_size = 3
 
-        self.learning_rate = 0.3
+        self.keep_probability_for_dropout = 0.80
+
+        self.learning_rate = 0.1
         self.minibatch_size = 10
         self.activation_functions = ["relu", "relu", "sigmoid", "relu", "sigmoid", "relu", "relu", "relu", "relu", "relu"]
         self.initial_weight_range = [-1.0, 1.0]
@@ -44,15 +48,9 @@ class Main():
         self.show_interval = None
         self.softmax = True
 
-        self.hidden_layer_dimensions = [250,40]
+        self.hidden_layer_dimensions = [500,50]
         self.selectedSP500 = []
-        #self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-        for i in range(510):
-            k= 0
-            if(i % 2 == 0):
-                k=1
-            self.selectedSP500.append(k)
-        #self.selectedSP500 = np.zeros()
+        self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
@@ -63,7 +61,7 @@ class Main():
         self.f = open("res.txt", "w");
         selectedFTSE100 = self.generate_selected_list()
         testing_size = 0
-        number_of_stocks_to_test = 99
+        number_of_stocks_to_test = 5
         #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
             selectedFTSE100[stock_nr] = 1
@@ -85,10 +83,13 @@ class Main():
     def print_portfolio_return_graph(self):
         if (len(self.stock_results) > 0):
             portolfio_day_returns = self.find_portofolio_day_to_day_return(self.stock_results)
-            self.write_portfolio_return(portolfio_day_returns[-1])
+            portfolio_day_returns_as_percentage = self.make_return_percentage(portolfio_day_returns)
+            standard_deviation_of_returns = np.std(self.convert_accumulated_portfolio_return_to_day_returns(portolfio_day_returns))
+            self.write_portfolio_results(portfolio_day_returns_as_percentage[-1], standard_deviation_of_returns)
+
             day_list_without_jumps = self.make_day_list_without_day_jumps(len(self.day_list))
-            plt.plot(day_list_without_jumps, portolfio_day_returns)
-            self.scatter_plot_to_mark_test_networks(portolfio_day_returns)
+            plt.plot(day_list_without_jumps, portfolio_day_returns_as_percentage)
+            self.scatter_plot_to_mark_test_networks(portfolio_day_returns_as_percentage)
             plt.show()
         else:
             raise ValueError("No stocks in result list")
@@ -96,17 +97,16 @@ class Main():
     def scatter_plot_to_mark_test_networks(self, portolfio_day_returns):
         testing_sizes = self.stock_results[0].testing_sizes
         total_test = 0
-        print("Test: " + str(testing_sizes))
-        print("portolfio_day_returns: " + str(portolfio_day_returns))
         for test_size in testing_sizes:
             total_test += test_size
             ret = portolfio_day_returns[int(total_test)-1]
             plt.scatter(total_test-1, ret)
 
 
-    def write_portfolio_return(self, over_all_portfolio_return):
+    def write_portfolio_results(self, over_all_portfolio_return, standard_deviation_of_returns):
         self.f = open("res.txt", "a")
-        self.f.write("\n\nOVER ALL PORTFOLIO RETURN: " + str(over_all_portfolio_return))
+        self.f.write("\n\nPORTFOLIO RETURN: " + "{0:.4f}%".format(over_all_portfolio_return)+
+                     "\n" + "PORTFOLIO STANDARD DEVIATION: " + "{0:.4f}".format(standard_deviation_of_returns))
         self.f.close()
 
     def write_result_to_file(self, result_string, stock):
@@ -129,7 +129,7 @@ class Main():
                 total_return_for_day += stock_result.day_returns_list[day]
             portfolio_day_returns.append(float(total_return_for_day)/float(len(stock_results)))
             day += 1
-        return self.make_return_percentage(portfolio_day_returns)
+        return portfolio_day_returns
 
     def update_day_returns(self, day_returns):
         current_return = 1.0
@@ -152,6 +152,13 @@ class Main():
         return new_day_list
 
 
+    def convert_accumulated_portfolio_return_to_day_returns(self, accumulated_returns):
+        day_returns = []
+        for i in range(1, len(accumulated_returns)):
+            day_return = accumulated_returns[i]/accumulated_returns[i-1]
+            day_returns.append(day_return)
+        print("Day returns: " + accumulated_returns)
+        return day_returns
 
 main = Main()
 main.run_portfolio()
