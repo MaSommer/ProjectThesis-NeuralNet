@@ -1,75 +1,44 @@
-REUSLT FOR 0
-Running time: 	 17.6756789684 seconds ---
---- Over all accuracy: 0.35 ---
---- Over all accuracies: [0.3, 0.4] ---
---- Over all accuracy categorization: 
-	--- Total number of actual down: 9
-	--- Total number of actual up: 5
-	--- Total number of actual stay: 6
-		--- down-down-rate: 0.166666666667
-		--- down-up-rate: 0.166666666667
-		--- down-stay-rate: 0.1
-		--- up-down-rate: 0.666666666667
-		--- up-up-rate: 0.833333333333
-		--- up-stay-rate: 0.8
-		--- stay-down-rate: 0.166666666667
-		--- stay-up-rate: 0.0
-		--- stay-stay-rate: 0.1
---- Over all precision: 
-	--- Total number of estimated down: 4
-	--- Total number of estimated up: 14
-	--- Total number of estimated stay: 2
-		--- down-down-precision: 0.333333333333
-		--- down-up-precision: 0.166666666667
-		--- down-stay-precision: 0.5
-		--- up-down-precision: 0.428571428571
-		--- up-up-precision: 0.285714285714
-		--- up-stay-precision: 0.285714285714
-		--- stay-down-precision: 0.25
-		--- stay-up-precision: 0.0
-		--- stay-stay-precision: 0.25
---- Over all returns: [0.9946285471824888, 0.9837384169065507]
---- Total return: -2.1546%
---- Over all correct prediction beginning streak: [0, 1]
---- Over all correct prediction beginning streak avg: 0
+0 | Trading days: 10
+--------------------------------------------------------------------------------------------------------------
+Return:		-2.15%	
+Accuracy:	30.00%	
+--------------------------------------------------------------------------------------------------------------
+Returns per period:			['0.96', '1.02']
+Accuracies per period:		['0.00', '0.60']
 
-
-REUSLT FOR 1
-Running time: 	 16.9249720573 seconds ---
---- Over all accuracy: 0.25 ---
---- Over all accuracies: [0.3, 0.2] ---
---- Over all accuracy categorization: 
-	--- Total number of actual down: 12
-	--- Total number of actual up: 6
-	--- Total number of actual stay: 2
-		--- down-down-rate: 0.242857142857
-		--- down-up-rate: 0.125
-		--- down-stay-rate: 0.5
-		--- up-down-rate: 0.614285714286
-		--- up-up-rate: 0.375
-		--- up-stay-rate: 0.5
-		--- stay-down-rate: 0.142857142857
-		--- stay-up-rate: 0.5
-		--- stay-stay-rate: 0.0
---- Over all precision: 
-	--- Total number of estimated down: 5
-	--- Total number of estimated up: 10
-	--- Total number of estimated stay: 5
-		--- down-down-precision: 0.666666666667
-		--- down-up-precision: 0.166666666667
-		--- down-stay-precision: 0.166666666667
-		--- up-down-precision: 0.7
-		--- up-up-precision: 0.2
-		--- up-stay-precision: 0.1
-		--- stay-down-precision: 0.333333333333
-		--- stay-up-precision: 0.666666666667
-		--- stay-stay-precision: 0.0
---- Over all returns: [1.0237143767261814, 0.9693560169792268]
---- Total return: -0.7656%
---- Over all correct prediction beginning streak: [0, 0]
---- Over all correct prediction beginning streak avg: 0
+					Actual values
+					  |	U	S	D	|
+                   --------------------
+					U |	0	0	2	| 2
+Predicted values	S |	0	0	0	| 0
+					D |	5	0	3	| 8
+                   --------------------
+					  |	5	0	5	|
 
 
 
 
-OVER ALL PORTFOLIO RETURN: -1.46009984185
+1 | Trading days: 10
+--------------------------------------------------------------------------------------------------------------
+Return:		-7.13%	
+Accuracy:	30.00%	
+--------------------------------------------------------------------------------------------------------------
+Returns per period:			['0.91', '1.02']
+Accuracies per period:		['0.00', '0.60']
+
+					Actual values
+					  |	U	S	D	|
+                   --------------------
+					U |	1	0	6	| 7
+Predicted values	S |	0	0	0	| 0
+					D |	1	0	2	| 3
+                   --------------------
+					  |	2	0	8	|
+
+
+
+
+
+
+PORTFOLIO RETURN: -564.2751%
+PORTFOLIO STANDARD DEVIATION: 0.1451
