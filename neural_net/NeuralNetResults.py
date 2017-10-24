@@ -28,7 +28,7 @@ class NeuralNetResults():
     def generate_accuracy_information_and_overall_return(self):
         self.overall_return = 1.0
         self.initialize_estimated__and_actual_map()
-        counter_dict = self.feed_accuracy_relevant_dictionaries()
+        self.counter_dict = self.feed_accuracy_relevant_dictionaries()
         accuracy_info = self.feed_accuracy_relevant_dictionaries()
         precision_info = self.feed_accuracy_relevant_dictionaries()
 
@@ -41,7 +41,7 @@ class NeuralNetResults():
             return_that_day = self.actual_returns[i]
             self.update_estimated_or_actual_map(self.estimated_map, float(pred))
             self.update_estimated_or_actual_map(self.actual_map, float(target))
-            self.update_accuracy_counter(counter_dict, pred, target)
+            self.update_accuracy_counter(self.counter_dict, pred, target)
             if (pred != target):
                 correct_pred = False
                 self.update_return(return_that_day, pred, "false", target)
@@ -49,10 +49,10 @@ class NeuralNetResults():
                 if (correct_pred):
                     self.number_of_correct_predication_beginning_streak += 1
                 self.update_return(return_that_day, pred, "true", target)
-        for predicted in counter_dict:
-            for target in counter_dict[predicted]:
-                self.add_to_accuracy_or_precision_info(accuracy_info, predicted, target, counter_dict, self.actual_map, target)
-                self.add_to_accuracy_or_precision_info(precision_info, predicted, target, counter_dict, self.estimated_map, predicted)
+        for predicted in self.counter_dict:
+            for target in self.counter_dict[predicted]:
+                self.add_to_accuracy_or_precision_info(accuracy_info, predicted, target, self.counter_dict, self.actual_map, target)
+                self.add_to_accuracy_or_precision_info(precision_info, predicted, target, self.counter_dict, self.estimated_map, predicted)
         return accuracy_info, precision_info
 
     def add_to_accuracy_or_precision_info(self, info, prediction, target, counter_dict, divider, key):

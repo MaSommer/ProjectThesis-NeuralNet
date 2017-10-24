@@ -23,18 +23,18 @@ class Main():
 
     def __init__(self):
         self.start_time = time.time()
-        self.fromDate = "01.08.2005"
-        self.number_of_trading_days = 120
+        self.fromDate = "01.01.2014"
+        self.number_of_trading_days = 500
         self.attributes_input = ["op", "cp"]
         self.attributes_output = ["ret"]
-        self.one_hot_vector_interval = [-0.003, 0.003]
+        self.one_hot_vector_interval = [-0.000, 0.000]
 
         self.time_lags = 3
         self.one_hot_size = 3
 
-        self.learning_rate = 0.1
+        self.learning_rate = 0.3
         self.minibatch_size = 10
-        self.activation_functions = ["relu", "relu", "relu", "relu", "relu", "relu", "relu", "relu", "relu", "relu"]
+        self.activation_functions = ["relu", "relu", "sigmoid", "relu", "relu", "relu", "relu", "relu", "relu", "relu"]
         self.initial_weight_range = [-1.0, 1.0]
         self.initial_bias_weight_range = [0.0, 0.0]
         self.cost_function = "cross_entropy"
@@ -43,8 +43,7 @@ class Main():
         self.show_interval = None
         self.softmax = True
 
-        self.number_of_networks_for_each_stock = 10
-        self.hidden_layer_dimensions = [100, 60, 20]
+        self.hidden_layer_dimensions = [400,50]
 
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,

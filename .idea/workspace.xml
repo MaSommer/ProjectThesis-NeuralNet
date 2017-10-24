@@ -14,6 +14,8 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
   <component name="DockManager">
     <window id="1">
       <content type="file-editors">
@@ -46,6 +48,7 @@
                 <provider selected="true" editor-type-id="text-editor">
                   <state relative-caret-position="1005">
                     <caret line="67" column="60" lean-forward="false" selection-start-line="67" selection-start-column="60" selection-end-line="67" selection-end-column="60" />
+>>>>>>> Martin
                     <folding>
                       <element signature="e#0#49#0" expanded="true" />
                     </folding>
@@ -90,6 +93,7 @@
       </content>
     </window>
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="Main.py" pinned="false" current-in-tab="true">
@@ -107,8 +111,13 @@
       <file leaf-file-name="res.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/read_stock_data/res.txt">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+            <state relative-caret-position="894">
+              <caret line="74" column="41" lean-forward="false" selection-start-line="74" selection-start-column="41" selection-end-line="74" selection-end-column="41" />
+=======
             <state relative-caret-position="-141">
               <caret line="5" column="38" lean-forward="false" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
+>>>>>>> Martin
               <folding />
             </state>
           </provider>
@@ -117,8 +126,13 @@
       <file leaf-file-name="StockResult.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/StockResult.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+            <state relative-caret-position="30">
+              <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+=======
             <state relative-caret-position="270">
               <caret line="18" column="26" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="26" />
+>>>>>>> Martin
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -230,10 +244,17 @@
       </list>
     </option>
   </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
+    <option name="x" value="-334" />
+    <option name="y" value="-1177" />
     <option name="width" value="1042" />
-    <option name="height" value="773" />
+    <option name="height" value="1173" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -250,6 +271,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -277,11 +299,12 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -419,6 +442,9 @@
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32923368" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="processedProjectFiles" value="true" />
+  </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
@@ -467,6 +493,15 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/InputPortfolioInformation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/read_stock_data/StockReader.py" />
+    <entry file="file://$PROJECT_DIR$/read_stock_data/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1170">
           <caret line="78" column="13" lean-forward="true" selection-start-line="78" selection-start-column="13" selection-end-line="78" selection-end-column="13" />
@@ -762,16 +797,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/read_stock_data/res.txt">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="143">
+          <caret line="40" column="35" lean-forward="false" selection-start-line="40" selection-start-column="35" selection-end-line="40" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#49#0" expanded="true" />
+          </folding>
+=======
         <state relative-caret-position="-141">
           <caret line="5" column="38" lean-forward="false" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
           <folding />
+>>>>>>> Martin
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/StockResult.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="30">
+          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+=======
         <state relative-caret-position="270">
           <caret line="18" column="26" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="26" />
+>>>>>>> Martin
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

@@ -5,15 +5,18 @@ import time
 class StockResult():
 
     def __init__(self, start_time, stock_nr):
-        self.stock_nr = stock_nr
-        self.accuracies = []
-        self.accuracy_info_list = []
-        self.precision_info_list = []
-        self.over_all_returns = []
+        self.stock_nr = stock_nr        #TODO: should be changed to stock name
+        self.accuracies = []            #accuracies per period
+        self.accuracy_info_list = []    # list of 3x3 dict with accuracy for different pairs of prediction_actualValue, for every net
+        self.precision_info_list = []   #list of 3x3 dict for every net with hit percentage on different prediction_value pairs u|u = [1][1]
+        self.over_all_returns = []      #return per neural net (period with test data). total over each period
         self.correct_pred_beg_streak_list = []
-        self.actual_map_list = []
+        self.actual_map_list = []       #list with target dicts for each network.
+        self.estimated_map_list = []
 
-        self.day_returns_list = []
+        self.day_returns_list = []      #accumulated returns from day to day investment.
+        self.counter_dictionaries = []  #prediction_value pairs that maps the counts of each happening. uu, dd ss etc. list for each network
+                                        # uu = counter_dictionaries["up"]["up"], other - "stay", "down"
 
         self.estimated_map_list = []
         self.testing_sizes = []
@@ -90,6 +93,7 @@ class StockResult():
         self.correct_pred_beg_streak_list.append((neural_net.results.number_of_correct_predication_beginning_streak))
         self.estimated_map_list.append(neural_net.results.estimated_map)
         self.actual_map_list.append(neural_net.results.actual_map)
+        self.counter_dictionaries.append(neural_net.results.counter_dict)
 
         self.update_day_returns(neural_net.results.day_returns)
         self.testing_sizes.append(neural_net.testing_size)
