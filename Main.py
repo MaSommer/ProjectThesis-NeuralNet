@@ -8,6 +8,7 @@ import os
 import StockResult as res
 import NetworkManager as nm
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
@@ -43,9 +44,16 @@ class Main():
         self.show_interval = None
         self.softmax = True
 
-        self.hidden_layer_dimensions = [500,50]
+        self.hidden_layer_dimensions = [250,40]
+        self.selectedSP500 = []
+        #self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+        for i in range(510):
+            k= 0
+            if(i % 2 == 0):
+                k=1
+            self.selectedSP500.append(k)
+        #self.selectedSP500 = np.zeros()
 
-        self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
         self.testing_days_list = []
