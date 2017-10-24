@@ -14,10 +14,10 @@ class Stringformatter():
         self.output_string +="\n"
 
         pred_total_return = "%.2f" % ((stock_result.get_over_all_return()-1)*100)
-        #pred_total_return_up = "%.2f" % 3.50333         #result.get_total_up_return()
-        #pred_total_return_down = "%.2f" % -2.00555      #result.get_total_return_down()
+        pred_total_return_up = "%.2f" % ((stock_result.get_tot_up_return() -1)*100)         #result.get_total_up_return()
+        pred_total_return_down = "%.2f" % ((stock_result.get_tot_down_return()-1)*100)
 
-        self.output_string += "Return:\t\t" + str(pred_total_return) + "%\t"# + "Return up:\t\t" + str(pred_total_return_up) + "%\t" + "Return down:" + "\t" + str(pred_total_return_down) + "%\n"
+        self.output_string += "Return:\t\t" + str(pred_total_return) + "%\t\t" + "Return up:\t\t" + str(pred_total_return_up) + "%\t\t" + "Return down:" + "\t" + str(pred_total_return_down) + "%\n"
         self.output_string +="\n"
         pred_total_accuracy = "%.2f" % (stock_result.get_total_pred_accuracy()*100)
         #pred_total_accuracy_up = "%.2f" % 51.00444      #result.get_pred_total_accuracy_up()
@@ -45,29 +45,29 @@ class Stringformatter():
 
         self.output_string += "\n"
 
-        # pred_periodic_returns_up = [1.00,2.33,1.44,-3.00]     #result.get_periodic_returns_up()
+        pred_periodic_returns_up = stock_result.get_periodic_up_returns()
         # pred_periodic_accuracies_up = [55.00,43.00,51.00,52.33] # result.get_periodic_accuracies_up()
         #
-        # for i in range(len(pred_periodic_accuracies)):
-        #     a = "%.2f" % pred_periodic_returns_up[i]
-        #     pred_periodic_returns_up[i] = a
+        for i in range(len(pred_periodic_returns_up)):
+             a = "%.2f" % float(pred_periodic_returns_up[i])
+             pred_periodic_returns_up[i] = a
         #     b = "%.2f" % pred_periodic_accuracies_up[i]
         #     pred_periodic_accuracies_up[i] = b
         #
-        # self.output_string += "Returns up per period:\t\t" + str(pred_periodic_returns_up) + "\n"
+        self.output_string += "Returns up per period:\t\t" + str(pred_periodic_returns_up) + "\n"
         # self.output_string += "Accuracies up per period:\t" + str(pred_periodic_accuracies_up) + "\n\n"
         #
         #
-        # pred_periodic_returns_down = [1.00, 2.33, 1.44, -3.00]  # result.get_periodic_returns_down()
+        pred_periodic_returns_down = stock_result.get_periodic_down_returns()
         # pred_periodic_accuracies_down = [55.00, 43.00, 51.00, 52.33]  # result.get_periodic_accuracies_down()
         #
-        # for i in range(len(pred_periodic_accuracies)):
-        #     a = "%.2f" % pred_periodic_returns_down[i]
-        #     pred_periodic_returns_down[i] = a
+        for i in range(len(pred_periodic_returns_down)):
+             a = "%.2f" % float(pred_periodic_returns_down[i])
+             pred_periodic_returns_down[i] = a
         #     b = "%.2f" % pred_periodic_accuracies_down[i]
         #     pred_periodic_accuracies_down[i] = b
         #
-        # self.output_string += "Returns d per period:\t\t" + str(pred_periodic_returns_down) + "\n"
+        self.output_string += "Returns d per period:\t\t" + str(pred_periodic_returns_down) + "\n"
         # self.output_string += "Accuracies d per period:\t" + str(pred_periodic_accuracies_down) + "\n\n"
 
         estimated_and_actual_totals_count = self.generate_total_count_numbers(stock_result)
