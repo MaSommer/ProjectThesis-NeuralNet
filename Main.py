@@ -5,6 +5,7 @@ import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
 import os
+import numpy as np
 import StockResult as res
 import NetworkManager as nm
 import matplotlib.pyplot as plt
@@ -24,7 +25,7 @@ class Main():
     def __init__(self):
         self.start_time = time.time()
         self.fromDate = "01.01.2014"
-        self.number_of_trading_days = 500
+        self.number_of_trading_days = 100
         self.attributes_input = ["op", "cp"]
         self.attributes_output = ["ret"]
         self.one_hot_vector_interval = [-0.000, 0.000]
@@ -75,7 +76,9 @@ class Main():
     def print_portfolio_return_graph(self):
         if (len(self.stock_results) > 0):
             portolfio_day_returns = self.find_portofolio_day_to_day_return(self.stock_results)
-            self.write_portfolio_return(portolfio_day_returns[-1])
+            standard_deviation_of_returns = np.std(self.convert_accumulated_portfolio_return_to_day_returns(portolfio_day_returns))
+            self.write_portfolio_results(portolfio_day_returns[-1], standard_deviation_of_returns)
+
             day_list_without_jumps = self.make_day_list_without_day_jumps(len(self.day_list))
             plt.plot(day_list_without_jumps, portolfio_day_returns)
             self.scatter_plot_to_mark_test_networks(portolfio_day_returns)
@@ -94,8 +97,9 @@ class Main():
             plt.scatter(total_test-1, ret)
 
 
-    def write_portfolio_return(self, over_all_portfolio_return):
-        self.f.write("\n\nOVER ALL PORTFOLIO RETURN: " + str(over_all_portfolio_return))
+    def write_portfolio_results(self, over_all_portfolio_return, standard_deviation_of_returns):
+        self.f.write("\n\nPORTFOLIO RETURN: " + "{0:.4f}%".format((over_all_portfolio_return - 1) * 100)+
+                     "\n" + "PORTFOLIO STANDARD DEVIATION" + "{0:.4f}".format(standard_deviation_of_returns))
 
     def write_result_to_file(self, result_string, stock):
         self.f = open("res.txt", "a");
@@ -139,6 +143,12 @@ class Main():
         return new_day_list
 
 
+    def convert_accumulated_portfolio_return_to_day_returns(self, accumulated_returns):
+        day_returns = []
+        for i in range(1, len(accumulated_returns)):
+            day_return = accumulated_returns[i]/accumulated_returns[i-1]
+            day_returns.append(day_return)
+        return day_returns
 
 main = Main()
 main.run_portfolio()
