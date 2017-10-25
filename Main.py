@@ -24,9 +24,9 @@ import numpy as np
 
 class Main():
 
-    def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, keep_probability_dropout,
-                 from_date, number_of_trading_days, attributes_input,
-                 learning_rate, minibatch_size):
+    def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
+                 from_date, number_of_trading_days, attributes_input, number_of_stocks,
+                 learning_rate, minibatch_size, epochs):
 
         #Start timer
         self.start_time = time.time()
@@ -38,12 +38,14 @@ class Main():
         self.time_lags = time_lags                              #3
         self.one_hot_vector_interval = one_hot_vector_interval  #[-0.000, 0.000]
         self.keep_probability_for_dropout = keep_probability_dropout #0.80
+        self.number_of_networks = number_of_networks
 
         #Data set specific
         self.fromDate = from_date                               # "01.01.2008"
         self.number_of_trading_days = number_of_trading_days    #2000
         self.attributes_input = attributes_input                #["op", "cp"]
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+        self.number_of_stocks = number_of_stocks
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
 
@@ -53,6 +55,7 @@ class Main():
         self.cost_function = "cross_entropy"                    #TODO: vil vi bare teste denne?
         self.learning_method = "gradient_decent"                #TODO: er det progget inn andre loesninger?
         self.softmax = True
+        self.epochs = epochs
 
         #Delete?
         self.one_hot_size = 3                                   #Brukes i NetworkManager
@@ -77,8 +80,31 @@ class Main():
         tot_day_std = self.get_total_day_std()
         tot_day_short_std = self.get_day_short_std()
         tot_day_long_std = self.get_day_long_std()
+
         aggregate_counter_table = self.get_aggregate_counter_table()
-        print(aggregate_counter_table)
+
+        #The hyperparameters
+        hyper_param_dict = self.generate_hyper_param_dict()
+        top_ten_stocks = 
+
+    def generate_hyper_param_dict(self):
+        #"activation_functions", "hidden_layer_dimension", "time_lags", "one_hot_vector_interval", "keep_probability_dropout",
+        #"from_date", "number_of_trading_days", "attributes_input",
+        #"learning_rate", "minibatch_size")
+        dict = {}
+        dict["activation_functions"] = self.activation_functions
+        dict["hidden_layer_dimension"] = self.hidden_layer_dimensions
+        dict["time_lags"] = self.time_lags
+        dict["one_hot_vector_interval"] = self.one_hot_vector_interval
+        dict["keep_probability_dropout"] = self.keep_probability_for_dropout
+        dict["from_date"] = self.fromDate
+        dict["number_of_trading_days"] = self.number_of_trading_days
+        dict["attributes_input"] = self.attributes_input
+        dict["learning_rate"] = self.learning_rate
+        dict["minibatch_size"] = self.minibatch_size
+        dict["number_of_stocks"] = self.number_of_stocks
+        dict["epochs"] = self.epochs
+
 
     def get_aggregate_counter_table(self): #returns the dictionary with counts on [pred][actual] for keys ["up"]["up"] etc
         dictionary = {}
@@ -120,12 +146,12 @@ class Main():
         self.f = open("res.txt", "w")
         selectedFTSE100 = self.generate_selected_list()
         testing_size = 0
-        number_of_stocks_to_test = 2
+        number_of_stocks_to_test = self.number_of_stocks
         #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
             selectedFTSE100[stock_nr] = 1
             network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
-            stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
+            stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
             result_string = stock_result.genereate_result_string()
 
             self.stock_results.append(stock_result)
@@ -291,7 +317,7 @@ class Main():
         return day_returns
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
-hidden_layer_dimensions = [100,50]
+hidden_layer_dimension = [100,50]
 time_lags = 3
 one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout =0.80
@@ -301,14 +327,17 @@ from_date =  "01.01.2008"
 number_of_trading_days = 1000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+number_of_networks = 4
+epochs = 40
+number_of_stocks = 2
 
 
  #Training specific
 learning_rate =0.1
 minibatch_size = 10
 
-main = Main(activation_functions, hidden_layer_dimensions, time_lags, one_hot_vector_interval, keep_probability_dropout,
-                 from_date, number_of_trading_days, attributes_input,
-                 learning_rate, minibatch_size)
+main = Main(activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
+                 from_date, number_of_trading_days, attributes_input, number_of_stocks,
+                 learning_rate, minibatch_size, epochs)
 main.run_portfolio()
 main.generate_hyper_param_result()
