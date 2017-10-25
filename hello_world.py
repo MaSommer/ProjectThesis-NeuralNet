@@ -13,6 +13,7 @@ The program is run by calling:
     mpiexec -n 4 python hello_world.py
 4 indicates that 4 processors are being used. 
 """
+import TestObject as to
 
 from mpi4py import MPI
 
@@ -20,7 +21,7 @@ comm = MPI.COMM_WORLD
 size = comm.Get_size()     # Total number of processors
 rank = comm.Get_rank()     # Unique ID of current processor
 
-data_range = 1000           # Numbers to average
+data_range = 1500           # Numbers to average
 
 def calc_average(a):
     return sum(a) / float(len(a))
@@ -32,16 +33,17 @@ if rank == 0:
 
     # Distributes the data to the other processors
     for i in range(1, size):
-        comm.send(data[i*data_sizes:(i+1)*data_sizes+1], dest=i, tag=11) 
+        #comm.send(data[i*data_sizes:(i+1)*data_sizes+1], dest=i, tag=11)
+        comm.send(to.TestObject(data[i*data_sizes:(i+1)*data_sizes+1]), dest=i, tag=11)
 
     # Calculates the average
-    average = calc_average(data[:data_sizes+1])
+    average = calc_average(to.TestObject(data[:data_sizes+1]).get_list())
 
 
 # Work done by slave processors
 else:
     my_data = comm.recv(source=0, tag=11)   # Recieve data from master
-    average = calc_average(my_data)         # Calculate result
+    average = calc_average(my_data.get_list())         # Calculate result
     comm.send(average, dest=0, tag=11)      # Send result to master
 
 

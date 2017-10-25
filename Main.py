@@ -11,7 +11,7 @@ import NetworkManager as nm
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+from mpi4py import MPI
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
@@ -25,6 +25,7 @@ import numpy as np
 class Main():
 
     def __init__(self):
+
         self.start_time = time.time()
         self.fromDate = "01.01.2008"
         self.number_of_trading_days = 2000
@@ -56,9 +57,60 @@ class Main():
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
         self.testing_days_list = []
         self.stock_results = []
+        self.f = open("res.txt", "w");
+
+    def run_portfolio_in_parallell(self):
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()  # Total number of processors
+        rank = comm.Get_rank()
+        if (rank == 0):
+            selectedFTSE100 = self.generate_selected_list()
+            number_of_stocks_to_test = 16
+            for prosessor_index in range(1, size):
+                end_of_range = (prosessor_index+1)*int(number_of_stocks_to_test/size)
+                start_range = (prosessor_index)*int(number_of_stocks_to_test/size)
+                for stock_nr in range(start_range, end_of_range):
+                    selectedFTSE100[stock_nr] = 1
+                    comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
+                    selectedFTSE100[stock_nr] = 0
+            for stock_nr in range(0, int(number_of_stocks_to_test/size)):
+                selectedFTSE100[stock_nr] = 1
+                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
+                if (stock_nr == 0):
+                    self.day_list = network_manager.day_list
+                stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
+                self.do_result_processing(stock_result)
+                selectedFTSE100[stock_nr] = 0
+
+
+        else:
+            network_manager = comm.recv(source=0, tag=11)
+            stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
+            self.do_result_processing(stock_result)
+            comm.send(stock_result, dest=0, tag=11)  # Send result to master
+
+        if (rank == 0):
+            for i in range(1, size):
+                status = MPI.Status()
+                recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+                print("Got data: " + str(recv_data) + ", from processor: " + str(status.Get_source()))
+                self.do_result_processing(stock_result)
+
+
+            self.print_portfolio_return_graph()
+            self.f.close()
+
+    def do_result_processing(self, stock_result):
+        stock_nr = stock_result.stock_nr
+        self.stock_results.append(stock_result)
+
+    def write_all_results_to_file(self):
+        for stock_result in self.stock_results:
+            result_string = stock_result.genereate_result_string()
+            print(result_string)
+            self.write_result_to_file(result_string, stock_result.stock_nr)
 
     def run_portfolio(self):
-        self.f = open("res.txt", "w");
         selectedFTSE100 = self.generate_selected_list()
         testing_size = 0
         number_of_stocks_to_test = 5
@@ -157,8 +209,7 @@ class Main():
         for i in range(1, len(accumulated_returns)):
             day_return = accumulated_returns[i]/accumulated_returns[i-1]
             day_returns.append(day_return)
-        print("Day returns: " + accumulated_returns)
         return day_returns
 
 main = Main()
-main.run_portfolio()
+main.run_portfolio_in_parallell()
