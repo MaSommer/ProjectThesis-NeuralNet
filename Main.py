@@ -13,7 +13,6 @@ import numpy as np
 
 from mpi4py import MPI
 
-
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
 #                                               "tanh" - Hyperbolic tangens
@@ -57,6 +56,7 @@ class Main():
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
         self.testing_days_list = []
         self.stock_results = []
+        self.f = open("res.txt", "w");
 
     def run_portfolio_in_parallell(self):
         comm = MPI.COMM_WORLD
@@ -106,6 +106,7 @@ class Main():
             result_string = stock_result.genereate_result_string()
             print(result_string)
             self.write_result_to_file(result_string, stock_result.stock_nr)
+
 
     def run_portfolio(self):
         self.f = open("res.txt", "w");
@@ -211,4 +212,4 @@ class Main():
         return day_returns
 
 main = Main()
-main.run_portfolio()
+main.run_portfolio_in_parallell()
