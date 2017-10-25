@@ -86,7 +86,7 @@ class Main():
 
         #The hyperparameters
         hyper_param_dict = self.generate_hyper_param_dict()
-        top_ten_stocks =0
+        per_stock_aggregate_return = self.calculate_aggregate_per_stock_return
 
     def generate_hyper_param_dict(self):
         #"activation_functions", "hidden_layer_dimension", "time_lags", "one_hot_vector_interval", "keep_probability_dropout",
