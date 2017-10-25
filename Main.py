@@ -57,7 +57,6 @@ class Main():
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
         self.testing_days_list = []
         self.stock_results = []
-        self.f = open("res.txt", "w");
 
     def run_portfolio_in_parallell(self):
         comm = MPI.COMM_WORLD
@@ -212,4 +211,4 @@ class Main():
         return day_returns
 
 main = Main()
-main.run_portfolio_in_parallell()
+main.run_portfolio()
