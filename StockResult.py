@@ -19,6 +19,9 @@ class StockResult():
         self.returns_up  = []
         self.returns_down = []
 
+        self.day_down_returns = []
+        self.day_up_returns = []
+
         self.day_returns_list = []      #accumulated returns from day to day investment.
         self.counter_dictionaries = []  #prediction_value pairs that maps the counts of each happening. uu, dd ss etc. list for each network
                                         # uu = counter_dictionaries["up"]["up"], other - "stay", "down"
@@ -58,6 +61,12 @@ class StockResult():
 
     def get_tot_up_return(self):
         return self.tot_up_return
+
+    def get_day_up_returns(self):
+        return self.day_up_returns
+
+    def get_day_down_returns(self):
+        return self.day_down_returns
 
     def get_tot_down_return(self):
         return self.tot_down_return
@@ -145,6 +154,14 @@ class StockResult():
         dictionary["down"]["down"] = 0.0
         return dictionary
 
+    def add_day_up_returns(self, neural_net):
+        for ret in neural_net.results.get_day_up_returns():
+            self.day_up_returns.append(ret)
+
+    def add_day_down_returns(self, neural_net):
+        for ret in neural_net.results.get_day_down_returns():
+            self.day_down_returns.append(ret)
+
     def add_to_result(self, neural_net):
         self.accuracies.append(neural_net.accuracy)
         self.accuracy_info_list.append(neural_net.results.accuracy_information)
@@ -153,6 +170,10 @@ class StockResult():
         self.over_all_returns.append(neural_net.results.overall_return)
         self.up_returns.append(neural_net.results.get_up_return())
         self.down_returns.append(neural_net.results.get_down_return())
+
+        #Adding day to day returns on each strategy. Collects from the neural_network_result class
+        self.add_day_down_returns(neural_net)
+        self.add_day_up_returns(neural_net)
 
         self.correct_pred_beg_streak_list.append((neural_net.results.number_of_correct_predication_beginning_streak))
         self.estimated_map_list.append(neural_net.results.estimated_map)
@@ -164,6 +185,14 @@ class StockResult():
 
         self.total_accuracy_sum += neural_net.accuracy * neural_net.testing_size
         self.total_testing_cases += neural_net.testing_size
+
+    def update_day_down_returns(self, day_down_returns):
+        current_return = 1.0
+        if(len(self.day_down_returns)>0):
+            current_return = self.day_down_returns_list[-1]
+        for ret in day_down_returns:
+            ret*=current_return
+            self.day_down_returns_list.append(ret)
 
     def update_day_returns(self, day_returns):
         current_return = 1.0
