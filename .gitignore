@@ -4,3 +4,7 @@
 /target/selectedS&P500v2.txt
 /.idea/workspace.xml
 /venv
+/venv/*
+probeview/*
+*.pyc
+
