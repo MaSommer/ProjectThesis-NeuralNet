@@ -2,7 +2,7 @@ import os
 import time
 import re
 from collections import defaultdict
-import DataNormalizer as normalizer
+import read_stock_data.DataNormalizer as normalizer
 import sys
 import copy
 

@@ -37,9 +37,12 @@ class Main():
 
         self.keep_probability_for_dropout = 0.80
 
+        self.portfolio_day_up_returns = []
+        self.portfolio_day_down_returns = []
+
         self.learning_rate = 0.1
         self.minibatch_size = 10
-        self.activation_functions = ["relu", "relu", "sigmoid", "relu", "sigmoid", "relu", "relu", "relu", "relu", "relu"]
+        self.activation_functions = ["tanh", "tanh", "tanh", "sigmoid", "sigmoid", "relu", "relu", "relu", "relu", "relu"]
         self.initial_weight_range = [-1.0, 1.0]
         self.initial_bias_weight_range = [0.0, 0.0]
         self.cost_function = "cross_entropy"
@@ -48,7 +51,7 @@ class Main():
         self.show_interval = None
         self.softmax = True
 
-        self.hidden_layer_dimensions = [500,50]
+        self.hidden_layer_dimensions = [100,20]
         self.selectedSP500 = []
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 
@@ -111,7 +114,7 @@ class Main():
         self.f = open("res.txt", "w");
         selectedFTSE100 = self.generate_selected_list()
         testing_size = 0
-        number_of_stocks_to_test = 5
+        number_of_stocks_to_test = 1
         #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
             selectedFTSE100[stock_nr] = 1
@@ -127,6 +130,8 @@ class Main():
             self.write_result_to_file(result_string, stock_nr)
             selectedFTSE100[stock_nr] = 0
 
+        self.write_long_results()
+        self.write_short_results()
         self.print_portfolio_return_graph()
         self.f.close()
 
@@ -152,6 +157,25 @@ class Main():
             ret = portolfio_day_returns[int(total_test)-1]
             plt.scatter(total_test-1, ret)
 
+    def write_long_results(self):
+        self.f = open("res.txt", "a")
+        tot_up_return = self.get_portfolio_up_return()
+        up_std = np.std(self.portfolio_day_up_returns)
+
+        self.f.write("\nResults for long strategy:\n" )
+        self.f.write("Return: " + str(tot_up_return)+"\n")
+        self.f.write("Standard deviation: " + str(up_std) + "\n")
+        self.f.close()
+
+    def write_short_results(self):
+        self.f = open("res.txt", "a")
+        tot_down_return = self.get_portfolio_down_return()
+        down_std = np.std(self.portfolio_day_down_returns)
+
+        self.f.write("\nResults for short strategy:\n" )
+        self.f.write("Return: " + str(tot_down_return)+"\n")
+        self.f.write("Standard deviation: " + str(down_std) + "\n")
+        self.f.close()
 
     def write_portfolio_results(self, over_all_portfolio_return, standard_deviation_of_returns):
         self.f = open("res.txt", "a")
@@ -180,6 +204,37 @@ class Main():
             portfolio_day_returns.append(float(total_return_for_day)/float(len(stock_results)))
             day += 1
         return portfolio_day_returns
+
+    def collect_portfolio_day_down_returns(self, stock_results): # Does not return anything
+        for stock_result in stock_results:
+            for ret in stock_result.get_day_down_returns():
+                self.portfolio_day_down_returns.append(ret)
+
+    def collect_portfolio_day_up_returns(self, stock_results): #Does not return anything
+        for stock_result in stock_results:
+            for ret in stock_result.get_day_up_returns():
+                self.portfolio_day_up_returns.append(ret)
+
+    def get_portfolio_up_return(self): #calculates total return on long strategy for portfolio
+        tot_up_ret = 1.00
+        if(len(self.portfolio_day_up_returns) == 0):
+            self.collect_portfolio_day_up_returns(self.stock_results)
+
+        for ret in self.portfolio_day_up_returns:
+            tot_up_ret *= ret
+
+        return tot_up_ret
+
+    def get_portfolio_down_return(self): #calculates total return on short strategy for portfolio
+        tot_down_ret = 1.00
+        if(len(self.portfolio_day_down_returns) == 0):
+            self.collect_portfolio_day_down_returns(self.stock_results)
+
+        for ret in self.portfolio_day_down_returns:
+            tot_down_ret *= ret
+
+        return tot_down_ret
+
 
     def update_day_returns(self, day_returns):
         current_return = 1.0
