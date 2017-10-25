@@ -120,7 +120,7 @@ class Main():
             selectedFTSE100[stock_nr] = 1
             network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
             stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
-            result_string = stock_result.genereate_result_string()
+            result_string = stock_result.generate_result_string()
 
             self.stock_results.append(stock_result)
 
