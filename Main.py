@@ -24,44 +24,87 @@ import numpy as np
 
 class Main():
 
-    def __init__(self):
+    def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, keep_probability_dropout,
+                 from_date, number_of_trading_days, attributes_input,
+                 learning_rate, minibatch_size):
+
+        #Start timer
         self.start_time = time.time()
-        self.fromDate = "01.01.2008"
-        self.number_of_trading_days = 2000
-        self.attributes_input = ["op", "cp"]
-        self.attributes_output = ["ret"]
-        self.one_hot_vector_interval = [-0.000, 0.000]
+        self.end_time = time.time()
 
-        self.time_lags = 3
-        self.one_hot_size = 3
+        #Network specific
+        self.activation_functions = activation_functions        #["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
+        self.hidden_layer_dimensions = hidden_layer_dimension   #[100,50]
+        self.time_lags = time_lags                              #3
+        self.one_hot_vector_interval = one_hot_vector_interval  #[-0.000, 0.000]
+        self.keep_probability_for_dropout = keep_probability_dropout #0.80
 
-        self.keep_probability_for_dropout = 0.80
-
-        self.portfolio_day_up_returns = []
-        self.portfolio_day_down_returns = []
-
-        self.learning_rate = 0.1
-        self.minibatch_size = 10
-        self.activation_functions = ["tanh", "tanh", "tanh", "sigmoid", "sigmoid", "relu", "relu", "relu", "relu", "relu"]
-        self.initial_weight_range = [-1.0, 1.0]
-        self.initial_bias_weight_range = [0.0, 0.0]
-        self.cost_function = "cross_entropy"
-        self.learning_method = "gradient_decent"
-        self.validation_interval = None
-        self.show_interval = None
-        self.softmax = True
-
-        self.hidden_layer_dimensions = [100,20]
-        self.selectedSP500 = []
+        #Data set specific
+        self.fromDate = from_date                               # "01.01.2008"
+        self.number_of_trading_days = number_of_trading_days    #2000
+        self.attributes_input = attributes_input                #["op", "cp"]
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
-        self.testing_days_list = []
+
+        #Training specific
+        self.learning_rate = learning_rate                      #0.1
+        self.minibatch_size = minibatch_size                    #10
+        self.cost_function = "cross_entropy"                    #TODO: vil vi bare teste denne?
+        self.learning_method = "gradient_decent"                #TODO: er det progget inn andre loesninger?
+        self.softmax = True
+
+        #Delete?
+        self.one_hot_size = 3                                   #Brukes i NetworkManager
+        self.initial_weight_range = [-1.0, 1.0]                 #TODO: fiks
+        self.initial_bias_weight_range = [0.0, 0.0]             #TODO: fiks
+        self.show_interval = None                               #Brukes i network manager
+        self.validation_interval = None                         #Brukes i network manager
+
+        #Results
+        self.portfolio_day_up_returns = []      #Describes the return on every trade on long-strategy
+        self.portfolio_day_down_returns = []    #Describes the return on every trade on short_strategy
         self.stock_results = []
+        self.hyper_param_result = None
+
+    def generate_hyper_param_result(self):
+        #Returns:
+        tot_up_return = self.get_portfolio_up_return()
+        tot_down_return = self.get_portfolio_down_return()
+        tot_return = self.get_total_return()
+
+        #Standard deviations per day:
+        tot_day_std = self.get_total_day_std()
+        tot_day_short_std = self.get_day_short_std()
+        tot_day_long_std = self.get_day_long_std()
+
+    def get_aggregate_counter_table(self): #returns the dictionary with counts on [pred][actual] for keys ["up"]["up"] etc
+        dictionary = {}
+        dictionary["up"] = {}
+        dictionary["down"] = {}
+        dictionary["stay"] = {}
+
+        for stock_result in self.stock_results:
+            dictionaries = stock_result.get_counter_dictionaries()
+            for dict in dictionaries:
+                dictionary["up"]["up"] += dict["up"]["up"]
+                dictionary["up"]["stay"] +=dict["up"]["stay"]
+                dictionary["up"]["down"] += dict["up"]["down"]
+
+                dictionary["stay"]["up"] += dict["stay"]["up"]
+                dictionary["stay"]["stay"] += dict["stay"]["stay"]
+                dictionary["stay"]["down"] += dict["stay"]["down"]
+
+                dictionary["down"]["up"] += dict["down"]["up"]
+                dictionary["down"]["stay"] += dict["down"]["stay"]
+                dictionary["down"]["down"] += dict["down"]["down"]
+
+
+
+
 
     def run_portfolio(self):
-        self.f = open("res.txt", "w");
+        self.f = open("res.txt", "w")
         selectedFTSE100 = self.generate_selected_list()
         testing_size = 0
         number_of_stocks_to_test = 1
@@ -84,10 +127,22 @@ class Main():
         self.write_short_results()
         self.print_portfolio_return_graph()
         self.f.close()
+        self.end_time = time.time()
+
+    def get_total_return(self):
+        portolfio_day_returns = self.find_portfolio_day_to_day_return(self.stock_results)
+        portfolio_day_returns_as_percentage = self.make_return_percentage(portolfio_day_returns)
+        tot_return = float(portfolio_day_returns_as_percentage[-1])
+        return tot_return
+
+    def get_total_day_std(self):
+        portfolio_day_returns = self.find_portfolio_day_to_day_return(self.stock_results)
+        standard_deviation_of_returns = np.std(self.convert_accumulated_portfolio_return_to_day_returns(portfolio_day_returns))
+        return standard_deviation_of_returns
 
     def print_portfolio_return_graph(self):
         if (len(self.stock_results) > 0):
-            portolfio_day_returns = self.find_portofolio_day_to_day_return(self.stock_results)
+            portolfio_day_returns = self.find_portfolio_day_to_day_return(self.stock_results)
             portfolio_day_returns_as_percentage = self.make_return_percentage(portolfio_day_returns)
             standard_deviation_of_returns = np.std(self.convert_accumulated_portfolio_return_to_day_returns(portolfio_day_returns))
             self.write_portfolio_results(portfolio_day_returns_as_percentage[-1], standard_deviation_of_returns)
@@ -106,6 +161,14 @@ class Main():
             total_test += test_size
             ret = portolfio_day_returns[int(total_test)-1]
             plt.scatter(total_test-1, ret)
+
+    def get_day_long_std(self):
+        up_std = np.std(self.portfolio_day_up_returns)
+        return up_std
+
+    def get_day_short_std(self):
+        down_std = np.std(self.portfolio_day_down_returns)
+        return down_std
 
     def write_long_results(self):
         self.f = open("res.txt", "a")
@@ -144,7 +207,7 @@ class Main():
             selected.append(0)
         return selected
 
-    def find_portofolio_day_to_day_return(self, stock_results):
+    def find_portfolio_day_to_day_return(self, stock_results):
         portfolio_day_returns = []
         day = 0
         for i in range(0, len(stock_results[0].day_returns_list)):
@@ -213,6 +276,23 @@ class Main():
             day_return = accumulated_returns[i]/accumulated_returns[i-1]
             day_returns.append(day_return)
         return day_returns
+
+activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
+hidden_layer_dimensions = [100,50]
+time_lags = 3
+one_hot_vector_interval = [-0.000, 0.000]
+keep_probability_for_dropout =0.80
+
+ #Data set specific
+fromDate =  "01.01.2008"
+number_of_trading_days = 2000
+attributes_input = ["op", "cp"]
+selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+
+
+ #Training specific
+learning_rate = learning_rate                      #0.1
+minibatch_size = minibatch_size                    #10
 
 main = Main()
 main.run_portfolio()
