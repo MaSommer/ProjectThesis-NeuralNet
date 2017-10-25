@@ -77,12 +77,23 @@ class Main():
         tot_day_std = self.get_total_day_std()
         tot_day_short_std = self.get_day_short_std()
         tot_day_long_std = self.get_day_long_std()
+        aggregate_counter_table = self.get_aggregate_counter_table()
+        print(aggregate_counter_table)
 
     def get_aggregate_counter_table(self): #returns the dictionary with counts on [pred][actual] for keys ["up"]["up"] etc
         dictionary = {}
         dictionary["up"] = {}
-        dictionary["down"] = {}
+        dictionary["up"]["up"] = 0
+        dictionary["up"]["stay"] = 0
+        dictionary["up"]["down"] = 0
         dictionary["stay"] = {}
+        dictionary["stay"]["up"] = 0
+        dictionary["stay"]["stay"] = 0
+        dictionary["stay"]["down"] = 0
+        dictionary["down"] = {}
+        dictionary["down"]["up"] = 0
+        dictionary["down"]["stay"] = 0
+        dictionary["down"]["down"] = 0
 
         for stock_result in self.stock_results:
             dictionaries = stock_result.get_counter_dictionaries()
@@ -99,6 +110,8 @@ class Main():
                 dictionary["down"]["stay"] += dict["down"]["stay"]
                 dictionary["down"]["down"] += dict["down"]["down"]
 
+        return dictionary
+
 
 
 
@@ -107,7 +120,7 @@ class Main():
         self.f = open("res.txt", "w")
         selectedFTSE100 = self.generate_selected_list()
         testing_size = 0
-        number_of_stocks_to_test = 1
+        number_of_stocks_to_test = 2
         #array with all the StockResult objects
         for stock_nr in range(0, number_of_stocks_to_test):
             selectedFTSE100[stock_nr] = 1
@@ -281,18 +294,21 @@ activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
 hidden_layer_dimensions = [100,50]
 time_lags = 3
 one_hot_vector_interval = [-0.000, 0.000]
-keep_probability_for_dropout =0.80
+keep_probability_dropout =0.80
 
  #Data set specific
-fromDate =  "01.01.2008"
-number_of_trading_days = 2000
+from_date =  "01.01.2008"
+number_of_trading_days = 1000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 
 
  #Training specific
-learning_rate = learning_rate                      #0.1
-minibatch_size = minibatch_size                    #10
+learning_rate =0.1
+minibatch_size = 10
 
-main = Main()
+main = Main(activation_functions, hidden_layer_dimensions, time_lags, one_hot_vector_interval, keep_probability_dropout,
+                 from_date, number_of_trading_days, attributes_input,
+                 learning_rate, minibatch_size)
 main.run_portfolio()
+main.generate_hyper_param_result()
