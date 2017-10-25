@@ -13,6 +13,8 @@ import numpy as np
 
 from mpi4py import MPI
 
+
+
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
 #                                               "tanh" - Hyperbolic tangens
@@ -208,7 +210,6 @@ class Main():
         for i in range(1, len(accumulated_returns)):
             day_return = accumulated_returns[i]/accumulated_returns[i-1]
             day_returns.append(day_return)
-        print("Day returns: " + accumulated_returns)
         return day_returns
 
 main = Main()
