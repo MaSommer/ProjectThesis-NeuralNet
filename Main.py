@@ -86,7 +86,7 @@ class Main():
 
         #The hyperparameters
         hyper_param_dict = self.generate_hyper_param_dict()
-        top_ten_stocks = 
+        top_ten_stocks =0
 
     def generate_hyper_param_dict(self):
         #"activation_functions", "hidden_layer_dimension", "time_lags", "one_hot_vector_interval", "keep_probability_dropout",
@@ -149,7 +149,7 @@ class Main():
         rank = comm.Get_rank()
         if (rank == 0):
             selectedFTSE100 = self.generate_selected_list()
-            number_of_stocks_to_test = 4
+            number_of_stocks_to_test = self.number_of_stocks
             for prosessor_index in range(1, size):
                 end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / size)
                 start_range = (prosessor_index) * int(number_of_stocks_to_test / size)
@@ -162,14 +162,14 @@ class Main():
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
                 if (stock_nr == 0):
                     self.day_list = network_manager.day_list
-                stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
+                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
                 self.do_result_processing(stock_result)
                 selectedFTSE100[stock_nr] = 0
 
 
         else:
             network_manager = comm.recv(source=0, tag=11)
-            stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
+            stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
             self.do_result_processing(stock_result)
             comm.send(stock_result, dest=0, tag=11)  # Send result to master
 
@@ -374,12 +374,12 @@ keep_probability_dropout =0.80
 
  #Data set specific
 from_date =  "01.01.2008"
-number_of_trading_days = 1000
+number_of_trading_days = 100
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 4
 epochs = 40
-number_of_stocks = 2
+number_of_stocks = 4
 
 
  #Training specific
@@ -389,5 +389,4 @@ minibatch_size = 10
 main = Main(activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
                  learning_rate, minibatch_size, epochs)
-main.run_portfolio()
-main.generate_hyper_param_result()
+main.run_portfolio_in_parallell()
