@@ -9,4 +9,5 @@ probeview/*
 *.pyc
 res.txt
 .idea/*
+results.csv
 
