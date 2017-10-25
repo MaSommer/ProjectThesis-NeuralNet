@@ -67,7 +67,7 @@ class Main():
         rank = comm.Get_rank()
         if (rank == 0):
             selectedFTSE100 = self.generate_selected_list()
-            number_of_stocks_to_test = 2
+            number_of_stocks_to_test = 4
             for prosessor_index in range(1, size):
                 end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / size)
                 start_range = (prosessor_index) * int(number_of_stocks_to_test / size)
