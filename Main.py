@@ -13,8 +13,6 @@ import numpy as np
 
 from mpi4py import MPI
 
-
-
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
 #                                               "tanh" - Hyperbolic tangens
@@ -108,7 +106,6 @@ class Main():
             result_string = stock_result.genereate_result_string()
             print(result_string)
             self.write_result_to_file(result_string, stock_result.stock_nr)
-
 
     def run_portfolio(self):
         self.f = open("res.txt", "w");
