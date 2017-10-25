@@ -8,6 +8,8 @@ class NeuralNetResults():
         self.target_list = self.convert_tensor_list_to_list(target_tensor)
         self.up_return = 1.00
         self.down_return = 1.00
+        self.day_down_returns = []
+        self.day_up_returns = []
 
         self.day_returns = []
         # print("Prediction_list and target_list: ")
@@ -32,6 +34,12 @@ class NeuralNetResults():
 
     def get_down_return(self):
         return self.down_return
+
+    def get_day_down_returns(self):
+        return self.day_down_returns
+
+    def get_day_up_returns(self):
+        return self.day_up_returns
 
 
     def generate_accuracy_information_and_overall_return(self):
@@ -98,22 +106,28 @@ class NeuralNetResults():
             if (pred == 0 and target == 0):
                 self.overall_return *= (-return_that_day + 1)
                 self.down_return *= (-return_that_day + 1)
+                self.day_down_returns.append(-return_that_day+1)
             elif (pred == 2 and target == 2):
                 self.overall_return *= (return_that_day + 1)
                 self.up_return *= (1+return_that_day)
+                self.day_up_returns.append(1+return_that_day)
         else:
             if (pred == 0 and target == 2):
                 self.overall_return *= (1 - return_that_day)
                 self.down_return *= (-return_that_day + 1)
+                self.day_down_returns.append(-return_that_day + 1)
             elif (pred == 2 and target == 0):
                 self.overall_return *= (1 + return_that_day)
                 self.up_return *= (1 + return_that_day)
+                self.day_up_returns.append(1 + return_that_day)
             elif (pred == 0 and target == 1):
                 self.overall_return *= (1 - return_that_day)
                 self.down_return *= (1 - return_that_day)
+                self.day_down_returns.append(-return_that_day + 1)
             elif (pred == 2 and target == 1):
                 self.overall_return *= (1 + return_that_day)
                 self.up_return *= (1 + return_that_day)
+                self.day_up_returns.append(1 + return_that_day)
         day_return = copy.deepcopy(self.overall_return)
         self.day_returns.append(day_return)
 

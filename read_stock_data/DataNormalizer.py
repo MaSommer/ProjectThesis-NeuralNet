@@ -1,4 +1,4 @@
-import numpy as np
+
 
 
 def normailize_regular(inputPortfolioInformation, attributeDataForRow, previous_attribute_data_for_row,

@@ -1,12 +1,12 @@
 import tensorflow as tf
 import numpy as np
-import CaseManager as cm
-import Layer as l
+import neural_net.CaseManager as cm
+import neural_net.Layer as l
 import FlowTools as flt
 import matplotlib.pyplot as PLT
 import math
 import time
-import NeuralNetResults as res
+import neural_net.NeuralNetResults as res
 import copy
 
 
