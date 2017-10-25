@@ -11,7 +11,7 @@ import NetworkManager as nm
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+from mpi4py import MPI
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
@@ -69,6 +69,7 @@ class Main():
         self.portfolio_day_down_returns = []    #Describes the return on every trade on short_strategy
         self.stock_results = []
         self.hyper_param_result = None
+        self.f = open("res.txt", "w");
 
     def generate_hyper_param_result(self):
         #Returns:
@@ -141,6 +142,55 @@ class Main():
 
 
 
+
+    def run_portfolio_in_parallell(self):
+        comm = MPI.COMM_WORLD
+        size = comm.Get_size()  # Total number of processors
+        rank = comm.Get_rank()
+        if (rank == 0):
+            selectedFTSE100 = self.generate_selected_list()
+            number_of_stocks_to_test = 4
+            for prosessor_index in range(1, size):
+                end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / size)
+                start_range = (prosessor_index) * int(number_of_stocks_to_test / size)
+                for stock_nr in range(start_range, end_of_range):
+                    selectedFTSE100[stock_nr] = 1
+                    comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
+                    selectedFTSE100[stock_nr] = 0
+            for stock_nr in range(0, int(number_of_stocks_to_test / size)):
+                selectedFTSE100[stock_nr] = 1
+                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
+                if (stock_nr == 0):
+                    self.day_list = network_manager.day_list
+                stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
+                self.do_result_processing(stock_result)
+                selectedFTSE100[stock_nr] = 0
+
+
+        else:
+            network_manager = comm.recv(source=0, tag=11)
+            stock_result = network_manager.build_networks(number_of_networks=4, epochs=40)
+            self.do_result_processing(stock_result)
+            comm.send(stock_result, dest=0, tag=11)  # Send result to master
+
+        if (rank == 0):
+            for i in range(1, size):
+                status = MPI.Status()
+                recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+                print("Got data: " + str(recv_data) + ", from processor: " + str(status.Get_source()))
+                self.do_result_processing(stock_result)
+
+            self.print_portfolio_return_graph()
+            self.f.close()
+
+    def do_result_processing(self, stock_result):
+        self.stock_results.append(stock_result)
+
+    def write_all_results_to_file(self):
+        for stock_result in self.stock_results:
+            result_string = stock_result.genereate_result_string()
+            print(result_string)
+            self.write_result_to_file(result_string, stock_result.stock_nr)
 
     def run_portfolio(self):
         self.f = open("res.txt", "w")
