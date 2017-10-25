@@ -68,25 +68,152 @@ class Main():
         self.portfolio_day_up_returns = []      #Describes the return on every trade on long-strategy
         self.portfolio_day_down_returns = []    #Describes the return on every trade on short_strategy
         self.stock_results = []
-        self.hyper_param_result = None
         self.f = open("res.txt", "w");
+        self.hyper_param_dict = None
+        self.aggregate_counter_table = None
 
     def generate_hyper_param_result(self):
-        #Returns:
-        tot_up_return = self.get_portfolio_up_return()
-        tot_down_return = self.get_portfolio_down_return()
-        tot_return = self.get_total_return()
+        self.result_dict = {}
 
-        #Standard deviations per day:
-        tot_day_std = self.get_total_day_std()
-        tot_day_short_std = self.get_day_short_std()
-        tot_day_long_std = self.get_day_long_std()
+        self.result_dict["tot_return"] = self.get_total_return()
+        self.result_dict["tot_day_std"] = self.get_total_day_std()
 
-        aggregate_counter_table = self.get_aggregate_counter_table()
+        self.result_dict["tot_long_return"] = self.get_portfolio_up_return()
+        self.result_dict["tot_day_long_std"] = self.get_day_long_std()
+
+        self.result_dict["tot_short_return"] = self.get_portfolio_down_return()
+        self.result_dict["tot_day_short_std"] = self.get_day_short_std()
+
+        self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
+        self.add_accuracy_to_result_dict()
+        self.add_precision_to_result_dict()
 
         #The hyperparameters
         hyper_param_dict = self.generate_hyper_param_dict()
-        per_stock_aggregate_return = self.calculate_aggregate_per_stock_return
+        print(hyper_param_dict)
+
+        stock_results_dict = {}
+        #Per stock data:
+        stock_results_dict["Stock_returns"] = self.generate_stock_return_list()
+        stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
+        stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
+        stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
+        import HyperParamResult as hpr
+        res = hpr.HyperParamResult(hyper_param_dict, stock_results_dict, self.result_dict)
+
+        return res
+
+    def generate_stock_long_returns(self):
+        ret = []
+        for stock_result in self.stock_results:
+            ret.append(stock_result.get_tot_up_return())
+        return ret
+
+    def generate_stock_short_returns(self):
+        ret = []
+        for stock_result in self.stock_results:
+            ret.append(stock_result.get_tot_down_return())
+        return ret
+
+    def generate_stock_return_list(self):
+        stock_returns = []
+        for stock_result in self.stock_results:
+            stock_returns.append(stock_result.get_over_all_return())
+        return stock_returns
+
+    def generate_stock_accuracies(self):
+        stock_accuracies = []
+        for stock_result in self.stock_results:
+            stock_accuracies.append(stock_result.get_total_pred_accuracy())
+        return stock_accuracies
+
+    def add_precision_to_result_dict(self):
+        if(self.generate_hyper_param_dict() == None):
+            self.aggregate_counter_table = self.get_aggregate_counter_table()
+            up = 0
+            s = 0
+            d = 0
+            for count in self.aggregate_counter_table["up"]:
+                up += self.aggregate_counter_table["up"][count]
+            for count in self.aggregate_counter_table["down"]:
+                d += self.aggregate_counter_table["down"][count]
+            for count in self.aggregate_counter_table["stay"]:
+                s+= self.aggregate_counter_table["stay"][count]
+        else:
+            up = 0.0
+            s = 0.0
+            d = 0.0
+            for count in self.aggregate_counter_table["up"]:
+                up += self.aggregate_counter_table["up"][count]
+            for count in self.aggregate_counter_table["down"]:
+                d += self.aggregate_counter_table["down"][count]
+            for count in self.aggregate_counter_table["stay"]:
+                s+= self.aggregate_counter_table["stay"][count]
+        if(up!=0):
+            self.result_dict["prec_up_up"] = float(self.aggregate_counter_table["up"]["up"])/up
+            self.result_dict["prec_up_d"] = float(self.aggregate_counter_table["up"]["down"])/up
+            self.result_dict["prec_up_s"] = float(self.aggregate_counter_table["up"]["stay"])/up
+        else:
+            self.result_dict["prec_up_d"] = "N/A"
+            self.result_dict["prec_up_s"] = "N/A"
+            self.result_dict["prec_up_up"] = "N/A"
+
+        if(d != 0):
+            self.result_dict["prec_d_d"] = float(self.aggregate_counter_table["down"]["down"])/d
+            self.result_dict["prec_d_s"] = float(self.aggregate_counter_table["down"]["stay"])/d
+            self.result_dict["prec_d_up"] = float(self.aggregate_counter_table["down"]["up"])/d
+        else:
+            self.result_dict["prec_d_d"] = "N/A"
+            self.result_dict["prec_d_s"] = "N/A"
+            self.result_dict["prec_d_up"] ="N/A"
+
+        if(s != 0):
+            self.result_dict["prec_s_up"] = float(self.aggregate_counter_table["stay"]["up"])/s
+            self.result_dict["prec_s_s"] = float(self.aggregate_counter_table["stay"]["stay"])/s
+            self.result_dict["prec_s_d"] = float(self.aggregate_counter_table["stay"]["down"])/s
+        else:
+            self.result_dict["prec_s_d"] = "N/A"
+            self.result_dict["prec_s_s"] = "N/A"
+            self.result_dict["prec_s_up"] = "N/A"
+
+    def add_accuracy_to_result_dict(self):
+        up = 0
+        s = 0
+        d = 0
+        for stock_result in self.stock_results:
+            dict = stock_result.get_over_all_actual_map()
+            up += dict["up"]
+            s += dict["stay"]
+            d += dict["down"]
+
+        if(up!=0):
+            self.result_dict["acc_up_up"] = float(self.aggregate_counter_table["up"]["up"])/up
+            self.result_dict["acc_s_up"] = float(self.aggregate_counter_table["stay"]["up"])/s
+            self.result_dict["acc_d_up"] = float(self.aggregate_counter_table["down"]["up"])/d
+        else:
+            self.result_dict["acc_d_up"] ="N/A"
+            self.result_dict["acc_up_up"] = "N/A"
+            self.result_dict["acc_s_up"] = "N/A"
+
+        if(d != 0):
+            self.result_dict["acc_d_d"] = float(self.aggregate_counter_table["down"]["down"])/d
+            self.result_dict["acc_up_d"] = float(self.aggregate_counter_table["up"]["down"])/up
+            self.result_dict["acc_s_d"] = float(self.aggregate_counter_table["stay"]["down"])/s
+        else:
+            self.result_dict["acc_up_d"] = "N/A"
+            self.result_dict["acc_d_d"] = "N/A"
+            self.result_dict["acc_s_d"] = "N/A"
+
+        if(s != 0):
+            self.result_dict["acc_up_s"] = float(self.aggregate_counter_table["up"]["stay"])/up
+            self.result_dict["acc_d_s"] = float(self.aggregate_counter_table["down"]["stay"])/d
+            self.result_dict["acc_s_s"] = float(self.aggregate_counter_table["stay"]["stay"])/s
+        else:
+            self.result_dict["acc_d_s"] = "N/A"
+            self.result_dict["acc_s_s"] = "N/A"
+            self.result_dict["acc_up_s"] = "N/A"
+
+
 
     def generate_hyper_param_dict(self):
         #"activation_functions", "hidden_layer_dimension", "time_lags", "one_hot_vector_interval", "keep_probability_dropout",
@@ -100,11 +227,15 @@ class Main():
         dict["keep_probability_dropout"] = self.keep_probability_for_dropout
         dict["from_date"] = self.fromDate
         dict["number_of_trading_days"] = self.number_of_trading_days
-        dict["attributes_input"] = self.attributes_input
+        dict["attr_input"] = self.attributes_input
         dict["learning_rate"] = self.learning_rate
         dict["minibatch_size"] = self.minibatch_size
         dict["number_of_stocks"] = self.number_of_stocks
         dict["epochs"] = self.epochs
+        dict["#hidden_layers"] = len(self.hidden_layer_dimensions)
+        dict["tot_test_size"] = self.stock_results[0].testing_sizes
+        dict["#tr_case_pr_network"] = self.number_of_trading_days/self.number_of_networks
+        return dict
 
 
     def get_aggregate_counter_table(self): #returns the dictionary with counts on [pred][actual] for keys ["up"]["up"] etc
@@ -179,6 +310,8 @@ class Main():
                 recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
                 print("Got data: " + str(recv_data) + ", from processor: " + str(status.Get_source()))
                 self.do_result_processing(stock_result)
+
+            hyp = self.generate_hyper_param_result()
 
             self.print_portfolio_return_graph()
             self.f.close()
@@ -308,14 +441,20 @@ class Main():
         return portfolio_day_returns
 
     def collect_portfolio_day_down_returns(self, stock_results): # Does not return anything
-        for stock_result in stock_results:
-            for ret in stock_result.get_day_down_returns():
-                self.portfolio_day_down_returns.append(ret)
+        for day in range(0, len(stock_results[0].get_day_down_returns())):
+            total_day_ret = 0
+            for stock_result in stock_results:
+                total_day_ret += stock_result.get_day_down_returns()[day]
+            day_avg = total_day_ret/float(len(stock_results))
+            self.portfolio_day_down_returns.append(day_avg)
 
     def collect_portfolio_day_up_returns(self, stock_results): #Does not return anything
-        for stock_result in stock_results:
-            for ret in stock_result.get_day_up_returns():
-                self.portfolio_day_up_returns.append(ret)
+        for day in range(0, len(stock_results[0].get_day_up_returns())):
+            total_day_ret = 0
+            for stock_result in stock_results:
+                total_day_ret += stock_result.get_day_up_returns()[day]
+            day_avg = total_day_ret/float(len(stock_results))
+            self.portfolio_day_up_returns.append(day_avg)
 
     def get_portfolio_up_return(self): #calculates total return on long strategy for portfolio
         tot_up_ret = 1.00
@@ -374,7 +513,7 @@ keep_probability_dropout =0.80
 
  #Data set specific
 from_date =  "01.01.2008"
-number_of_trading_days = 100
+number_of_trading_days = 500
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 4
