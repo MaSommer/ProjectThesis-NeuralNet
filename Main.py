@@ -13,6 +13,7 @@ import numpy as np
 
 from mpi4py import MPI
 
+
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
 #                                               "tanh" - Hyperbolic tangens
@@ -25,10 +26,9 @@ from mpi4py import MPI
 class Main():
 
     def __init__(self):
-
         self.start_time = time.time()
         self.fromDate = "01.01.2008"
-        self.number_of_trading_days = 2000
+        self.number_of_trading_days = 100
         self.attributes_input = ["op", "cp"]
         self.attributes_output = ["ret"]
         self.one_hot_vector_interval = [-0.000, 0.000]
@@ -65,15 +65,15 @@ class Main():
         rank = comm.Get_rank()
         if (rank == 0):
             selectedFTSE100 = self.generate_selected_list()
-            number_of_stocks_to_test = 16
+            number_of_stocks_to_test = 2
             for prosessor_index in range(1, size):
-                end_of_range = (prosessor_index+1)*int(number_of_stocks_to_test/size)
-                start_range = (prosessor_index)*int(number_of_stocks_to_test/size)
+                end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / size)
+                start_range = (prosessor_index) * int(number_of_stocks_to_test / size)
                 for stock_nr in range(start_range, end_of_range):
                     selectedFTSE100[stock_nr] = 1
                     comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
                     selectedFTSE100[stock_nr] = 0
-            for stock_nr in range(0, int(number_of_stocks_to_test/size)):
+            for stock_nr in range(0, int(number_of_stocks_to_test / size)):
                 selectedFTSE100[stock_nr] = 1
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
                 if (stock_nr == 0):
@@ -96,12 +96,10 @@ class Main():
                 print("Got data: " + str(recv_data) + ", from processor: " + str(status.Get_source()))
                 self.do_result_processing(stock_result)
 
-
             self.print_portfolio_return_graph()
             self.f.close()
 
     def do_result_processing(self, stock_result):
-        stock_nr = stock_result.stock_nr
         self.stock_results.append(stock_result)
 
     def write_all_results_to_file(self):
@@ -111,6 +109,7 @@ class Main():
             self.write_result_to_file(result_string, stock_result.stock_nr)
 
     def run_portfolio(self):
+        self.f = open("res.txt", "w");
         selectedFTSE100 = self.generate_selected_list()
         testing_size = 0
         number_of_stocks_to_test = 5
@@ -209,6 +208,7 @@ class Main():
         for i in range(1, len(accumulated_returns)):
             day_return = accumulated_returns[i]/accumulated_returns[i-1]
             day_returns.append(day_return)
+        print("Day returns: " + accumulated_returns)
         return day_returns
 
 main = Main()
