@@ -69,10 +69,10 @@ class InputPortolfioInformation:
                     line = f.readline()
                     continue
                 previous_attribute_data_for_row = self.addColDataFromRow(rowCells[1:len(rowCells)], previous_attribute_data_for_row)
-            if (row%1000 == 0):
-                print("--- Row " + str(row) +" for " + filename + " takes \t %s seconds ---" % (time.time() - self.start_time))
             row+=1
             line = f.readline()
+        print(
+        "Finished loading input" + " for " + filename + " : \t %s seconds ---" % (time.time() - self.start_time))
         if(self.normalize_method == "minmax"):
             self.min_max_normalize()
 

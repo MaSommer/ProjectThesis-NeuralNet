@@ -6,6 +6,8 @@ import neural_net.NeuralNet as nn
 import time
 import copy
 import os
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import numpy as np
 import StockResult as res
 import NetworkManager as nm
@@ -29,12 +31,14 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs, run_nr):
+                 learning_rate, minibatch_size, epochs, rf_rate, run_nr):
 
         #Start timer
         self.start_time = time.time()
         self.end_time = time.time()
         self.run_nr = run_nr
+
+        self.rf_rate = rf_rate
 
         #Network specific
         self.activation_functions = activation_functions        #["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
@@ -79,6 +83,7 @@ class Run():
 
 
 
+
     def run_portfolio_in_parallell(self):
         from mpi4py import MPI as MPI
         comm = MPI.COMM_WORLD
@@ -87,20 +92,25 @@ class Run():
         if (rank == 0):
             selectedFTSE100 = self.generate_selected_list()
             number_of_stocks_to_test = self.number_of_stocks
+            delegated = self.delegate_stock_nr(number_of_cores, self.number_of_stocks)
             for prosessor_index in range(1, number_of_cores):
-                number_of_stocks_per_core = int(number_of_stocks_to_test / (number_of_cores))
-                end_of_range = (prosessor_index + 1) * number_of_stocks_per_core
-                start_range = (prosessor_index) * number_of_stocks_per_core
-                stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
+             #   end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / number_of_cores)
+              #  start_range = (prosessor_index) * int(number_of_stocks_to_test / number_of_cores)
+               #stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
+                stock_information_for_processor = [delegated[prosessor_index], copy.deepcopy(selectedFTSE100)]
 
                 comm.send(stock_information_for_processor, dest=prosessor_index, tag=11)
 
-            for stock_nr in range(0, int(number_of_stocks_to_test / number_of_cores)):
+                # for stock_nr in range(start_range, end_of_range):
+                #     selectedFTSE100[stock_nr] = 1
+                #     self.comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
+                #     selectedFTSE100[stock_nr] = 0
+            for stock_nr in delegated[0]:
                 selectedFTSE100[stock_nr] = 1
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
                 if (stock_nr == 0):
                     self.day_list = network_manager.day_list
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
+                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
 
                 self.stock_results.append(stock_result)
                 selectedFTSE100[stock_nr] = 0
@@ -108,12 +118,14 @@ class Run():
 
         else:
             stock_information_for_processor = comm.recv(source=0, tag=11)
-            selectedFTSE100 = stock_information_for_processor[2]
+            selectedFTSE100 = stock_information_for_processor[1]
             stock_results = []
-            for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
+            #for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
+            for stock_nr in stock_information_for_processor[0]:
                 selectedFTSE100[stock_nr] = 1
+                rank = comm.Get_rank()
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
+                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
                 stock_results.append(stock_result)
                 selectedFTSE100[stock_nr] = 0
 
@@ -127,7 +139,7 @@ class Run():
             for i in range(1, number_of_cores):
                 status = MPI.Status()
                 recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-                print("Got data: " + str(recv_data) + ", from processor: " + str(status.Get_source()))
+                print("COMPLETE! \t\t Processor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time))
                 self.stock_results.extend(recv_data)
 
             hyp, ordered_label_list_type_1 = self.generate_hyper_param_result()
@@ -146,23 +158,30 @@ class Run():
 
         ordered_label_list_for_hyp_type_1.append(self.define_key_and_put_in_dict(self.result_dict, "tot_return", self.get_total_return()))
         ordered_label_list_for_hyp_type_1.append(self.define_key_and_put_in_dict(self.result_dict, "tot_day_std", self.get_total_day_std()))
-        # self.result_dict["tot_return"] = self.get_total_return()
-        # self.result_dict["tot_day_std"] = self.get_total_day_std()
 
-        # ordered_label_list.append(
-        #     self.define_key_and_put_in_dict(self.result_dict, "tot_long_return", self.get_portfolio_up_return()))
-        # ordered_label_list.append(
-        #     self.define_key_and_put_in_dict(self.result_dict, "tot_day_long_std", self.get_day_long_std()))
-        #self.result_dict["tot_long_return"] = self.get_portfolio_up_return()
-        #self.result_dict["tot_day_long_std"] = self.get_day_long_std()
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_long_return", (self.get_portfolio_up_return()-1)))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_day_long_std", self.get_day_long_std()))
 
-        # ordered_label_list_for_hyp_type_1.append(
-        #     self.define_key_and_put_in_dict(self.result_dict, "tot_short_return", self.get_portfolio_down_return()))
-        # ordered_label_list_for_hyp_type_1.append(
-        #     self.define_key_and_put_in_dict(self.result_dict, "tot_day_short_std", self.get_day_short_std()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_short_return", self.get_portfolio_down_return() - 1))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_day_short_std", self.get_day_short_std()))
 
-        #self.result_dict["tot_short_return"] = self.get_portfolio_down_return()
-        #self.result_dict["tot_day_short_std"] = self.get_day_short_std()
+        sharpe_ratios = self.compute_sharpe_ratios()
+        self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[0] #TODO
+        self.result_dict["sharpe_short_ratio"] = sharpe_ratios[1] #TODO
+        self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[2] #TODO
+
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "sharpe_tot_ratio", sharpe_ratios[0]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "sharpe_short_ratio", sharpe_ratios[1]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "sharpe_tot_ratio", sharpe_ratios[2]))
+
+
 
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
@@ -190,9 +209,15 @@ class Run():
         dict[key] = value
         return key
 
-    def generate_portfolio_accumulated_day_ret(self):
-        ret = []
+    def delegate_stock_nr(self, processors, nr_of_stocks):
+        delegated = []
+        for n in range(processors):
+            delegated.append([])
 
+        for nr in range(0, nr_of_stocks):
+            index = nr % processors
+            delegated[index].append(nr)
+        return delegated
 
     def generate_stock_long_returns(self):
         ret = []
@@ -253,8 +278,8 @@ class Run():
     def get_total_return(self):
         portolfio_day_returns = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
         portfolio_day_returns_as_percentage = self.make_return_percentage(portolfio_day_returns)
-        tot_return = float(portfolio_day_returns_as_percentage[-1])
-        return tot_return
+        tot_return = float(portfolio_day_returns_as_percentage[-1]/100)
+        return portolfio_day_returns[-1]
 
     def get_total_day_std(self):
         portfolio_day_returns = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
@@ -375,6 +400,12 @@ class Run():
 
         return tot_down_ret
 
+    def compute_sharpe_ratios(self):
+        sharpe_ratios = [0,0,0] #0 - tot, 1 - short, 2 - long
+        sharpe_ratios[0] = (self.get_total_return()-self.rf_rate)/self.get_total_day_std()
+        sharpe_ratios[1] = (self.get_portfolio_down_return()-self.rf_rate)/self.get_day_short_std()
+        sharpe_ratios[2] = (self.get_portfolio_up_return()-self.rf_rate)/self.get_day_long_std()
+        return sharpe_ratios
 
     def update_day_returns(self, day_returns):
         current_return = 1.0

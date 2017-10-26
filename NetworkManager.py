@@ -39,7 +39,7 @@ class NetworkManager():
 
 
 
-    def build_networks(self, number_of_networks=10, epochs=40):
+    def build_networks(self, number_of_networks=10, epochs=40, rank = 0):
         attributes_output = ["ret"]
         lftse100 = pi.InputPortolfioInformation(self.selectedFTSE100, attributes_output, self.fromDate, "LFTSE100wReturn.txt", 1,
                                                 self.number_of_trading_days, normalize_method="minmax",
@@ -61,8 +61,8 @@ class NetworkManager():
         seperator0 = 0
         self.stock_result = res.StockResult(self.start_time, self.stock_nr)
         start_day_testing = 0
+        print("\nSTARTED PROCESS" + "\t\tProcessor #" + str(rank) + " stock #" + str(self.stock_nr))
         for network_nr in range(0, number_of_networks):
-            print ("\n--- STOCK " + str(self.stock_nr) +" BUILDING NEURAL NET NR " + str(network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
             separator1 = int(round(len(cases) * fraction_of_cases_for_one_network)) + seperator0
             if (network_nr == number_of_networks - 1):
                 separator1 = len(cases)
@@ -81,7 +81,7 @@ class NetworkManager():
                                       self.minibatch_size,
                                       self.time_lags, self.cost_function, self.learning_method, case_manager,
                                       self.keep_probability_for_dropout,
-                                      self.validation_interval, self.show_interval, self.softmax, self.start_time,)
+                                      self.validation_interval, self.show_interval, self.softmax, self.start_time, rank)
             neural_net.run(epochs=epochs, sess=None, continued=None)
 
             self.stock_result.add_to_result(neural_net)
@@ -92,4 +92,5 @@ class NetworkManager():
             seperator0 = separator1
 
         self.stock_result.generate_final_result_info(number_of_networks)
+        print ("\nFINISHED PROCESS \tProcessor #" + str(rank) + " stock #" + str(self.stock_nr) + " in\t" +"%s seconds ---" % (time.time() - self.start_time))
         return self.stock_result
