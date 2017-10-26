@@ -32,6 +32,7 @@ class StockResult():
         self.total_testing_cases = 0.0
         self.start_time = start_time
 
+
     def get_counter_dictionaries(self):
         return self.counter_dictionaries
 
@@ -76,6 +77,9 @@ class StockResult():
 
     def get_periodic_up_returns(self):
         return self.up_returns
+
+    def get_over_all_actual_map(self):
+        return self.over_all_actual_map
 
     def generate_final_result_info(self, number_of_networks):
         self.accuracy = self.total_accuracy_sum / self.total_testing_cases

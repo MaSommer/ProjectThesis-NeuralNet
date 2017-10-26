@@ -4,14 +4,17 @@ import read_stock_data.CaseGenerator as cg
 import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
+import copy
 import os
 import numpy as np
 import StockResult as res
 import NetworkManager as nm
 import matplotlib.pyplot as plt
 import numpy as np
+import ExcelFormatter as excel
+import HyperParamResult as hpr
 
-from mpi4py import MPI
+from mpi4py import MPI as MPI
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
@@ -46,6 +49,7 @@ class Main():
         self.attributes_input = attributes_input                #["op", "cp"]
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.number_of_stocks = number_of_stocks
+        print("SPDRUSING")
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
 
@@ -68,25 +72,218 @@ class Main():
         self.portfolio_day_up_returns = []      #Describes the return on every trade on long-strategy
         self.portfolio_day_down_returns = []    #Describes the return on every trade on short_strategy
         self.stock_results = []
-        self.hyper_param_result = None
         self.f = open("res.txt", "w");
+        self.hyper_param_dict = None
+        self.aggregate_counter_table = None
+
+
+
+
+    def run_portfolio_in_parallell(self):
+        comm = MPI.COMM_WORLD
+        number_of_cores = comm.Get_size()  # Total number of processors
+        rank = comm.Get_rank()
+        if (rank == 0):
+            selectedFTSE100 = self.generate_selected_list()
+            number_of_stocks_to_test = self.number_of_stocks
+            for prosessor_index in range(1, number_of_cores):
+                end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / number_of_cores)
+                start_range = (prosessor_index) * int(number_of_stocks_to_test / number_of_cores)
+                stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
+
+                comm.send(stock_information_for_processor, dest=prosessor_index, tag=11)
+
+                # for stock_nr in range(start_range, end_of_range):
+                #     selectedFTSE100[stock_nr] = 1
+                #     self.comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
+                #     selectedFTSE100[stock_nr] = 0
+            for stock_nr in range(0, int(number_of_stocks_to_test / number_of_cores)):
+                selectedFTSE100[stock_nr] = 1
+                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
+                if (stock_nr == 0):
+                    self.day_list = network_manager.day_list
+                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
+
+                self.stock_results.append(stock_result)
+                selectedFTSE100[stock_nr] = 0
+
+
+        else:
+            stock_information_for_processor = comm.recv(source=0, tag=11)
+            selectedFTSE100 = stock_information_for_processor[2]
+            stock_results = []
+            for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
+                selectedFTSE100[stock_nr] = 1
+                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
+                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
+                stock_results.append(stock_result)
+                selectedFTSE100[stock_nr] = 0
+
+            comm.send(stock_results, dest=0, tag=11)  # Send result to master
+            #network_manager = self.comm.recv(source=0, tag=11)
+            #stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
+            #self.do_result_processing(stock_result)
+            #self.comm.send(stock_result, dest=0, tag=11)  # Send result to master
+
+        if (rank == 0):
+            for i in range(1, number_of_cores):
+                status = MPI.Status()
+                recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+                print("Got data: " + str(recv_data) + ", from processor: " + str(status.Get_source()))
+                self.stock_results.extend(recv_data)
+
+            hyp = self.generate_hyper_param_result()
+            hyp_type_1 = [hyp[0], hyp[1]]
+            hyp_type_2 = [hyp[2]]
+            excel.ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True) #prints to results.csv file
+            #self.print_portfolio_return_graph()
+            self.f.close()
+
 
     def generate_hyper_param_result(self):
-        #Returns:
-        tot_up_return = self.get_portfolio_up_return()
-        tot_down_return = self.get_portfolio_down_return()
-        tot_return = self.get_total_return()
 
-        #Standard deviations per day:
-        tot_day_std = self.get_total_day_std()
-        tot_day_short_std = self.get_day_short_std()
-        tot_day_long_std = self.get_day_long_std()
+        self.result_dict = {}
 
-        aggregate_counter_table = self.get_aggregate_counter_table()
+        self.result_dict["tot_return"] = self.get_total_return()
+        self.result_dict["tot_day_std"] = self.get_total_day_std()
+
+
+        #self.result_dict["tot_long_return"] = self.get_portfolio_up_return()
+        #self.result_dict["tot_day_long_std"] = self.get_day_long_std()
+
+        #self.result_dict["tot_short_return"] = self.get_portfolio_down_return()
+        #self.result_dict["tot_day_short_std"] = self.get_day_short_std()
+
+        self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
+        self.add_accuracy_to_result_dict()
+        self.add_precision_to_result_dict()
+
 
         #The hyperparameters
         hyper_param_dict = self.generate_hyper_param_dict()
-        per_stock_aggregate_return = self.calculate_aggregate_per_stock_return
+
+        stock_results_dict = {}
+        #Per stock data:
+        stock_results_dict["Stock_returns"] = self.generate_stock_return_list()
+        stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
+        stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
+        stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
+
+        res = [self.result_dict, hyper_param_dict, stock_results_dict]
+
+        return res
+
+    def generate_stock_long_returns(self):
+        ret = []
+        for stock_result in self.stock_results:
+            ret.append(stock_result.get_tot_up_return())
+        return ret
+
+    def generate_stock_short_returns(self):
+        ret = []
+        for stock_result in self.stock_results:
+            ret.append(stock_result.get_tot_down_return())
+        return ret
+
+    def generate_stock_return_list(self):
+        stock_returns = []
+        for stock_result in self.stock_results:
+            stock_returns.append(stock_result.get_over_all_return())
+        return stock_returns
+
+    def generate_stock_accuracies(self):
+        stock_accuracies = []
+        for stock_result in self.stock_results:
+            stock_accuracies.append(stock_result.get_total_pred_accuracy())
+        return stock_accuracies
+
+    def add_precision_to_result_dict(self):
+        if(self.generate_hyper_param_dict() == None):
+            self.aggregate_counter_table = self.get_aggregate_counter_table()
+            up = 0
+            s = 0
+            d = 0
+            for count in self.aggregate_counter_table["up"]:
+                up += self.aggregate_counter_table["up"][count]
+            for count in self.aggregate_counter_table["down"]:
+                d += self.aggregate_counter_table["down"][count]
+            for count in self.aggregate_counter_table["stay"]:
+                s+= self.aggregate_counter_table["stay"][count]
+        else:
+            up = 0.0
+            s = 0.0
+            d = 0.0
+            for count in self.aggregate_counter_table["up"]:
+                up += self.aggregate_counter_table["up"][count]
+            for count in self.aggregate_counter_table["down"]:
+                d += self.aggregate_counter_table["down"][count]
+            for count in self.aggregate_counter_table["stay"]:
+                s+= self.aggregate_counter_table["stay"][count]
+        if(up!=0):
+            self.result_dict["prec_up_up"] = float(self.aggregate_counter_table["up"]["up"])/up
+            self.result_dict["prec_up_d"] = float(self.aggregate_counter_table["up"]["down"])/up
+            self.result_dict["prec_up_s"] = float(self.aggregate_counter_table["up"]["stay"])/up
+        else:
+            self.result_dict["prec_up_d"] = "N/A"
+            self.result_dict["prec_up_s"] = "N/A"
+            self.result_dict["prec_up_up"] = "N/A"
+
+        if(d != 0):
+            self.result_dict["prec_d_d"] = float(self.aggregate_counter_table["down"]["down"])/d
+            self.result_dict["prec_d_s"] = float(self.aggregate_counter_table["down"]["stay"])/d
+            self.result_dict["prec_d_up"] = float(self.aggregate_counter_table["down"]["up"])/d
+        else:
+            self.result_dict["prec_d_d"] = "N/A"
+            self.result_dict["prec_d_s"] = "N/A"
+            self.result_dict["prec_d_up"] ="N/A"
+
+        if(s != 0):
+            self.result_dict["prec_s_up"] = float(self.aggregate_counter_table["stay"]["up"])/s
+            self.result_dict["prec_s_s"] = float(self.aggregate_counter_table["stay"]["stay"])/s
+            self.result_dict["prec_s_d"] = float(self.aggregate_counter_table["stay"]["down"])/s
+        else:
+            self.result_dict["prec_s_d"] = "N/A"
+            self.result_dict["prec_s_s"] = "N/A"
+            self.result_dict["prec_s_up"] = "N/A"
+
+    def add_accuracy_to_result_dict(self):
+        up = 0
+        s = 0
+        d = 0
+        for stock_result in self.stock_results:
+            dict = stock_result.get_over_all_actual_map()
+            up += dict["up"]
+            s += dict["stay"]
+            d += dict["down"]
+
+        if(up!=0):
+            self.result_dict["acc_up_up"] = float(self.aggregate_counter_table["up"]["up"])/up
+            self.result_dict["acc_s_up"] = float(self.aggregate_counter_table["stay"]["up"])/up
+            self.result_dict["acc_d_up"] = float(self.aggregate_counter_table["down"]["up"])/up
+        else:
+            self.result_dict["acc_d_up"] ="N/A"
+            self.result_dict["acc_up_up"] = "N/A"
+            self.result_dict["acc_s_up"] = "N/A"
+
+        if(d != 0):
+            self.result_dict["acc_d_d"] = float(self.aggregate_counter_table["down"]["down"])/d
+            self.result_dict["acc_up_d"] = float(self.aggregate_counter_table["up"]["down"])/d
+            self.result_dict["acc_s_d"] = float(self.aggregate_counter_table["stay"]["down"])/d
+        else:
+            self.result_dict["acc_up_d"] = "N/A"
+            self.result_dict["acc_d_d"] = "N/A"
+            self.result_dict["acc_s_d"] = "N/A"
+
+        if(s != 0):
+            self.result_dict["acc_up_s"] = float(self.aggregate_counter_table["up"]["stay"])/s
+            self.result_dict["acc_d_s"] = float(self.aggregate_counter_table["down"]["stay"])/s
+            self.result_dict["acc_s_s"] = float(self.aggregate_counter_table["stay"]["stay"])/s
+        else:
+            self.result_dict["acc_d_s"] = "N/A"
+            self.result_dict["acc_s_s"] = "N/A"
+            self.result_dict["acc_up_s"] = "N/A"
+
+
 
     def generate_hyper_param_dict(self):
         #"activation_functions", "hidden_layer_dimension", "time_lags", "one_hot_vector_interval", "keep_probability_dropout",
@@ -100,11 +297,15 @@ class Main():
         dict["keep_probability_dropout"] = self.keep_probability_for_dropout
         dict["from_date"] = self.fromDate
         dict["number_of_trading_days"] = self.number_of_trading_days
-        dict["attributes_input"] = self.attributes_input
+        dict["attr_input"] = self.attributes_input
         dict["learning_rate"] = self.learning_rate
         dict["minibatch_size"] = self.minibatch_size
         dict["number_of_stocks"] = self.number_of_stocks
         dict["epochs"] = self.epochs
+        dict["#hidden_layers"] = len(self.hidden_layer_dimensions)
+        dict["tot_test_size"] = self.stock_results[0].testing_sizes
+        dict["#tr_case_pr_network"] = self.number_of_trading_days/self.number_of_networks
+        return dict
 
 
     def get_aggregate_counter_table(self): #returns the dictionary with counts on [pred][actual] for keys ["up"]["up"] etc
@@ -140,51 +341,6 @@ class Main():
         return dictionary
 
 
-
-
-
-    def run_portfolio_in_parallell(self):
-        comm = MPI.COMM_WORLD
-        size = comm.Get_size()  # Total number of processors
-        rank = comm.Get_rank()
-        if (rank == 0):
-            selectedFTSE100 = self.generate_selected_list()
-            number_of_stocks_to_test = self.number_of_stocks
-            for prosessor_index in range(1, size):
-                end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / size)
-                start_range = (prosessor_index) * int(number_of_stocks_to_test / size)
-                for stock_nr in range(start_range, end_of_range):
-                    selectedFTSE100[stock_nr] = 1
-                    comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
-                    selectedFTSE100[stock_nr] = 0
-            for stock_nr in range(0, int(number_of_stocks_to_test / size)):
-                selectedFTSE100[stock_nr] = 1
-                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
-                if (stock_nr == 0):
-                    self.day_list = network_manager.day_list
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
-                self.do_result_processing(stock_result)
-                selectedFTSE100[stock_nr] = 0
-
-
-        else:
-            network_manager = comm.recv(source=0, tag=11)
-            stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
-            self.do_result_processing(stock_result)
-            comm.send(stock_result, dest=0, tag=11)  # Send result to master
-
-        if (rank == 0):
-            for i in range(1, size):
-                status = MPI.Status()
-                recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-                print("Got data: " + str(recv_data) + ", from processor: " + str(status.Get_source()))
-                self.do_result_processing(stock_result)
-
-            self.print_portfolio_return_graph()
-            self.f.close()
-
-    def do_result_processing(self, stock_result):
-        self.stock_results.append(stock_result)
 
     def write_all_results_to_file(self):
         for stock_result in self.stock_results:
@@ -308,14 +464,20 @@ class Main():
         return portfolio_day_returns
 
     def collect_portfolio_day_down_returns(self, stock_results): # Does not return anything
-        for stock_result in stock_results:
-            for ret in stock_result.get_day_down_returns():
-                self.portfolio_day_down_returns.append(ret)
+        for day in range(0, len(stock_results[0].get_day_down_returns())):
+            total_day_ret = 0
+            for stock_result in stock_results:
+                total_day_ret += stock_result.get_day_down_returns()[day]
+            day_avg = total_day_ret/float(len(stock_results))
+            self.portfolio_day_down_returns.append(day_avg)
 
     def collect_portfolio_day_up_returns(self, stock_results): #Does not return anything
-        for stock_result in stock_results:
-            for ret in stock_result.get_day_up_returns():
-                self.portfolio_day_up_returns.append(ret)
+        for day in range(0, len(stock_results[0].get_day_up_returns())):
+            total_day_ret = 0
+            for stock_result in stock_results:
+                total_day_ret += stock_result.get_day_up_returns()[day]
+            day_avg = total_day_ret/float(len(stock_results))
+            self.portfolio_day_up_returns.append(day_avg)
 
     def get_portfolio_up_return(self): #calculates total return on long strategy for portfolio
         tot_up_ret = 1.00
@@ -366,6 +528,8 @@ class Main():
             day_returns.append(day_return)
         return day_returns
 
+
+
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
 hidden_layer_dimension = [100,50]
 time_lags = 3
@@ -377,9 +541,9 @@ from_date =  "01.01.2008"
 number_of_trading_days = 100
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 4
+number_of_networks = 2
 epochs = 40
-number_of_stocks = 4
+number_of_stocks = 2
 
 
  #Training specific
