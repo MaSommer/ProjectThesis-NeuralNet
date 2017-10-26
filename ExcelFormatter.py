@@ -4,8 +4,8 @@ import xlwt
 class ExcelFormatter():
 
     def __init__(self, hyp_type_1, hyp_type_2, first_run=False):
+        self.first_run = first_run
         self.output("results.csv", "sheet1", hyp_type_1, hyp_type_2)
-        self.first_run =  first_run
 
     def output(self, filename, sheet, hyp_type_1, hyp_type_2):
         book = xlwt.Workbook()
@@ -103,4 +103,4 @@ hyp3["sds"] = [0.5, 0.2, 0.8, 0.9]
 hyp_type_1 = [hyp1, hyp2]
 hyp_type_2 = [hyp3]
 
-ExcelFormatter(hyp_type_1, hyp_type_2)
+ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True)
