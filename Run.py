@@ -121,7 +121,7 @@ class Run():
             selectedFTSE100 = stock_information_for_processor[1]
             stock_results = []
             #for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
-            for stock_nr in stock_information_for_processor[0]:
+            for stock_nr in stock_information_for_processor[0]: #TODO: potentially conflicting when less stocks than processors
                 selectedFTSE100[stock_nr] = 1
                 rank = comm.Get_rank()
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
