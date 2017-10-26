@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ExcelFormatter as excel
 import HyperParamResult as hpr
-
 from mpi4py import MPI as MPI
 
 
