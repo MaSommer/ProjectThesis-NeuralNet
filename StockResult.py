@@ -94,6 +94,7 @@ class StockResult():
 
         self.over_all_actual_map = self.generate_over_all_actual_and_estimated_map(self.actual_map_list)
         self.over_all_estimated_map = self.generate_over_all_actual_and_estimated_map(self.estimated_map_list)
+        print("\n\n")
 
     def generate_over_all_actual_and_estimated_map(self, map_list):
         total_numbers = self.feed_actual_estimated_map()

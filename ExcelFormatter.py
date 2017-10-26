@@ -1,24 +1,37 @@
 import xlwt
+from xlutils.copy import copy
+import xlrd
 
 
 class ExcelFormatter():
 
-    def __init__(self, hyp_type_1, hyp_type_2, first_run=False):
-        self.first_run = first_run
+    def __init__(self, hyp_type_1, hyp_type_2, ordered_label_list_type_1, line_number=1):
+        self.line_number = line_number
+        self.ordered_label_list_type_1 = ordered_label_list_type_1
+        if (line_number == 1):
+            self.first_run = True
+        else:
+            self.first_run = False
         self.output("results.csv", "sheet1", hyp_type_1, hyp_type_2)
 
     def output(self, filename, sheet, hyp_type_1, hyp_type_2):
         book = xlwt.Workbook()
+        if (self.first_run):
+            book = xlwt.Workbook()
+            sh = book.add_sheet(sheet)
+        else:
+            book = xlrd.open_workbook("results.csv", formatting_info=True)
+            rb = book.sheet_by_index(0)
+            book_copy = copy(book)
+            sh = book_copy.get_sheet(0)
 
-        sh = book.add_sheet(sheet)
-        hyp_dicts_type_1 = [{}, {}, {}]
-        hyp_dict_type_2 = [{}]
 
-        #self.delete_existing_file(sh)
         col = self.write_hyp_dicts_to_file_type_1(hyp_type_1, sh)
         self.write_hyp_dicts_to_file_type_2(hyp_type_2, sh, col)
-
-        book.save(filename)
+        if (self.first_run):
+            book.save(filename)
+        else:
+            book_copy.save(filename)
 
     def delete_existing_file(self, worksheet):
         rows_to_move = worksheet.rows[0:]
@@ -34,14 +47,22 @@ class ExcelFormatter():
 
     def write_hyp_dicts_to_file_type_1(self, hyp_dicts_type_1, sh):
         col = 0
-        for hyp_dict in hyp_dicts_type_1:
-            column_labels, values = self.generate_column_labels_and_values(hyp_dict)
-            if (self.first_run):
-                self.write_to_file(column_labels, sh, 0, col)
-            _,col = self.write_to_file(values, sh, 1, col)
+        for label in self.ordered_label_list_type_1:
+            for hyp_dict in hyp_dicts_type_1:
+                if (label in hyp_dict):
+                    value = hyp_dict[label]
+                    if (self.first_run):
+                        sh.write(0, col, str(label))
+                    sh.write(self.line_number, col, str(value))
+                    col+=1
+                    # column_labels, values = self.generate_column_labels_and_values(hyp_dict)
+                    # if (self.first_run):
+                    #     self.write_to_file(column_labels, sh, 0, col)
+                    # _,col = self.write_to_file(values, sh, self.line_number, col)
         return col
 
     def write_hyp_dicts_to_file_type_2(self, hyp_dicts_type_2, sh, col):
+        type = 0
         for hyp_dict in hyp_dicts_type_2:
             column_labels,values = self.generate_column_labels_and_values(hyp_dict)
             label_index = 0
@@ -53,14 +74,18 @@ class ExcelFormatter():
                         start_col = label_index*len(values[label_index-1])+col
 
                     for i in range(0, len(values[label_index])):
-                        col_data = ""+label+"-stock-"+str(i)
+                        if (type == 0):
+                            col_data = ""+label+"-stock-"+str(i)
+                        elif (type == 1):
+                            col_data = ""+label+"-day-"+str(i)
                         sh.write(0, start_col+i, col_data)
                     label_index += 1
 
             for value in values:
                 for i in range(0, len(value)):
-                    sh.write(1, col, value[i])
+                    sh.write(self.line_number, col, value[i])
                     col += 1
+            type += 1
         return col
 
 
@@ -81,26 +106,29 @@ class ExcelFormatter():
         return colum_labels, values
 
 
-hyp1 = {}
-hyp1["ret"] = 2.5
-hyp1["ret-up"] = 2
-hyp1["rey-down"] = 3.0
-hyp1["sd"] = 0.5
-hyp1["stock-nr"] = 1
-hyp1["stock-drus"] = "pikk"
-hyp2 = {}
-hyp2["rag"] = 18
-hyp2["fag-up"] = 20
-hyp2["fag-down"] = 30
-hyp2["fitte"] = 24
-hyp2["kuken-nr"] = 24.5
-hyp2["kusa-drus"] = "dick_size"
 
-hyp3 = {}
-hyp3["returns"] = [1, 2, 3, 4, 5]
-hyp3["sds"] = [0.5, 0.2, 0.8, 0.9]
 
-hyp_type_1 = [hyp1, hyp2]
-hyp_type_2 = [hyp3]
-
-ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True)
+#
+# hyp1 = {}
+# hyp1["ret"] = 2.5
+# hyp1["ret-up"] = 2
+# hyp1["rey-down"] = 3.0
+# hyp1["sd"] = 0.5
+# hyp1["stock-nr"] = 1
+# hyp1["stock-drus"] = "pikk"
+# hyp2 = {}
+# hyp2["rag"] = 18
+# hyp2["fag-up"] = 20
+# hyp2["fag-down"] = 30
+# hyp2["fitte"] = 24
+# hyp2["kuken-nr"] = 24.5
+# hyp2["kusa-drus"] = "dick_size"
+#
+# hyp3 = {}
+# hyp3["returns"] = [1, 2, 3, 4, 5]
+# hyp3["sds"] = [0.5, 0.2, 0.8, 0.9]
+#
+# hyp_type_1 = [hyp1, hyp2]
+# hyp_type_2 = [hyp3]
+#
+# ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True)
