@@ -29,11 +29,13 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs):
+                 learning_rate, minibatch_size, epochs, rf_rate):
 
         #Start timer
         self.start_time = time.time()
         self.end_time = time.time()
+
+        self.rf_rate = rf_rate
 
         #Network specific
         self.activation_functions = activation_functions        #["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
@@ -79,6 +81,7 @@ class Run():
 
 
 
+
     def run_portfolio_in_parallell(self):
         from mpi4py import MPI as MPI
         comm = MPI.COMM_WORLD
@@ -87,10 +90,13 @@ class Run():
         if (rank == 0):
             selectedFTSE100 = self.generate_selected_list()
             number_of_stocks_to_test = self.number_of_stocks
+            delegated = self.delegate_stock_nr(number_of_cores, self.number_of_stocks)
             for prosessor_index in range(1, number_of_cores):
-                end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / number_of_cores)
-                start_range = (prosessor_index) * int(number_of_stocks_to_test / number_of_cores)
-                stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
+             #   end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / number_of_cores)
+              #  start_range = (prosessor_index) * int(number_of_stocks_to_test / number_of_cores)
+               #stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
+                stock_information_for_processor = [delegated[prosessor_index], copy.deepcopy(selectedFTSE100)]
+                print("YES: " + str(delegated[prosessor_index]))
 
                 comm.send(stock_information_for_processor, dest=prosessor_index, tag=11)
 
@@ -98,7 +104,7 @@ class Run():
                 #     selectedFTSE100[stock_nr] = 1
                 #     self.comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
                 #     selectedFTSE100[stock_nr] = 0
-            for stock_nr in range(0, int(number_of_stocks_to_test / number_of_cores)):
+            for stock_nr in delegated[0]:
                 selectedFTSE100[stock_nr] = 1
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
                 if (stock_nr == 0):
@@ -111,9 +117,10 @@ class Run():
 
         else:
             stock_information_for_processor = comm.recv(source=0, tag=11)
-            selectedFTSE100 = stock_information_for_processor[2]
+            selectedFTSE100 = stock_information_for_processor[1]
             stock_results = []
-            for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
+            #for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
+            for stock_nr in stock_information_for_processor[0]:
                 selectedFTSE100[stock_nr] = 1
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
                 stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
@@ -149,11 +156,19 @@ class Run():
         self.result_dict["tot_day_std"] = self.get_total_day_std()
 
 
-        #self.result_dict["tot_long_return"] = self.get_portfolio_up_return()
-        #self.result_dict["tot_day_long_std"] = self.get_day_long_std()
+        self.result_dict["tot_long_return"] = self.get_portfolio_up_return()
+        self.result_dict["tot_day_long_std"] = self.get_day_long_std() #TODO: fix the day_long_std
 
-        #self.result_dict["tot_short_return"] = self.get_portfolio_down_return()
-        #self.result_dict["tot_day_short_std"] = self.get_day_short_std()
+        self.result_dict["tot_short_return"] = self.get_portfolio_down_return()
+        self.result_dict["tot_day_short_std"] = self.get_day_short_std() #TODO: fix the short_std
+
+        sharpe_ratios = self.compute_sharpe_ratios()
+        self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[0] #TODO
+        self.result_dict["sharpe_short_ratio"] = sharpe_ratios[1] #TODO
+        self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[2] #TODO
+        print("\n\n\n\n" + str(sharpe_ratios) + "\n\n\n\n")
+
+
 
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict()
@@ -173,6 +188,16 @@ class Run():
         res = [self.result_dict, hyper_param_dict, stock_results_dict]
 
         return res
+
+    def delegate_stock_nr(self, processors, nr_of_stocks):
+        delegated = []
+        for n in range(processors):
+            delegated.append([])
+
+        for nr in range(0, nr_of_stocks):
+            index = nr % processors
+            delegated[index].append(nr)
+        return delegated
 
     def generate_stock_long_returns(self):
         ret = []
@@ -500,6 +525,12 @@ class Run():
 
         return tot_down_ret
 
+    def compute_sharpe_ratios(self):
+        sharpe_ratios = [0,0,0] #0 - tot, 1 - short, 2 - long
+        sharpe_ratios[0] = (self.get_total_return()-self.rf_rate)/self.get_total_day_std()
+        sharpe_ratios[1] = (self.get_portfolio_down_return()-self.rf_rate)/self.get_day_short_std()
+        sharpe_ratios[2] = (self.get_portfolio_up_return()-self.rf_rate)/self.get_day_long_std()
+        return sharpe_ratios
 
     def update_day_returns(self, day_returns):
         current_return = 1.0
