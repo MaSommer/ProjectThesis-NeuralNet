@@ -62,7 +62,7 @@ class NetworkManager():
         self.stock_result = res.StockResult(self.start_time, self.stock_nr)
         start_day_testing = 0
         for network_nr in range(0, number_of_networks):
-            print ("\n--- BUILDING NEURAL NET NR " + str(network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
+            print ("\n--- STOCK " + str(self.stock_nr) +" BUILDING NEURAL NET NR " + str(network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
             separator1 = int(round(len(cases) * fraction_of_cases_for_one_network)) + seperator0
             if (network_nr == number_of_networks - 1):
                 separator1 = len(cases)

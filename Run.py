@@ -29,11 +29,12 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs):
+                 learning_rate, minibatch_size, epochs, run_nr):
 
         #Start timer
         self.start_time = time.time()
         self.end_time = time.time()
+        self.run_nr = run_nr
 
         #Network specific
         self.activation_functions = activation_functions        #["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
@@ -49,7 +50,6 @@ class Run():
         self.attributes_input = attributes_input                #["op", "cp"]
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.number_of_stocks = number_of_stocks
-        print("SPDRUSING")
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
 
@@ -88,16 +88,13 @@ class Run():
             selectedFTSE100 = self.generate_selected_list()
             number_of_stocks_to_test = self.number_of_stocks
             for prosessor_index in range(1, number_of_cores):
-                end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / number_of_cores)
-                start_range = (prosessor_index) * int(number_of_stocks_to_test / number_of_cores)
+                number_of_stocks_per_core = int(number_of_stocks_to_test / (number_of_cores))
+                end_of_range = (prosessor_index + 1) * number_of_stocks_per_core
+                start_range = (prosessor_index) * number_of_stocks_per_core
                 stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
 
                 comm.send(stock_information_for_processor, dest=prosessor_index, tag=11)
 
-                # for stock_nr in range(start_range, end_of_range):
-                #     selectedFTSE100[stock_nr] = 1
-                #     self.comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
-                #     selectedFTSE100[stock_nr] = 0
             for stock_nr in range(0, int(number_of_stocks_to_test / number_of_cores)):
                 selectedFTSE100[stock_nr] = 1
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
@@ -136,8 +133,8 @@ class Run():
             hyp = self.generate_hyper_param_result()
             hyp_type_1 = [hyp[0], hyp[1]]
             hyp_type_2 = [hyp[2]]
-            excel.ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True) #prints to results.csv file
-            #self.print_portfolio_return_graph()
+            excel.ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True, line_number=self.run_nr) #prints to results.csv file
+            self.print_portfolio_return_graph()
             self.f.close()
 
 

@@ -3,8 +3,9 @@ import xlwt
 
 class ExcelFormatter():
 
-    def __init__(self, hyp_type_1, hyp_type_2, first_run=False):
+    def __init__(self, hyp_type_1, hyp_type_2, first_run=False, line_number=1):
         self.first_run = first_run
+        self.line_number = line_number
         self.output("results.csv", "sheet1", hyp_type_1, hyp_type_2)
 
     def output(self, filename, sheet, hyp_type_1, hyp_type_2):
@@ -38,7 +39,7 @@ class ExcelFormatter():
             column_labels, values = self.generate_column_labels_and_values(hyp_dict)
             if (self.first_run):
                 self.write_to_file(column_labels, sh, 0, col)
-            _,col = self.write_to_file(values, sh, 1, col)
+            _,col = self.write_to_file(values, sh, self.line_number, col)
         return col
 
     def write_hyp_dicts_to_file_type_2(self, hyp_dicts_type_2, sh, col):
@@ -59,7 +60,7 @@ class ExcelFormatter():
 
             for value in values:
                 for i in range(0, len(value)):
-                    sh.write(1, col, value[i])
+                    sh.write(self.line_number, col, value[i])
                     col += 1
         return col
 
@@ -80,27 +81,27 @@ class ExcelFormatter():
             values.append(value)
         return colum_labels, values
 
-
-hyp1 = {}
-hyp1["ret"] = 2.5
-hyp1["ret-up"] = 2
-hyp1["rey-down"] = 3.0
-hyp1["sd"] = 0.5
-hyp1["stock-nr"] = 1
-hyp1["stock-drus"] = "pikk"
-hyp2 = {}
-hyp2["rag"] = 18
-hyp2["fag-up"] = 20
-hyp2["fag-down"] = 30
-hyp2["fitte"] = 24
-hyp2["kuken-nr"] = 24.5
-hyp2["kusa-drus"] = "dick_size"
-
-hyp3 = {}
-hyp3["returns"] = [1, 2, 3, 4, 5]
-hyp3["sds"] = [0.5, 0.2, 0.8, 0.9]
-
-hyp_type_1 = [hyp1, hyp2]
-hyp_type_2 = [hyp3]
-
-ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True)
+#
+# hyp1 = {}
+# hyp1["ret"] = 2.5
+# hyp1["ret-up"] = 2
+# hyp1["rey-down"] = 3.0
+# hyp1["sd"] = 0.5
+# hyp1["stock-nr"] = 1
+# hyp1["stock-drus"] = "pikk"
+# hyp2 = {}
+# hyp2["rag"] = 18
+# hyp2["fag-up"] = 20
+# hyp2["fag-down"] = 30
+# hyp2["fitte"] = 24
+# hyp2["kuken-nr"] = 24.5
+# hyp2["kusa-drus"] = "dick_size"
+#
+# hyp3 = {}
+# hyp3["returns"] = [1, 2, 3, 4, 5]
+# hyp3["sds"] = [0.5, 0.2, 0.8, 0.9]
+#
+# hyp_type_1 = [hyp1, hyp2]
+# hyp_type_2 = [hyp3]
+#
+# ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True)
