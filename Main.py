@@ -98,8 +98,7 @@ class Main():
         stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
         stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
         stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
-        import HyperParamResult as hpr
-        res = hpr.HyperParamResult(hyper_param_dict, stock_results_dict, self.result_dict)
+        res=[hyper_param_dict, stock_results_dict, self.result_dict]
 
         return res
 
@@ -529,3 +528,4 @@ main = Main(activation_functions, hidden_layer_dimension, time_lags, one_hot_vec
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
                  learning_rate, minibatch_size, epochs)
 main.run_portfolio_in_parallell()
+

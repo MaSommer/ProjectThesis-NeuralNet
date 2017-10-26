@@ -107,27 +107,40 @@ class NeuralNetResults():
                 self.overall_return *= (-return_that_day + 1)
                 self.down_return *= (-return_that_day + 1)
                 self.day_down_returns.append(-return_that_day+1)
+                self.day_up_returns.append(1)
             elif (pred == 2 and target == 2):
                 self.overall_return *= (return_that_day + 1)
                 self.up_return *= (1+return_that_day)
                 self.day_up_returns.append(1+return_that_day)
+                self.day_down_returns.append(1)
+            elif(pred == 1 and target == 1):
+                self.day_down_returns.append(1)
+                self.day_up_returns.append(1)
         else:
             if (pred == 0 and target == 2):
                 self.overall_return *= (1 - return_that_day)
                 self.down_return *= (-return_that_day + 1)
                 self.day_down_returns.append(-return_that_day + 1)
+                self.day_up_returns.append(1)
             elif (pred == 2 and target == 0):
                 self.overall_return *= (1 + return_that_day)
                 self.up_return *= (1 + return_that_day)
                 self.day_up_returns.append(1 + return_that_day)
+                self.day_down_returns.append(1)
             elif (pred == 0 and target == 1):
                 self.overall_return *= (1 - return_that_day)
                 self.down_return *= (1 - return_that_day)
                 self.day_down_returns.append(-return_that_day + 1)
+                self.day_up_returns.append(1)
             elif (pred == 2 and target == 1):
                 self.overall_return *= (1 + return_that_day)
                 self.up_return *= (1 + return_that_day)
                 self.day_up_returns.append(1 + return_that_day)
+                self.day_down_returns.append(1)
+            elif (pred == 1 ):
+                self.day_down_returns.append(1)
+                self.day_up_returns.append(1)
+
         day_return = copy.deepcopy(self.overall_return)
         self.day_returns.append(day_return)
 
