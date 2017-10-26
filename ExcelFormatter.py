@@ -81,26 +81,26 @@ class ExcelFormatter():
         return colum_labels, values
 
 
-# hyp1 = {}
-# hyp1["ret"] = 2.5
-# hyp1["ret-up"] = 2
-# hyp1["rey-down"] = 3.0
-# hyp1["sd"] = 0.5
-# hyp1["stock-nr"] = 1
-# hyp1["stock-drus"] = "pikk"
-# hyp2 = {}
-# hyp2["rag"] = 18
-# hyp2["fag-up"] = 20
-# hyp2["fag-down"] = 30
-# hyp2["fitte"] = 24
-# hyp2["kuken-nr"] = 24.5
-# hyp2["kusa-drus"] = "dick_size"
-#
-# hyp3 = {}
-# hyp3["returns"] = [1, 2, 3, 4, 5]
-# hyp3["sds"] = [0.5, 0.2, 0.8, 0.9]
-#
-# hyp_type_1 = [hyp1, hyp2]
-# hyp_type_2 = [hyp3]
-#
-#ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True)
+hyp1 = {}
+hyp1["ret"] = 2.5
+hyp1["ret-up"] = 2
+hyp1["rey-down"] = 3.0
+hyp1["sd"] = 0.5
+hyp1["stock-nr"] = 1
+hyp1["stock-drus"] = "pikk"
+hyp2 = {}
+hyp2["rag"] = 18
+hyp2["fag-up"] = 20
+hyp2["fag-down"] = 30
+hyp2["fitte"] = 24
+hyp2["kuken-nr"] = 24.5
+hyp2["kusa-drus"] = "dick_size"
+
+hyp3 = {}
+hyp3["returns"] = [1, 2, 3, 4, 5]
+hyp3["sds"] = [0.5, 0.2, 0.8, 0.9]
+
+hyp_type_1 = [hyp1, hyp2]
+hyp_type_2 = [hyp3]
+
+ExcelFormatter(hyp_type_1, hyp_type_2, first_run=True)

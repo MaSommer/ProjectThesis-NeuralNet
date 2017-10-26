@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ExcelFormatter as excel
 import HyperParamResult as hpr
-
 from mpi4py import MPI as MPI
+
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
@@ -93,10 +93,6 @@ class Main():
 
                 comm.send(stock_information_for_processor, dest=prosessor_index, tag=11)
 
-                # for stock_nr in range(start_range, end_of_range):
-                #     selectedFTSE100[stock_nr] = 1
-                #     self.comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
-                #     selectedFTSE100[stock_nr] = 0
             for stock_nr in range(0, int(number_of_stocks_to_test / number_of_cores)):
                 selectedFTSE100[stock_nr] = 1
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
@@ -120,10 +116,6 @@ class Main():
                 selectedFTSE100[stock_nr] = 0
 
             comm.send(stock_results, dest=0, tag=11)  # Send result to master
-            #network_manager = self.comm.recv(source=0, tag=11)
-            #stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
-            #self.do_result_processing(stock_result)
-            #self.comm.send(stock_result, dest=0, tag=11)  # Send result to master
 
         if (rank == 0):
             for i in range(1, number_of_cores):
@@ -543,14 +535,16 @@ attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 2
 epochs = 40
-number_of_stocks = 2
+number_of_stocks = 4
 
 
  #Training specific
 learning_rate =0.1
 minibatch_size = 10
 
-main = Main(activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
-                 from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs)
-main.run_portfolio_in_parallell()
+print("h")
+
+# main = Main(activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
+#                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
+#                  learning_rate, minibatch_size, epochs)
+# main.run_portfolio_in_parallell()
