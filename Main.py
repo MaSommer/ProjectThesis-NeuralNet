@@ -30,16 +30,18 @@ attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 2
 epochs = 40
-number_of_stocks = 4
+number_of_stocks = 6
 
 
  #Training specific
 learning_rate =0.1
 minibatch_size = 10
 
+rf_rate = 0.02
+
 
 
 test = run.Run(activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
            from_date, number_of_trading_days, attributes_input, number_of_stocks,
-           learning_rate, minibatch_size, epochs)
+           learning_rate, minibatch_size, epochs, rf_rate)
 test.run_portfolio_in_parallell()
