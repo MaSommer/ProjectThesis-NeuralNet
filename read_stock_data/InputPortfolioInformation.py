@@ -70,7 +70,7 @@ class InputPortolfioInformation:
                     continue
                 previous_attribute_data_for_row = self.addColDataFromRow(rowCells[1:len(rowCells)], previous_attribute_data_for_row)
             if (row%500 == 0):
-                print("--- Row " + str(row) + " takes \t %s seconds ---" % (time.time() - self.start_time))
+                print("--- Row " + str(row) +" for " + filename + " takes \t %s seconds ---" % (time.time() - self.start_time))
             row+=1
             line = f.readline()
         if(self.normalize_method == "minmax"):
