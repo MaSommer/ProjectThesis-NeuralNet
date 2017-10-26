@@ -538,7 +538,7 @@ keep_probability_dropout =0.80
 
  #Data set specific
 from_date =  "01.01.2008"
-number_of_trading_days = 100
+number_of_trading_days = 200
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 2
