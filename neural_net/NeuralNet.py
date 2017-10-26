@@ -26,7 +26,7 @@ class NeuralNet():
 
     def __init__(self, network_nr, layer_dimensions, activation_functions, learning_rate, minibatch_size, time_lags, cost_function,
                  learning_method, case_manager, keep_probability_for_dropout, validation_interval=None, show_interval=None,
-                 softmax=True, start_time=time.time()):
+                 softmax=True, start_time=time.time(), rank = 0):
         self.network_nr = network_nr
         self.keep_probability_for_dropout = keep_probability_for_dropout
         self.layer_dimensions = layer_dimensions
@@ -49,6 +49,7 @@ class NeuralNet():
         self.validation_history = []
 
         self.start_time = start_time
+        self.rank = rank
 
         self.build_network()
 
@@ -110,9 +111,9 @@ class NeuralNet():
 
     def run(self,epochs=100,sess=None,continued=False):
         #PLT.ion()
-        print ("--- TRAINING NEURAL NET NR " + str(self.network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
+        #print ("\tProcessor #" + str(self.rank) + "\tTraining net #" + str(self.network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
         self.training_session(epochs,sess=sess,continued=continued)
-        print ("--- TESTING NEURAL NET \t %s seconds ---" % (time.time() - self.start_time))
+        #print ("\t\t Processor #" + str(self.rank) + "\tTesting net #" + str(self.network_nr) + "\t %s seconds ---" % (time.time() - self.start_time))
 
         self.test_on_training_set(sess=self.current_session) #tst on trainning set
         self.testing_session(sess=self.current_session)
@@ -157,8 +158,8 @@ class NeuralNet():
                 #accuracy = trainer_and_accuracy[1]
             self.error_history.append((epoch, error/number_of_batches))
             self.consider_validation_testing(epoch,sess)
-            if (epoch%10 == 0):
-                print("\t--- Epoch " + str(epoch) + " out of " + str(epochs) + " after \t %s seconds ---" % (time.time() - self.start_time))
+            #if (epoch == epochs):
+                #print("\t\tProcessor #" + str(self.rank) + "finished training net #" + str(self.network_nr) + " after \t %s seconds ---" % (time.time() - self.start_time))
         self.global_training_step += epochs
         # flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
         #                           title="",fig=not(continued))
@@ -194,7 +195,7 @@ class NeuralNet():
         acc_and_correct_pred, grabvals, _ = self.run_one_step(
             [accuracy, correct_pred, trans_output_print, trans_target_print], self.monitored_variables, self.probes,
             session=sess, feed_dict=feeder, show_interval=None)
-        print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]) + " on test size: " + str(len(cases)))
+        #print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]) + " on test size: " + str(len(cases)))
         self.accuracy = float(str(acc_and_correct_pred[0]))
         self.testing_size = float((len(cases)))
 

@@ -15,6 +15,3 @@ class HyperParamResult():
 
         #Per stock results aggregated over all the runs
         self.per_stock_dict = per_stock_dict
-
-
-print("hei")

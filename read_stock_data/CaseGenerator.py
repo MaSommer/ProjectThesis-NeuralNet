@@ -11,8 +11,8 @@ class CaseGenerator():
         self.days_input_data = []
         self.days_output_data = []
         self.addZeros(input_data, output_data, time_lags)
-        print("Output len: " + str(len(output_data[0])))
-        print("Input len: " + str(len(input_data[0])))
+        # print("Output len: " + str(len(output_data[0])))
+        # print("Input len: " + str(len(input_data[0])))
         self.add_data(input_data, output_data, output_normalized_data, time_lags)
 
 
