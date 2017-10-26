@@ -6,6 +6,8 @@ import neural_net.NeuralNet as nn
 import time
 import copy
 import os
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import numpy as np
 import StockResult as res
 import NetworkManager as nm
@@ -51,7 +53,6 @@ class Run():
         self.attributes_input = attributes_input                #["op", "cp"]
         self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.number_of_stocks = number_of_stocks
-        print("SPDRUSING")
         self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
                                              self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
 
@@ -96,7 +97,6 @@ class Run():
               #  start_range = (prosessor_index) * int(number_of_stocks_to_test / number_of_cores)
                #stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
                 stock_information_for_processor = [delegated[prosessor_index], copy.deepcopy(selectedFTSE100)]
-                print("YES: " + str(delegated[prosessor_index]))
 
                 comm.send(stock_information_for_processor, dest=prosessor_index, tag=11)
 
@@ -109,7 +109,7 @@ class Run():
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
                 if (stock_nr == 0):
                     self.day_list = network_manager.day_list
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
+                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
 
                 self.stock_results.append(stock_result)
                 selectedFTSE100[stock_nr] = 0
@@ -122,8 +122,9 @@ class Run():
             #for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
             for stock_nr in stock_information_for_processor[0]:
                 selectedFTSE100[stock_nr] = 1
+                rank = comm.Get_rank()
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
+                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
                 stock_results.append(stock_result)
                 selectedFTSE100[stock_nr] = 0
 
@@ -137,7 +138,7 @@ class Run():
             for i in range(1, number_of_cores):
                 status = MPI.Status()
                 recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-                print("Got data: " + str(recv_data) + ", from processor: " + str(status.Get_source()))
+                print("COMPLETE! \t\t Processor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time))
                 self.stock_results.extend(recv_data)
 
             hyp = self.generate_hyper_param_result()
@@ -156,17 +157,16 @@ class Run():
         self.result_dict["tot_day_std"] = self.get_total_day_std()
 
 
-        self.result_dict["tot_long_return"] = self.get_portfolio_up_return()
+        self.result_dict["tot_long_return"] = (self.get_portfolio_up_return()-1)
         self.result_dict["tot_day_long_std"] = self.get_day_long_std() #TODO: fix the day_long_std
 
-        self.result_dict["tot_short_return"] = self.get_portfolio_down_return()
+        self.result_dict["tot_short_return"] = (self.get_portfolio_down_return()-1)
         self.result_dict["tot_day_short_std"] = self.get_day_short_std() #TODO: fix the short_std
 
         sharpe_ratios = self.compute_sharpe_ratios()
         self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[0] #TODO
         self.result_dict["sharpe_short_ratio"] = sharpe_ratios[1] #TODO
         self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[2] #TODO
-        print("\n\n\n\n" + str(sharpe_ratios) + "\n\n\n\n")
 
 
 
@@ -403,8 +403,8 @@ class Run():
     def get_total_return(self):
         portolfio_day_returns = self.find_portfolio_day_to_day_return(self.stock_results)
         portfolio_day_returns_as_percentage = self.make_return_percentage(portolfio_day_returns)
-        tot_return = float(portfolio_day_returns_as_percentage[-1])
-        return tot_return
+        tot_return = float(portfolio_day_returns_as_percentage[-1]/100)
+        return portolfio_day_returns[-1]
 
     def get_total_day_std(self):
         portfolio_day_returns = self.find_portfolio_day_to_day_return(self.stock_results)
