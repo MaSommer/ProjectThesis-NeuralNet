@@ -176,14 +176,14 @@ class Run():
         sharpe_ratios = self.compute_sharpe_ratios()
         self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[0] #TODO
         self.result_dict["sharpe_short_ratio"] = sharpe_ratios[1] #TODO
-        self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[2] #TODO
+        self.result_dict["sharpe_long_ratio"] = sharpe_ratios[2] #TODO
 
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_tot_ratio", sharpe_ratios[0]))
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_short_ratio", sharpe_ratios[1]))
         ordered_label_list_for_hyp_type_1.append(
-            self.define_key_and_put_in_dict(self.result_dict, "sharpe_tot_ratio", sharpe_ratios[2]))
+            self.define_key_and_put_in_dict(self.result_dict, "sharpe_long_ratio", sharpe_ratios[2]))
 
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
@@ -220,13 +220,13 @@ class Run():
         total_acc = 0
         for stock_result in self.stock_results:
             total_acc += stock_result.accuracy
-        return total_acc/float(len(stock_result))
+        return total_acc/float(len(self.stock_results))
 
     def generate_tot_precision(self):
         total_prec = 0
         for stock_result in self.stock_results:
             total_prec += stock_result.over_all_precision
-        return total_prec/float(len(stock_result))
+        return total_prec/float(len(self.stock_results))
 
     def delegate_stock_nr(self, processors, nr_of_stocks):
         delegated = []
