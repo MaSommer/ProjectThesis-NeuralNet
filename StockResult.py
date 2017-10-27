@@ -121,18 +121,16 @@ class StockResult():
         return total_info
 
     def generate_over_all_precision(self):
-        tot_predicted = 0
-        for classification in self.over_all_estimated_map:
-            tot_predicted += self.over_all_estimated_map[classification]
+        tot_predicted = self.total_testing_cases
         weights = {}
         for classification in self.over_all_estimated_map:
-            weights[classification] = self.over_all_estimated_map[classification]/tot_predicted
+            weights[classification] = float(self.over_all_estimated_map[classification])/float(tot_predicted)
         prec = {}
         for classification in self.total_precision_info:
             prec[classification] = self.total_precision_info[classification][classification]
         tot_prec = 0
         for classification in weights:
-            tot_prec += prec[classification]*weights[classification]
+            tot_prec += float(prec[classification])*float(weights[classification])
         return tot_prec
 
 
