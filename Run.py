@@ -146,7 +146,7 @@ class Run():
 
             hyp, ordered_label_list_type_1 = self.generate_hyper_param_result()
             hyp_type_1 = [hyp[0], hyp[1]]
-            hyp_type_2 = [hyp[2], hyp[3]]
+            hyp_type_2 = [hyp[2]]
             excel.ExcelFormatter(hyp_type_1, hyp_type_2, ordered_label_list_type_1, line_number=self.run_nr) #prints to results.csv file
             #self.print_portfolio_return_graph()
             self.f.close()
