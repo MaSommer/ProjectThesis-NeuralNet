@@ -5,7 +5,7 @@ import read_stock_data.CaseGenerator as cg
 import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
-import copyx
+import copy
 import os
 import numpy as np
 import StockResult as res
