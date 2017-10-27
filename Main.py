@@ -5,7 +5,7 @@ import read_stock_data.CaseGenerator as cg
 import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
-import copy
+import copyx
 import os
 import numpy as np
 import StockResult as res
@@ -17,17 +17,17 @@ import HyperParamResult as hpr
 
 
 activation_functions = ["tanh", "tanh", "tanh", "relu", "tanh", "sigmoid"]
-hidden_layer_dimension = [300,40]
+hidden_layer_dimension = [550,110]
 time_lags = 3
 one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout =0.80
 
  #Data set specific
 from_date =  "01.01.2008"
-number_of_trading_days = 2000
+number_of_trading_days = 700
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 4
+number_of_networks = 1
 epochs = 40
 number_of_stocks = 12
 
