@@ -159,6 +159,11 @@ class Run():
         self.result_dict = {}
 
         ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_prec", self.generate_tot_precision()))
+
+        ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_return", self.get_total_return()))
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_day_std", self.get_total_day_std()))
@@ -184,11 +189,6 @@ class Run():
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_short_ratio", sharpe_ratios[1]))
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_long_ratio", sharpe_ratios[2]))
-
-        ordered_label_list_for_hyp_type_1.append(
-            self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
-        ordered_label_list_for_hyp_type_1.append(
-            self.define_key_and_put_in_dict(self.result_dict, "tot_prec", self.generate_tot_precision()))
 
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
