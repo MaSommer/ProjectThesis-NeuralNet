@@ -184,21 +184,19 @@ class Run():
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_tot_ratio", sharpe_ratios[2]))
 
 
-
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
         self.add_precision_to_result_dict(ordered_label_list_for_hyp_type_1)
 
-
-        #The hyperparameters
+        # The hyperparameters
         hyper_param_dict = self.generate_hyper_param_dict(ordered_label_list_for_hyp_type_1)
 
         stock_results_dict = {}
         #Per stock data:
         stock_results_dict["Stock_returns"] = self.generate_stock_return_list()
         stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
-        stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
-        stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
+        #stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
+        #stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
 
         portfolio_dict = {}
         portfolio_dict["portfolio_accumulated_day_ret"] = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
@@ -448,7 +446,7 @@ class Run():
         ordered_label_list.append("prec_d_up")
         ordered_label_list.append("prec_s_d")
         ordered_label_list.append("prec_s_up")
-        if(self.generate_hyper_param_dict(ordered_label_list) == None):
+        if(self.aggregate_counter_table == None):
             self.aggregate_counter_table = self.get_aggregate_counter_table()
             up = 0
             s = 0
