@@ -156,8 +156,10 @@ class Run():
 
         self.result_dict = {}
 
-        ordered_label_list_for_hyp_type_1.append(self.define_key_and_put_in_dict(self.result_dict, "tot_return", self.get_total_return()))
-        ordered_label_list_for_hyp_type_1.append(self.define_key_and_put_in_dict(self.result_dict, "tot_day_std", self.get_total_day_std()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_return", self.get_total_return()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_day_std", self.get_total_day_std()))
 
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_long_return", (self.get_portfolio_up_return()-1)))
@@ -181,7 +183,10 @@ class Run():
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_tot_ratio", sharpe_ratios[2]))
 
-
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_prec", self.generate_tot_precision()))
 
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
@@ -208,6 +213,18 @@ class Run():
     def define_key_and_put_in_dict(self, dict, key, value):
         dict[key] = value
         return key
+
+    def generate_tot_accuracy(self):
+        total_acc = 0
+        for stock_result in self.stock_results:
+            total_acc += stock_result.accuracy
+        return total_acc/float(len(stock_result))
+
+    def generate_tot_precision(self):
+        total_prec = 0
+        for stock_result in self.stock_results:
+            total_prec += stock_result.over_all_precision
+        return total_prec/float(len(stock_result))
 
     def delegate_stock_nr(self, processors, nr_of_stocks):
         delegated = []
