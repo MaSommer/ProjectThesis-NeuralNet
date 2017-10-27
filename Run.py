@@ -7,7 +7,8 @@ import time
 import copy
 import os
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+os.environ['T' \
+           'F_CPP_MIN_LOG_LEVEL']='2'
 import numpy as np
 import StockResult as res
 import NetworkManager as nm
@@ -90,6 +91,7 @@ class Run():
         number_of_cores = comm.Get_size()  # Total number of processors
         rank = comm.Get_rank()
         if (rank == 0):
+            print("\n\n\n------------------------------ RUN NR " + str(self.run_nr) + " ------------------------------")
             selectedFTSE100 = self.generate_selected_list()
             number_of_stocks_to_test = self.number_of_stocks
             delegated = self.delegate_stock_nr(number_of_cores, self.number_of_stocks)
@@ -121,7 +123,7 @@ class Run():
             selectedFTSE100 = stock_information_for_processor[1]
             stock_results = []
             #for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
-            for stock_nr in stock_information_for_processor[0]:
+            for stock_nr in stock_information_for_processor[0]: #TODO: potentially conflicting when less stocks than processors
                 selectedFTSE100[stock_nr] = 1
                 rank = comm.Get_rank()
                 network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
@@ -139,12 +141,12 @@ class Run():
             for i in range(1, number_of_cores):
                 status = MPI.Status()
                 recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-                print("COMPLETE! \t\t Processor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time))
+                print("COMPLETE! \t\tProcessor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time))
                 self.stock_results.extend(recv_data)
 
             hyp, ordered_label_list_type_1 = self.generate_hyper_param_result()
             hyp_type_1 = [hyp[0], hyp[1]]
-            hyp_type_2 = [hyp[2], hyp[3]]
+            hyp_type_2 = [hyp[2]]
             excel.ExcelFormatter(hyp_type_1, hyp_type_2, ordered_label_list_type_1, line_number=self.run_nr) #prints to results.csv file
             #self.print_portfolio_return_graph()
             self.f.close()
