@@ -18,7 +18,7 @@ import HyperParamResult as hpr
 
 activation_functions = ["tanh", "tanh", "tanh", "relu", "tanh", "sigmoid"]
 hidden_layer_dimension = [500,60]
-time_lags = 3
+time_lags = 0
 one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout =0.80
 
