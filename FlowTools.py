@@ -12,8 +12,8 @@ import numpy.random as NPR
 
 def gen_initialized_session(dir='probeview'):
     sess = tf.Session()
-    sess.probe_stream = viewprep(sess,dir=dir)  # Create a probe stream and attach to the session
-    sess.viewdir = dir  # add a second slot, viewdir, to the session
+    #sess.probe_stream = viewprep(sess,dir=dir)  # Create a probe stream and attach to the session
+    #sess.viewdir = dir  # add a second slot, viewdir, to the session
     sess.run(tf.global_variables_initializer())
     return sess
 
