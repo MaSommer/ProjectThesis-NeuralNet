@@ -109,7 +109,7 @@ class Run():
                 #     selectedFTSE100[stock_nr] = 0
             for stock_nr in delegated[0]:
                 selectedFTSE100[stock_nr] = 1
-                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
+                network_manager = nm.NetworkManager(self, copy.deepcopy(selectedFTSE100), stock_nr)
                 if (stock_nr == 0):
                     self.day_list = network_manager.day_list
                 stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
@@ -120,16 +120,16 @@ class Run():
 
         else:
             stock_information_for_processor = comm.recv(source=0, tag=11)
-            selectedFTSE100 = stock_information_for_processor[1]
+            selected = stock_information_for_processor[1]
             stock_results = []
             #for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
             for stock_nr in stock_information_for_processor[0]: #TODO: potentially conflicting when less stocks than processors
-                selectedFTSE100[stock_nr] = 1
+                selected[stock_nr] = 1
                 rank = comm.Get_rank()
-                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
+                network_manager = nm.NetworkManager(self, selected, stock_nr)
                 stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
                 stock_results.append(stock_result)
-                selectedFTSE100[stock_nr] = 0
+                selected[stock_nr] = 0
 
             comm.send(stock_results, dest=0, tag=11)  # Send result to master
             #network_manager = self.comm.recv(source=0, tag=11)
