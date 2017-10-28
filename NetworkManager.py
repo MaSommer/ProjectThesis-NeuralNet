@@ -47,8 +47,6 @@ class NetworkManager():
                                                 one_hot_vector_interval=self.one_hot_vector_interval, is_output=True,
                                                 start_time=self.start_time)
         if (lftse100.ended_up_being_to_many_NA_values == True):
-            print(" FOUND IT" )
-            sys.exit()
             return None
 
         # selectedSP500 = ssr.readSelectedStocks("TestInput.txt")
