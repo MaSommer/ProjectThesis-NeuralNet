@@ -50,6 +50,7 @@ class NeuralNet():
 
         self.start_time = start_time
         self.rank = rank
+        self.probes = None
 
         self.build_network()
 
@@ -121,7 +122,7 @@ class NeuralNet():
         # PLT.ioff()
 
     def training_session(self,epochs,sess=None,dir="probeview",continued=False):
-        self.roundup_probes()
+        #self.roundup_probes()
         session = sess if sess else flt.gen_initialized_session(dir=dir)
         self.current_session = session
         self.do_training(session,self.case_manager.get_training_cases(),epochs,continued=continued)
@@ -169,7 +170,7 @@ class NeuralNet():
         sess = session if session else flt.gen_initialized_session(dir=dir)
         if probed_vars is not None:
             results = sess.run([operators, grabbed_vars, probed_vars], feed_dict=feed_dict)
-            sess.probe_stream.add_summary(results[2], global_step=step)
+            #sess.probe_stream.add_summary(results[2], global_step=step)
         else:
             results = sess.run([operators, grabbed_vars], feed_dict=feed_dict)
         if show_interval and (step % show_interval == 0):

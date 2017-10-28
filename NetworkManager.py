@@ -12,7 +12,7 @@ import sys
 
 class NetworkManager():
 
-    def __init__(self, main, selectedFTSE100, stock_nr):
+    def __init__(self, main, selectedFTSE100, stock_nr, run_nr):
         self.selectedFTSE100 = selectedFTSE100
         self.sp500 = main.sp500
 
@@ -34,6 +34,7 @@ class NetworkManager():
         self.softmax = main.softmax
         self.hidden_layer_dimensions = main.hidden_layer_dimensions
         self.day_list = []
+        self.run_nr = run_nr
 
         self.keep_probability_for_dropout = main.keep_probability_for_dropout
 
@@ -65,7 +66,7 @@ class NetworkManager():
         seperator0 = 0
         self.stock_result = res.StockResult(self.start_time, self.stock_nr)
         start_day_testing = 0
-        print("\nSTARTED PROCESS" + "\t\tProcessor #" + str(rank) + " stock #" + str(self.stock_nr))
+        print("\nSTARTED PROCESS" + "\t\tProcessor #" + str(rank) + " stock #" + str(self.stock_nr) + "\t\tRun nr#" + str(self.run_nr))
         for network_nr in range(0, number_of_networks):
             separator1 = int(round(len(cases) * fraction_of_cases_for_one_network)) + seperator0
             if (network_nr == number_of_networks - 1):

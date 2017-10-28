@@ -124,7 +124,7 @@ class Run():
             for i in range(1, number_of_cores):
                 status = MPI.Status()
                 recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-                print("COMPLETE! \t\tProcessor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time))
+                print("COMPLETE! \t\tProcessor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time) + "\t run nr: "+ str(self.run_nr))
                 self.stock_results.extend(recv_data)
 
             hyp, ordered_label_list_type_1 = self.generate_hyper_param_result()
@@ -135,7 +135,7 @@ class Run():
             self.f.close()
 
     def generate_network_manager(self, selected, stock_nr, rank):
-        network_manager = nm.NetworkManager(self, selected, stock_nr)
+        network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr)
         stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs,
                                                       rank=rank)
         self.add_to_stock_results(stock_result, network_manager)
