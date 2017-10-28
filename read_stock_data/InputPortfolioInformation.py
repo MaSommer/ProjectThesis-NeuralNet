@@ -38,6 +38,10 @@ class InputPortolfioInformation:
         self.fromDate = self.createIntegerOfDate(fromDate)
         self.number_of_trading_days = number_of_trading_days
 
+        self.streak_wit_NA_values = 0
+        self.is_in_a_NA_streak = False
+        self.ended_up_being_to_many_NA_values = False
+
         self.defineGlobalAttributes()
 
         self.readFile(filename)
@@ -198,12 +202,23 @@ class InputPortolfioInformation:
     def getDataPoint(self, rowCell):
         output = self.convertDigitWithoutComma(rowCell)
         if (output != "" and (re.match("^\d+?\.\d+?$", output) is not None or output.isdigit())):
-            return float(output)
+            return self.return_float(output)
         elif(len(output) > 0 and output[0] == "-"):
             if (output[1:len(output)] != "" and (re.match("^\d+?\.\d+?$", output[1:len(output)]) is not None or output[1:len(output)].isdigit())):
-                return float(output)
+                return self.return_float(output)
         else:
+            if (self.is_output):
+                self.streak_wit_NA_values += 1
+                self.is_in_a_NA_streak = True
+                if (self.is_in_a_NA_streak > 20):
+                    self.ended_up_being_to_many_NA_values = True
             return 0.0
+
+    def return_float(self, output):
+        if (self.is_output and self.is_in_a_NA_streak):
+            self.is_in_a_NA_streak = False
+            self.streak_wit_NA_values = 0
+        return float(output)
 
 #checks if the cell is a part of the selected stock
     def checkIfSelected(self, col):

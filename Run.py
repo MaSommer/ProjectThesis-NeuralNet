@@ -82,9 +82,6 @@ class Run():
         self.aggregate_counter_table = None
 
 
-
-
-
     def run_portfolio_in_parallell(self):
         from mpi4py import MPI as MPI
         comm = MPI.COMM_WORLD
@@ -93,49 +90,29 @@ class Run():
         if (rank == 0):
             print("\n\n\n------------------------------ RUN NR " + str(self.run_nr) + " ------------------------------")
             selectedFTSE100 = self.generate_selected_list()
-            number_of_stocks_to_test = self.number_of_stocks
             delegated = self.delegate_stock_nr(number_of_cores, self.number_of_stocks)
-            for prosessor_index in range(1, number_of_cores):
-             #   end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / number_of_cores)
-              #  start_range = (prosessor_index) * int(number_of_stocks_to_test / number_of_cores)
-               #stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
-                stock_information_for_processor = [delegated[prosessor_index], copy.deepcopy(selectedFTSE100)]
 
+            for prosessor_index in range(1, number_of_cores):
+                stock_information_for_processor = [delegated[prosessor_index], copy.deepcopy(selectedFTSE100)]
                 comm.send(stock_information_for_processor, dest=prosessor_index, tag=11)
 
-                # for stock_nr in range(start_range, end_of_range):
-                #     selectedFTSE100[stock_nr] = 1
-                #     self.comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
-                #     selectedFTSE100[stock_nr] = 0
             for stock_nr in delegated[0]:
                 selectedFTSE100[stock_nr] = 1
-                network_manager = nm.NetworkManager(self, copy.deepcopy(selectedFTSE100), stock_nr)
-                if (stock_nr == 0):
-                    self.day_list = network_manager.day_list
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
-
-                self.stock_results.append(stock_result)
+                self.generate_network_manager(copy.deepcopy(selectedFTSE100), stock_nr)
                 selectedFTSE100[stock_nr] = 0
-
 
         else:
             stock_information_for_processor = comm.recv(source=0, tag=11)
             selected = stock_information_for_processor[1]
             stock_results = []
-            #for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
             for stock_nr in stock_information_for_processor[0]: #TODO: potentially conflicting when less stocks than processors
                 selected[stock_nr] = 1
                 rank = comm.Get_rank()
-                network_manager = nm.NetworkManager(self, selected, stock_nr)
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
-                stock_results.append(stock_result)
+                self.generate_network_manager(selected, stock_nr)
                 selected[stock_nr] = 0
 
             comm.send(stock_results, dest=0, tag=11)  # Send result to master
-            #network_manager = self.comm.recv(source=0, tag=11)
-            #stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
-            #self.do_result_processing(stock_result)
-            #self.comm.send(stock_result, dest=0, tag=11)  # Send result to master
+
 
         if (rank == 0):
             for i in range(1, number_of_cores):
@@ -151,6 +128,16 @@ class Run():
             #self.print_portfolio_return_graph()
             self.f.close()
 
+    def generate_network_manager(self, selected, stock_nr):
+        network_manager = nm.NetworkManager(self, selected, stock_nr)
+        stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs,
+                                                      rank=rank)
+        self.add_to_stock_results(stock_result, network_manager)
+
+    def add_to_stock_results(self, stock_result, network_manager):
+        if (stock_result != None):
+            stock_results.append(stock_result)
+            self.day_list = network_manager.day_list
 
     def generate_hyper_param_result(self):
 
