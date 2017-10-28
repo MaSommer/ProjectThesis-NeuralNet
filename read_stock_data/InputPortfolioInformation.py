@@ -75,6 +75,7 @@ class InputPortolfioInformation:
             self.min_max_normalize()
         print(
         "Finished loading input" + " for " + filename + " : \t %s seconds ---" % (time.time() - self.start_time))
+        f.close()
 
 
 
