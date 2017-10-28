@@ -251,13 +251,13 @@ class Run():
     def generate_stock_long_returns(self):
         ret = []
         for stock_result in self.stock_results:
-            ret.append(stock_result.get_tot_up_return())
+            ret.append([stock_result.get_tot_up_return(), stock_result.stock_nr])
         return ret
 
     def generate_stock_short_returns(self):
         ret = []
         for stock_result in self.stock_results:
-            ret.append(stock_result.get_tot_down_return())
+            ret.append([stock_result.get_tot_down_return(), stock_result.stock_nr])
         return ret
 
     def generate_stock_return_list(self):
