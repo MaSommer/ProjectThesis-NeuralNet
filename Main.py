@@ -28,8 +28,8 @@ number_of_trading_days = 700
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 1
-epochs = 40
-number_of_stocks =48
+epochs = 1
+number_of_stocks =36
 
 
  #Training specific
