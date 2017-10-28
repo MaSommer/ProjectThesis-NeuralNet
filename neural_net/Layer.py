@@ -54,17 +54,17 @@ class Layer():
 
 #type - which of variable, ex "weights", "output", "input", "bias"
 #spec - which visualization do you want, ex "avg", "hist", "max", "min"
-    def gen_probe(self,type,spec):
-        var = self.get_layer_variables(type)
-        base = self.name +'_'+type
-        with tf.name_scope('probe_'):
-            if ('avg' in spec) or ('stdev' in spec):
-                avg = tf.reduce_mean(var)
-            if 'avg' in spec:
-                tf.summary.scalar(base + '/avg/', avg)
-            if 'max' in spec:
-                tf.summary.scalar(base + '/max/', tf.reduce_max(var))
-            if 'min' in spec:
-                tf.summary.scalar(base + '/min/', tf.reduce_min(var))
-            if 'hist' in spec:
-                tf.summary.histogram(base + '/hist/',var)
+    # def gen_probe(self,type,spec):
+    #     var = self.get_layer_variables(type)
+    #     base = self.name +'_'+type
+    #     with tf.name_scope('probe_'):
+    #         if ('avg' in spec) or ('stdev' in spec):
+    #             avg = tf.reduce_mean(var)
+    #         if 'avg' in spec:
+    #             tf.summary.scalar(base + '/avg/', avg)
+    #         if 'max' in spec:
+    #             tf.summary.scalar(base + '/max/', tf.reduce_max(var))
+    #         if 'min' in spec:
+    #             tf.summary.scalar(base + '/min/', tf.reduce_min(var))
+    #         if 'hist' in spec:
+    #             tf.summary.histogram(base + '/hist/',var)
