@@ -109,7 +109,7 @@ class Run():
                 #     selectedFTSE100[stock_nr] = 0
             for stock_nr in delegated[0]:
                 selectedFTSE100[stock_nr] = 1
-                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
+                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr, self.run_nr)
                 if (stock_nr == 0):
                     self.day_list = network_manager.day_list
                 stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
@@ -126,7 +126,7 @@ class Run():
             for stock_nr in stock_information_for_processor[0]: #TODO: potentially conflicting when less stocks than processors
                 selectedFTSE100[stock_nr] = 1
                 rank = comm.Get_rank()
-                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr)
+                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr, self.run_nr)
                 stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
                 stock_results.append(stock_result)
                 selectedFTSE100[stock_nr] = 0
@@ -141,7 +141,7 @@ class Run():
             for i in range(1, number_of_cores):
                 status = MPI.Status()
                 recv_data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-                print("COMPLETE! \t\tProcessor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time))
+                print("COMPLETE! \t\tProcessor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time) + "\t run nr: "+ str(self.run_nr))
                 self.stock_results.extend(recv_data)
 
             hyp, ordered_label_list_type_1 = self.generate_hyper_param_result()
