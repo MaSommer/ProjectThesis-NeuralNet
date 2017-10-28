@@ -38,6 +38,7 @@ class InputPortolfioInformation:
         self.fromDate = self.createIntegerOfDate(fromDate)
         self.number_of_trading_days = number_of_trading_days
 
+        #This is done because we don't want to include this stock if it has to many NA in a row
         self.streak_wit_NA_values = 0
         self.is_in_a_NA_streak = False
         self.ended_up_being_to_many_NA_values = False

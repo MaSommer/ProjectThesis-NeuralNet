@@ -98,7 +98,7 @@ class Run():
 
             for stock_nr in delegated[0]:
                 selectedFTSE100[stock_nr] = 1
-                self.generate_network_manager(copy.deepcopy(selectedFTSE100), stock_nr)
+                self.generate_network_manager(copy.deepcopy(selectedFTSE100), stock_nr, rank)
                 selectedFTSE100[stock_nr] = 0
 
         else:
@@ -108,7 +108,7 @@ class Run():
             for stock_nr in stock_information_for_processor[0]: #TODO: potentially conflicting when less stocks than processors
                 selected[stock_nr] = 1
                 rank = comm.Get_rank()
-                self.generate_network_manager(selected, stock_nr)
+                self.generate_network_manager(selected, stock_nr, rank)
                 selected[stock_nr] = 0
 
             comm.send(stock_results, dest=0, tag=11)  # Send result to master
@@ -128,7 +128,7 @@ class Run():
             #self.print_portfolio_return_graph()
             self.f.close()
 
-    def generate_network_manager(self, selected, stock_nr):
+    def generate_network_manager(self, selected, stock_nr, rank):
         network_manager = nm.NetworkManager(self, selected, stock_nr)
         stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs,
                                                       rank=rank)
