@@ -29,7 +29,7 @@ attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 1
 epochs = 40
-number_of_stocks =2
+number_of_stocks =100
 
 
  #Training specific
