@@ -187,7 +187,7 @@ class StockResult():
 
     def add_to_result(self, neural_net):
         self.neural_nets.append(neural_net)
-        
+
         self.accuracies.append(neural_net.accuracy)
         self.accuracy_info_list.append(neural_net.results.accuracy_information)
         self.precision_info_list.append(neural_net.results.precision_information)
