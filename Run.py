@@ -32,7 +32,7 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs, rf_rate, run_nr):
+                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500):
 
         #Start timer
         self.start_time = time.time()
@@ -53,11 +53,11 @@ class Run():
         self.fromDate = from_date                               # "01.01.2008"
         self.number_of_trading_days = number_of_trading_days    #2000
         self.attributes_input = attributes_input                #["op", "cp"]
-        self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+        #self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.number_of_stocks = number_of_stocks
-        self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
-                                             self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
-
+        #self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
+        #                                     self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
+        self.sp500 = sp500
         #Training specific
         self.learning_rate = learning_rate                      #0.1
         self.minibatch_size = minibatch_size                    #10
@@ -81,7 +81,8 @@ class Run():
         self.hyper_param_dict = None
         self.aggregate_counter_table = None
 
-
+        #Map from stock nr to stock
+        self.global_stock_results = {}
 
 
 
@@ -93,49 +94,31 @@ class Run():
         if (rank == 0):
             print("\n\n\n------------------------------ RUN NR " + str(self.run_nr) + " ------------------------------")
             selectedFTSE100 = self.generate_selected_list()
-            number_of_stocks_to_test = self.number_of_stocks
             delegated = self.delegate_stock_nr(number_of_cores, self.number_of_stocks)
-            for prosessor_index in range(1, number_of_cores):
-             #   end_of_range = (prosessor_index + 1) * int(number_of_stocks_to_test / number_of_cores)
-              #  start_range = (prosessor_index) * int(number_of_stocks_to_test / number_of_cores)
-               #stock_information_for_processor = [start_range, end_of_range, copy.deepcopy(selectedFTSE100)]
-                stock_information_for_processor = [delegated[prosessor_index], copy.deepcopy(selectedFTSE100)]
 
+            for prosessor_index in range(1, number_of_cores):
+                stock_information_for_processor = [delegated[prosessor_index], copy.deepcopy(selectedFTSE100)]
                 comm.send(stock_information_for_processor, dest=prosessor_index, tag=11)
 
-                # for stock_nr in range(start_range, end_of_range):
-                #     selectedFTSE100[stock_nr] = 1
-                #     self.comm.send(nm.NetworkManager(self, selectedFTSE100, stock_nr), dest=prosessor_index, tag=11)
-                #     selectedFTSE100[stock_nr] = 0
             for stock_nr in delegated[0]:
                 selectedFTSE100[stock_nr] = 1
-                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr, self.run_nr)
-                if (stock_nr == 0):
-                    self.day_list = network_manager.day_list
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
-
-                self.stock_results.append(stock_result)
+                self.generate_network_manager(copy.deepcopy(selectedFTSE100), stock_nr, rank)
                 selectedFTSE100[stock_nr] = 0
-
 
         else:
             stock_information_for_processor = comm.recv(source=0, tag=11)
-            selectedFTSE100 = stock_information_for_processor[1]
+            selected = stock_information_for_processor[1]
             stock_results = []
-            #for stock_nr in range(stock_information_for_processor[0], stock_information_for_processor[1]):
             for stock_nr in stock_information_for_processor[0]: #TODO: potentially conflicting when less stocks than processors
-                selectedFTSE100[stock_nr] = 1
+                selected[stock_nr] = 1
                 rank = comm.Get_rank()
-                network_manager = nm.NetworkManager(self, selectedFTSE100, stock_nr, self.run_nr)
-                stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs, rank=rank)
-                stock_results.append(stock_result)
-                selectedFTSE100[stock_nr] = 0
+                stock_result = self.generate_network_manager(selected, stock_nr, rank)
+                if (stock_result != None):
+                    stock_results.append(stock_result)
+                selected[stock_nr] = 0
 
             comm.send(stock_results, dest=0, tag=11)  # Send result to master
-            #network_manager = self.comm.recv(source=0, tag=11)
-            #stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs)
-            #self.do_result_processing(stock_result)
-            #self.comm.send(stock_result, dest=0, tag=11)  # Send result to master
+
 
         if (rank == 0):
             for i in range(1, number_of_cores):
@@ -151,6 +134,17 @@ class Run():
             #self.print_portfolio_return_graph()
             self.f.close()
 
+    def generate_network_manager(self, selected, stock_nr, rank):
+        network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr)
+        stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs,
+                                                      rank=rank)
+        self.add_to_stock_results(stock_result, network_manager)
+        return stock_result
+
+    def add_to_stock_results(self, stock_result, network_manager):
+        if (stock_result != None):
+            self.stock_results.append(stock_result)
+            self.day_list = network_manager.day_list
 
     def generate_hyper_param_result(self):
 
@@ -220,6 +214,17 @@ class Run():
         total_acc = 0
         for stock_result in self.stock_results:
             total_acc += stock_result.accuracy
+            # stock_result.accuracy == 1.0 and stock_result.over_all_return == 1.0
+            if (stock_result.get_total_pred_accuracy() == 1.0 and stock_result.get_over_all_return() == 1.0):
+                raise ValueError("Most likely something wrong here! Accuracy and return is 1.0.")
+                print("THE WRONG SHIT IS FOUND:")
+                predicted = stock_result.predictions
+                targets = stock_result.targets
+                actual_returns = stock_result.actual_returns
+                print("Tar\tEst\tRet")
+                for i in range(0, len(targets)):
+                    print(str(targets[i])+"\t"+str(predicted[i])+"\t"+str(actual_returns[i]))
+
         return total_acc/float(len(self.stock_results))
 
     def generate_tot_precision(self):
@@ -241,25 +246,25 @@ class Run():
     def generate_stock_long_returns(self):
         ret = []
         for stock_result in self.stock_results:
-            ret.append(stock_result.get_tot_up_return())
+            ret.append([stock_result.get_tot_up_return(), stock_result.stock_nr])
         return ret
 
     def generate_stock_short_returns(self):
         ret = []
         for stock_result in self.stock_results:
-            ret.append(stock_result.get_tot_down_return())
+            ret.append([stock_result.get_tot_down_return(), stock_result.stock_nr])
         return ret
 
     def generate_stock_return_list(self):
         stock_returns = []
         for stock_result in self.stock_results:
-            stock_returns.append(stock_result.get_over_all_return())
+            stock_returns.append([stock_result.get_over_all_return(), stock_result.stock_nr])
         return stock_returns
 
     def generate_stock_accuracies(self):
         stock_accuracies = []
         for stock_result in self.stock_results:
-            stock_accuracies.append(stock_result.get_total_pred_accuracy())
+            stock_accuracies.append([stock_result.get_total_pred_accuracy(), stock_result.stock_nr])
         return stock_accuracies
 
     def write_all_results_to_file(self):
@@ -298,7 +303,7 @@ class Run():
         portolfio_day_returns = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
         portfolio_day_returns_as_percentage = self.make_return_percentage(portolfio_day_returns)
         tot_return = float(portfolio_day_returns_as_percentage[-1]/100)
-        return portolfio_day_returns[-1]
+        return (portolfio_day_returns[-1]/100)+1
 
     def get_total_day_std(self):
         portfolio_day_returns = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
