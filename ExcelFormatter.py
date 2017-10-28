@@ -25,7 +25,6 @@ class ExcelFormatter():
             book_copy = copy(book)
             sh = book_copy.get_sheet(0)
 
-
         col = self.write_hyp_dicts_to_file_type_1(hyp_type_1, sh)
         self.write_hyp_dicts_to_file_type_2(hyp_type_2, sh, col)
         if (self.first_run):
@@ -82,13 +81,14 @@ class ExcelFormatter():
                     label_index += 1
 
             for value in values:
+                stock_index_list_with_values = self.auto_generated_list()
+                for val in value:
+                    stock_index_list_with_values[int(val[1])] = val[0]
                 for i in range(0, len(value)):
-                    sh.write(self.line_number, col, str(value[i]))
+                    sh.write(self.line_number, col, str(stock_index_list_with_values[i]))
                     col += 1
             type += 1
         return col
-
-
 
     def write_to_file(self, dict, sh, row, col):
         for col_data in dict:
@@ -106,6 +106,11 @@ class ExcelFormatter():
         return colum_labels, values
 
 
+    def auto_generated_list(self):
+        l = []
+        for i in range(0, 300):
+            l.append(0)
+        return l
 
 
 #
