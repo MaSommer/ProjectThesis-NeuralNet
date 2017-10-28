@@ -136,7 +136,7 @@ class Run():
 
     def add_to_stock_results(self, stock_result, network_manager):
         if (stock_result != None):
-            stock_results.append(stock_result)
+            self.stock_results.append(stock_result)
             self.day_list = network_manager.day_list
 
     def generate_hyper_param_result(self):
