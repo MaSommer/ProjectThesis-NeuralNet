@@ -75,9 +75,9 @@ class ExcelFormatter():
 
                     for i in range(0, len(values[label_index])):
                         if (type == 0):
-                            col_data = ""+label+"-stock-"+str(values[i][1])
+                            col_data = ""+label+"-stock-"+str(values[label_index][i][1])
                         elif (type == 1):
-                            col_data = ""+label+"-day-"+str(values[i][1])
+                            col_data = ""+label+"-day-"+str(values[label_index][i][1])
                         sh.write(0, start_col+i, str(col_data))
                     label_index += 1
 
