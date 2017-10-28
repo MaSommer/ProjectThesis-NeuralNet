@@ -158,8 +158,15 @@ class Run():
 
         self.result_dict = {}
 
-        ordered_label_list_for_hyp_type_1.append(self.define_key_and_put_in_dict(self.result_dict, "tot_return", self.get_total_return()))
-        ordered_label_list_for_hyp_type_1.append(self.define_key_and_put_in_dict(self.result_dict, "tot_day_std", self.get_total_day_std()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_prec", self.generate_tot_precision()))
+
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_return", self.get_total_return()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_day_std", self.get_total_day_std()))
 
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_long_return", (self.get_portfolio_up_return()-1)))
@@ -174,31 +181,29 @@ class Run():
         sharpe_ratios = self.compute_sharpe_ratios()
         self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[0] #TODO
         self.result_dict["sharpe_short_ratio"] = sharpe_ratios[1] #TODO
-        self.result_dict["sharpe_tot_ratio"] = sharpe_ratios[2] #TODO
+        self.result_dict["sharpe_long_ratio"] = sharpe_ratios[2] #TODO
 
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_tot_ratio", sharpe_ratios[0]))
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_short_ratio", sharpe_ratios[1]))
         ordered_label_list_for_hyp_type_1.append(
-            self.define_key_and_put_in_dict(self.result_dict, "sharpe_tot_ratio", sharpe_ratios[2]))
-
+            self.define_key_and_put_in_dict(self.result_dict, "sharpe_long_ratio", sharpe_ratios[2]))
 
 
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
         self.add_precision_to_result_dict(ordered_label_list_for_hyp_type_1)
 
-
-        #The hyperparameters
+        # The hyperparameters
         hyper_param_dict = self.generate_hyper_param_dict(ordered_label_list_for_hyp_type_1)
 
         stock_results_dict = {}
         #Per stock data:
         stock_results_dict["Stock_returns"] = self.generate_stock_return_list()
         stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
-        stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
-        stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
+        #stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
+        #stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
 
         portfolio_dict = {}
         portfolio_dict["portfolio_accumulated_day_ret"] = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
@@ -210,6 +215,18 @@ class Run():
     def define_key_and_put_in_dict(self, dict, key, value):
         dict[key] = value
         return key
+
+    def generate_tot_accuracy(self):
+        total_acc = 0
+        for stock_result in self.stock_results:
+            total_acc += stock_result.accuracy
+        return total_acc/float(len(self.stock_results))
+
+    def generate_tot_precision(self):
+        total_prec = 0
+        for stock_result in self.stock_results:
+            total_prec += stock_result.over_all_precision
+        return total_prec/float(len(self.stock_results))
 
     def delegate_stock_nr(self, processors, nr_of_stocks):
         delegated = []
@@ -448,7 +465,7 @@ class Run():
         ordered_label_list.append("prec_d_up")
         ordered_label_list.append("prec_s_d")
         ordered_label_list.append("prec_s_up")
-        if(self.generate_hyper_param_dict(ordered_label_list) == None):
+        if(self.aggregate_counter_table == None):
             self.aggregate_counter_table = self.get_aggregate_counter_table()
             up = 0
             s = 0

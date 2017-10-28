@@ -71,10 +71,11 @@ class InputPortolfioInformation:
                 previous_attribute_data_for_row = self.addColDataFromRow(rowCells[1:len(rowCells)], previous_attribute_data_for_row)
             row+=1
             line = f.readline()
+        if (self.normalize_method == "minmax"):
+            self.min_max_normalize()
         print(
         "Finished loading input" + " for " + filename + " : \t %s seconds ---" % (time.time() - self.start_time))
-        if(self.normalize_method == "minmax"):
-            self.min_max_normalize()
+        f.close()
 
 
 

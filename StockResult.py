@@ -30,6 +30,7 @@ class StockResult():
         self.testing_sizes = []
         self.total_accuracy_sum = 0.0
         self.total_testing_cases = 0.0
+        self.total_precision_sum = 0.0
         self.start_time = start_time
 
 
@@ -94,6 +95,8 @@ class StockResult():
 
         self.over_all_actual_map = self.generate_over_all_actual_and_estimated_map(self.actual_map_list)
         self.over_all_estimated_map = self.generate_over_all_actual_and_estimated_map(self.estimated_map_list)
+
+        self.over_all_precision = self.generate_over_all_precision()
         print("\n\n")
 
     def generate_over_all_actual_and_estimated_map(self, map_list):
@@ -116,6 +119,20 @@ class StockResult():
             for target in info_list[0][prediction]:
                 total_info[prediction][target] = float(total_numbers[prediction][target]) / float(number_of_networks)
         return total_info
+
+    def generate_over_all_precision(self):
+        tot_predicted = self.total_testing_cases
+        weights = {}
+        for classification in self.over_all_estimated_map:
+            weights[classification] = float(self.over_all_estimated_map[classification])/float(tot_predicted)
+        prec = {}
+        for classification in self.total_precision_info:
+            prec[classification] = self.total_precision_info[classification][classification]
+        tot_prec = 0
+        for classification in weights:
+            tot_prec += float(prec[classification])*float(weights[classification])
+        return tot_prec
+
 
     def generate_over_all_return(self, over_all_returns):
         tot_ret = 1.0
