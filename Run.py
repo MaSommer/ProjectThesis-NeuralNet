@@ -81,6 +81,10 @@ class Run():
         self.hyper_param_dict = None
         self.aggregate_counter_table = None
 
+        #Map from stock nr to stock
+        self.global_stock_results = {}
+
+
 
     def run_portfolio_in_parallell(self):
         from mpi4py import MPI as MPI
@@ -212,6 +216,7 @@ class Run():
             total_acc += stock_result.accuracy
             # stock_result.accuracy == 1.0 and stock_result.over_all_return == 1.0
             if (stock_result.get_total_pred_accuracy() == 1.0 and stock_result.get_over_all_return() == 1.0):
+                raise ValueError("Most likely something wrong here! Accuracy and return is 1.0.")
                 print("THE WRONG SHIT IS FOUND:")
                 predicted = stock_result.predictions
                 targets = stock_result.targets
