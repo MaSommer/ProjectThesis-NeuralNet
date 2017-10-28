@@ -6,6 +6,7 @@ import neural_net.NeuralNet as nn
 import time
 import os
 import StockResult as res
+import sys
 
 
 
@@ -45,7 +46,9 @@ class NetworkManager():
                                                 self.number_of_trading_days, normalize_method="minmax",
                                                 one_hot_vector_interval=self.one_hot_vector_interval, is_output=True,
                                                 start_time=self.start_time)
-        if (lftse100.ended_up_being_to_many_NA_values):
+        if (lftse100.ended_up_being_to_many_NA_values == True):
+            print(" FOUND IT" )
+            sys.exit()
             return None
 
         # selectedSP500 = ssr.readSelectedStocks("TestInput.txt")

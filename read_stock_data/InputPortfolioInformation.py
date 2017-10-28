@@ -211,7 +211,7 @@ class InputPortolfioInformation:
             if (self.is_output):
                 self.streak_wit_NA_values += 1
                 self.is_in_a_NA_streak = True
-                if (self.is_in_a_NA_streak > 20):
+                if (self.streak_wit_NA_values > 20):
                     self.ended_up_being_to_many_NA_values = True
             return 0.0
 
