@@ -17,19 +17,19 @@ import HyperParamResult as hpr
 
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
-hidden_layer_dimension = [200,40]
+hidden_layer_dimension = [60,40]
 time_lags = 6
 one_hot_vector_interval = [-0.00, 0.00]
 keep_probability_dropout =0.80
 
  #Data set specific
 from_date =  "01.01.2012"
-number_of_trading_days = 500
+number_of_trading_days = 300
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 1
-epochs = 20
-number_of_stocks =36
+epochs = 10
+number_of_stocks =100
 
 
  #Training specific
@@ -38,7 +38,7 @@ minibatch_size = 10
 
 rf_rate = 0.02
 
-nr_of_runs = 5
+nr_of_runs = 1
 global_run_nr = 1
 
 
