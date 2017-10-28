@@ -75,15 +75,15 @@ class ExcelFormatter():
 
                     for i in range(0, len(values[label_index])):
                         if (type == 0):
-                            col_data = ""+label+"-stock-"+str(i)
+                            col_data = ""+label+"-stock-"+str(values[i][1])
                         elif (type == 1):
-                            col_data = ""+label+"-day-"+str(i)
+                            col_data = ""+label+"-day-"+str(values[i][1])
                         sh.write(0, start_col+i, str(col_data))
                     label_index += 1
 
             for value in values:
                 for i in range(0, len(value)):
-                    sh.write(self.line_number, col, str(value[i]))
+                    sh.write(self.line_number, col, str(value[i][0]))
                     col += 1
             type += 1
         return col

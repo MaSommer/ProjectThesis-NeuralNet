@@ -263,13 +263,13 @@ class Run():
     def generate_stock_return_list(self):
         stock_returns = []
         for stock_result in self.stock_results:
-            stock_returns.append(stock_result.get_over_all_return())
+            stock_returns.append([stock_result.get_over_all_return(), stock_result.stock_nr])
         return stock_returns
 
     def generate_stock_accuracies(self):
         stock_accuracies = []
         for stock_result in self.stock_results:
-            stock_accuracies.append(stock_result.get_total_pred_accuracy())
+            stock_accuracies.append([stock_result.get_total_pred_accuracy(), stock_result.stock_nr])
         return stock_accuracies
 
     def write_all_results_to_file(self):
