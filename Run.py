@@ -223,15 +223,12 @@ class Run():
             # stock_result.accuracy == 1.0 and stock_result.over_all_return == 1.0
             if (stock_result.get_total_pred_accuracy() == 1.0 and stock_result.get_over_all_return() == 1.0):
                 print("THE WRONG SHIT IS FOUND:")
-                neural_net_result = stock_result.neural_nets[0].results
-                predicted = neural_net_result.predication_list
-                target = neural_net_result.target_list
-                actual_returns = neural_net_result.actual_returns
+                predicted = stock_result.predictions
+                targets = stock_result.targets
+                actual_returns = stock_result.actual_returns
                 print("Tar\tEst\tRet")
                 for i in range(0, len(target)):
-                    print(str(target[i]))
-                    print(str(predicted[i]))
-                    print(str(actual_returns[i]))
+                    print(str(targets[i])+"\t"+str(predicted[i])+"\t"+str(actual_returns[i]))
 
         return total_acc/float(len(self.stock_results))
 

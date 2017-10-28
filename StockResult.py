@@ -33,7 +33,9 @@ class StockResult():
         self.total_precision_sum = 0.0
         self.start_time = start_time
 
-        self.neural_nets = []
+        self.predictions = []
+        self.targets = []
+        self.actual_returns = []
 
     def get_counter_dictionaries(self):
         return self.counter_dictionaries
@@ -186,7 +188,9 @@ class StockResult():
             self.day_down_returns.append(ret)
 
     def add_to_result(self, neural_net):
-        self.neural_nets.append(neural_net)
+        self.predictions.extend(neural_net.results.predication_list)
+        self.targets.extend(neural_net.results.target_list)
+        self.actual_returns.extend(neural_net.results.actual_returns)
 
         self.accuracies.append(neural_net.accuracy)
         self.accuracy_info_list.append(neural_net.results.accuracy_information)
