@@ -32,7 +32,7 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs, rf_rate, run_nr):
+                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500):
 
         #Start timer
         self.start_time = time.time()
@@ -53,11 +53,11 @@ class Run():
         self.fromDate = from_date                               # "01.01.2008"
         self.number_of_trading_days = number_of_trading_days    #2000
         self.attributes_input = attributes_input                #["op", "cp"]
-        self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+        #self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.number_of_stocks = number_of_stocks
-        self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
-                                             self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
-
+        #self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
+        #                                     self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
+        self.sp500 = sp500
         #Training specific
         self.learning_rate = learning_rate                      #0.1
         self.minibatch_size = minibatch_size                    #10
@@ -108,7 +108,9 @@ class Run():
             for stock_nr in stock_information_for_processor[0]: #TODO: potentially conflicting when less stocks than processors
                 selected[stock_nr] = 1
                 rank = comm.Get_rank()
-                self.generate_network_manager(selected, stock_nr, rank)
+                stock_result = self.generate_network_manager(selected, stock_nr, rank)
+                if (stock_result != None):
+                    stock_results.append(stock_result)
                 selected[stock_nr] = 0
 
             comm.send(stock_results, dest=0, tag=11)  # Send result to master
@@ -133,6 +135,7 @@ class Run():
         stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs,
                                                       rank=rank)
         self.add_to_stock_results(stock_result, network_manager)
+        return stock_result
 
     def add_to_stock_results(self, stock_result, network_manager):
         if (stock_result != None):
