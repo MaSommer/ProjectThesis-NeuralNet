@@ -227,7 +227,7 @@ class Run():
                 targets = stock_result.targets
                 actual_returns = stock_result.actual_returns
                 print("Tar\tEst\tRet")
-                for i in range(0, len(target)):
+                for i in range(0, len(targets)):
                     print(str(targets[i])+"\t"+str(predicted[i])+"\t"+str(actual_returns[i]))
 
         return total_acc/float(len(self.stock_results))
