@@ -38,7 +38,7 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 1
+nr_of_runs = 6
 global_run_nr = 1
 
 
