@@ -303,7 +303,7 @@ class Run():
         portolfio_day_returns = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
         portfolio_day_returns_as_percentage = self.make_return_percentage(portolfio_day_returns)
         tot_return = float(portfolio_day_returns_as_percentage[-1]/100)
-        return portolfio_day_returns[-1]
+        return (portolfio_day_returns[-1]/100)+1
 
     def get_total_day_std(self):
         portfolio_day_returns = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
