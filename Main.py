@@ -16,7 +16,7 @@ import ExcelFormatter as excel
 import HyperParamResult as hpr
 
 
-activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
+activation_functions = ["relu", "relu", "relu", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [500,40]
 time_lags = 1
 one_hot_vector_interval = [-0.000, 0.000]
