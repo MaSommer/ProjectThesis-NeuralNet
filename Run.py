@@ -77,7 +77,7 @@ class Run():
         self.portfolio_day_up_returns = []      #Describes the return on every trade on long-strategy
         self.portfolio_day_down_returns = []    #Describes the return on every trade on short_strategy
         self.stock_results = []
-        self.f = open("res.txt", "w");
+        #self.f = open("res.txt", "w");
         self.hyper_param_dict = None
         self.aggregate_counter_table = None
 
