@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ExcelFormatter as excel
 import HyperParamResult as hpr
+import GoogleSheetWriter as gsw
 
 from mpi4py import MPI as MPI
 
@@ -77,7 +78,7 @@ class Run():
         self.portfolio_day_up_returns = []      #Describes the return on every trade on long-strategy
         self.portfolio_day_down_returns = []    #Describes the return on every trade on short_strategy
         self.stock_results = []
-        #self.f = open("res.txt", "w");
+
         self.hyper_param_dict = None
         self.aggregate_counter_table = None
 
@@ -127,12 +128,12 @@ class Run():
                 print("COMPLETE! \t\tProcessor #" + str(status.Get_source()) + "\t" +"%s seconds ---" % (time.time() - self.start_time) + "\t run nr: "+ str(self.run_nr))
                 self.stock_results.extend(recv_data)
 
-            hyp, ordered_label_list_type_1 = self.generate_hyper_param_result()
+            hyp, ordered_label_list_type_1, ordered_label_list_type_2 = self.generate_hyper_param_result()
             hyp_type_1 = [hyp[0], hyp[1]]
             hyp_type_2 = [hyp[2]]
-            excel.ExcelFormatter(hyp_type_1, hyp_type_2, ordered_label_list_type_1, line_number=self.run_nr) #prints to results.csv file
+            #excel.ExcelFormatter(hyp_type_1, hyp_type_2, ordered_label_list_type_1, line_number=self.run_nr) #prints to results.csv file
+            gsw.main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2)
             #self.print_portfolio_return_graph()
-            self.f.close()
 
     def generate_network_manager(self, selected, stock_nr, rank):
         network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr)
@@ -193,18 +194,34 @@ class Run():
         hyper_param_dict = self.generate_hyper_param_dict(ordered_label_list_for_hyp_type_1)
 
         stock_results_dict = {}
+        ordered_label_list_for_hyp_type_2 = []
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_accuracies", self.generate_stock_accuracies()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_returns",
+                                            self.generate_stock_return_list()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_long_return",
+                                            self.generate_stock_long_returns()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_short_return",
+                                            self.generate_stock_short_returns()))
+
         #Per stock data:
-        stock_results_dict["Stock_returns"] = self.generate_stock_return_list()
-        stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
-        #stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
-        #stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
+        # stock_results_dict["Stock_returns"] = self.generate_stock_return_list()
+        # stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
+        # stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
+        # stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
 
         portfolio_dict = {}
-        portfolio_dict["portfolio_accumulated_day_ret"] = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(portfolio_dict, "portfolio_accumulated_day_ret",
+                                            self.find_portfolio_day_to_day_accumulated_return(self.stock_results)))
+        #portfolio_dict["portfolio_accumulated_day_ret"] = self.find_portfolio_day_to_day_accumulated_return(self.stock_results)
 
         res = [self.result_dict, hyper_param_dict, stock_results_dict, portfolio_dict]
 
-        return res, ordered_label_list_for_hyp_type_1
+        return res, ordered_label_list_for_hyp_type_1, ordered_label_list_for_hyp_type_2
 
     def define_key_and_put_in_dict(self, dict, key, value):
         dict[key] = value
