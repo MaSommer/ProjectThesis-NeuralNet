@@ -18,8 +18,8 @@ import HyperParamResult as hpr
 
 activation_functions = ["relu", "relu", "relu", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [500,40]
-time_lags = 6
-one_hot_vector_interval = [-0.00, 0.00]
+time_lags = 0
+one_hot_vector_interval = [-0.005, 0.005]
 keep_probability_dropout =0.80
 
  #Data set specific
@@ -38,7 +38,7 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 6
+nr_of_runs = 10
 global_run_nr = 1
 
 
