@@ -16,18 +16,18 @@ import ExcelFormatter as excel
 import HyperParamResult as hpr
 
 
-activation_functions = ["relu", "relu", "relu", "tanh", "tanh", "tanh"]
-hidden_layer_dimension = [500,40]
+activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
+hidden_layer_dimension = [500,30]
 time_lags = 1
 one_hot_vector_interval = [-0.005, 0.005]
 keep_probability_dropout =0.80
 
  #Data set specific
 from_date =  "01.01.2012"
-number_of_trading_days = 700
+number_of_trading_days = 1000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 1
+number_of_networks = 2
 epochs = 40
 number_of_stocks =100
 
@@ -38,7 +38,7 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 10
+nr_of_runs = 20
 global_run_nr = 1
 
 
