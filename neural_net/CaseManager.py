@@ -144,28 +144,18 @@ class CaseManager():
         down_count = 0
         interval_up.sort()
         interval_down.sort()
-        print("Interval down: " + str(interval_down))
-        print("Interval up: " + str(interval_up))
         up_sum = 0
         down_sum = 0
         ninty_percent_index_up = int((len(interval_up)-1) * (1- x_percent))
         ninty_percent_index_down = int(len(interval_down) * x_percent)
-        print("Intercal down size: " + str( len(interval_down)))
-        print("Intercal up size: " + str( len(interval_up)))
-        print("X percent: " + str(x_percent))
-        print("End index down: " + str(ninty_percent_index_down))
-        print("Start index up: " + str(ninty_percent_index_up))
 
         for i in range(ninty_percent_index_up, len(interval_up)):
             up_sum += interval_up[i]
-            print("HEY1")
             up_count += 1
 
         for i in range(0, ninty_percent_index_down):
             down_sum += interval_down[i]
             down_count += 1
-            print("HEY2")
-        print("\n\n\n\nDOWN COUNT: " + str(down_count) + "\n\n\n")
 
         averages["up_top_x_percent_avg"] = float(up_sum/up_count)
         averages["down_low_x_percent_avg"] = float(down_sum/down_count)
