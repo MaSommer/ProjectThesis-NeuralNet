@@ -150,8 +150,11 @@ class Run():
 
         ordered_label_list_for_hyp_type_1 = []
 
-        self.result_dict = {}
+        # The hyperparameters
+        hyper_param_dict = self.generate_hyper_param_dict(ordered_label_list_for_hyp_type_1)
 
+        #The results
+        self.result_dict = {}
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
         ordered_label_list_for_hyp_type_1.append(
@@ -184,13 +187,10 @@ class Run():
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_long_ratio", sharpe_ratios[2]))
 
-
+        #The accuracy and precision
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
         self.add_precision_to_result_dict(ordered_label_list_for_hyp_type_1)
-
-        # The hyperparameters
-        hyper_param_dict = self.generate_hyper_param_dict(ordered_label_list_for_hyp_type_1)
 
         stock_results_dict = {}
         ordered_label_list_for_hyp_type_2 = []
@@ -206,11 +206,6 @@ class Run():
             self.define_key_and_put_in_dict(stock_results_dict, "Stock_short_return",
                                             self.generate_stock_short_returns()))
 
-        #Per stock data:
-        # stock_results_dict["Stock_returns"] = self.generate_stock_return_list()
-        # stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
-        # stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
-        # stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
 
         portfolio_dict = {}
         ordered_label_list_for_hyp_type_2.append(
