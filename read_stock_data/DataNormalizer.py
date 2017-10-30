@@ -37,14 +37,9 @@ def normalize_with_max_and_seperate_neg_and_pos(data, min, max, rank):
         if (not (is_float_or_int(data) or is_float_or_int(min))):
             print("Rank: " + str(rank) + "Data: " + str(data)+ " Min: " + str(min))
             return 0
-        try:
-            return -data/min
-        except TypeError as te:
-            print("Rank: " + str(rank) + "Data: " + str(data)+ " Min: " + str(min))
-            sys.exit(1)
-
+        return -data/min
     else:
-        if ((data or max) is None):
+        if (data is None):
             return 0
         if (not (is_float_or_int(data) or is_float_or_int(max))):
             print("Rank: " + str(rank) + "Data: " + str(data)+ " Min: " + str(min))
