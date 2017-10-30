@@ -37,6 +37,8 @@ class StockResult():
         self.targets = []
         self.actual_returns = []
 
+        self.training_accuricies = []
+
     def get_counter_dictionaries(self):
         return self.counter_dictionaries
 
@@ -100,7 +102,14 @@ class StockResult():
         self.over_all_estimated_map = self.generate_over_all_actual_and_estimated_map(self.estimated_map_list)
 
         self.over_all_precision = self.generate_over_all_precision()
+        self.tot_traning_acc = self.generate_tot_training_acc()
         print("\n\n")
+
+    def generate_tot_training_acc(self):
+        tot_acc = 0
+        for acc in self.training_accuricies:
+            tot_acc += acc
+        return tot_acc/float(len(self.training_accuricies))
 
     def generate_over_all_actual_and_estimated_map(self, map_list):
         total_numbers = self.feed_actual_estimated_map()
@@ -193,6 +202,7 @@ class StockResult():
         self.actual_returns.extend(neural_net.results.actual_returns)
 
         self.accuracies.append(neural_net.accuracy)
+        self.training_accuricies.append((neural_net.training_acc))
         self.accuracy_info_list.append(neural_net.results.accuracy_information)
         self.precision_info_list.append(neural_net.results.precision_information)
 

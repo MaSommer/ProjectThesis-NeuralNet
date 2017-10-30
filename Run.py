@@ -161,7 +161,9 @@ class Run():
         #The results
         self.result_dict = {}
         ordered_label_list_for_hyp_type_1.append(
-            self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
+            self.define_key_and_put_in_dict(self.result_dict, "tot_training_acc", self.generate_tot_training_accuracy()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_test_acc", self.generate_tot_accuracy()))
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_prec", self.generate_tot_precision()))
 
@@ -242,6 +244,12 @@ class Run():
                     print(str(targets[i])+"\t"+str(predicted[i])+"\t"+str(actual_returns[i]))
 
         return total_acc/float(len(self.stock_results))
+
+    def generate_tot_training_accuracy(self):
+        tot_acc = 0
+        for stock_result in self.stock_results:
+            tot_acc += stock_result.tot_traning_acc
+        return tot_acc/float(len(self.stock_results))
 
     def generate_tot_precision(self):
         total_prec = 0

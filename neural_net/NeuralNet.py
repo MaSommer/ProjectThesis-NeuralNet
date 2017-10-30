@@ -51,6 +51,8 @@ class NeuralNet():
         self.start_time = start_time
         self.rank = rank
         self.probes = None
+        self.training_acc= 0
+        self.test_acc = 0
 
         self.build_network()
 
@@ -68,7 +70,6 @@ class NeuralNet():
         #layer_size = [input, h1, h2, h3, output]
         # i er layer nr i og outsize er storrelsen paa layer nr i
         for layer_index,number_of_neurons in enumerate(self.layer_dimensions[1:]):
-            print (layer_index)
             layer = l.Layer(self, layer_index, input_variables, input_size, number_of_neurons, self.time_lags)
 
             act_func = self.get_activation_function(layer_index)
@@ -134,11 +135,11 @@ class NeuralNet():
     def testing_session(self,sess):
         cases = self.case_manager.get_testing_cases()
         if len(cases) > 0:
-            self.do_testing(sess,cases,msg='Final Testing')
+            self.do_testing(sess,cases,msg='Final Testing', is_training=False)
 
     #test on training set
     def test_on_training_set(self, sess):
-        self.do_testing(sess, self.case_manager.get_training_cases(), msg='Total Training')
+        self.do_testing(sess, self.case_manager.get_training_cases(), msg='Total Training', is_training=True)
 
     #Continued means not first session with training
     def do_training(self, sess, cases, epochs=100, continued=False):
@@ -181,7 +182,7 @@ class NeuralNet():
             self.display_grabvars(results[1], grabbed_vars, step=step)
         return results[0], results[1], sess
 
-    def do_testing(self,sess,cases,msg='Testing'):
+    def do_testing(self,sess,cases,msg='Testing', is_training = False):
         trans_output = (tf.transpose(self.output_variables, [1, 0, 2]))
         trans_target = (tf.transpose(self.targets, [1, 0, 2]))
         correct_pred = tf.equal(tf.argmax(trans_output[-1], 1), tf.argmax(trans_target[-1], 1))
@@ -201,10 +202,13 @@ class NeuralNet():
             [accuracy, correct_pred, trans_output_print, trans_target_print], self.monitored_variables, self.probes,
             session=sess, feed_dict=feeder, show_interval=None)
         #print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]) + " on test size: " + str(len(cases)))
-        self.accuracy = float(str(acc_and_correct_pred[0]))
-        self.testing_size = float((len(cases)))
+        if (is_training):
+            self.training_acc = float(str(acc_and_correct_pred[0]))
+        else:
+            self.accuracy = float(str(acc_and_correct_pred[0]))
+            self.testing_size = float((len(cases)))
 
-        self.results = res.NeuralNetResults(self, acc_and_correct_pred[2], acc_and_correct_pred[3], returns)
+            self.results = res.NeuralNetResults(self, acc_and_correct_pred[2], acc_and_correct_pred[3], returns)
         return accuracy
 
     def convert_tensor_list_to_list(self, tensor_info):
