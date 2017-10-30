@@ -48,17 +48,17 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2, google_usr, google_pwd):
+def main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2):
     """Shows basic usage of the Sheets API.
 
     Creates a Sheets API service object and prints the names and majors of
     students in a sample spreadsheet:
     https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
     """
-    url_login = "https://accounts.google.com/ServiceLogin"
-    url_auth = "https://accounts.google.com/ServiceLoginAuth"
-    session = SessionGoogle(url_login, url_auth, google_usr, google_pwd)
-    print(session.get("http://plus.google.com"))
+    # url_login = "https://accounts.google.com/ServiceLogin"
+    # url_auth = "https://accounts.google.com/ServiceLoginAuth"
+    # session = SessionGoogle(url_login, url_auth, google_usr, google_pwd)
+    # print(session.get("http://plus.google.com"))
 
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())

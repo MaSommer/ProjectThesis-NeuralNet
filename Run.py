@@ -32,15 +32,12 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, google_usr, google_pwd):
+                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500):
 
         #Start timer
         self.start_time = time.time()
         self.end_time = time.time()
         self.run_nr = run_nr
-
-        self.google_usr = google_usr
-        self.google_pwd = google_pwd
 
         self.rf_rate = rf_rate
 
@@ -134,7 +131,7 @@ class Run():
             hyp_type_1 = [hyp[0], hyp[1]]
             hyp_type_2 = [hyp[2]]
             #excel.ExcelFormatter(hyp_type_1, hyp_type_2, ordered_label_list_type_1, line_number=self.run_nr) #prints to results.csv file
-            gsw.main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2, self.google_usr, self.google_pwd)
+            gsw.main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2)
             #self.print_portfolio_return_graph()
 
     def generate_network_manager(self, selected, stock_nr, rank):
