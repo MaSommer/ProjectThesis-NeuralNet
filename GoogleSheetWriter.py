@@ -9,7 +9,11 @@ from oauth2client.file import Storage
 
 import requests
 import BeautifulSoup
-import argparse
+try:
+    import argparse
+    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+except ImportError:
+    flags = None
 
 
 # If modifying these scopes, delete your previously saved credentials
@@ -40,8 +44,7 @@ def get_credentials():
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
-        if credentials is None or credentials.invalid:
-            flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+        if flags:
             credentials = tools.run_flow(flow, store, flags)
         else: # Needed only for compatibility with Python 2.6
             credentials = tools.run(flow, store)
@@ -76,12 +79,12 @@ def main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_t
     value_list = []
 
     l1, v1 = write_hyp_dicts_to_file_type_1(hyp_type_1, ordered_label_list_type_1)
-    #l2, v2 = write_hyp_dicts_to_file_type_2(hyp_type_2, ordered_label_list_type_2)
+    l2, v2 = write_hyp_dicts_to_file_type_2(hyp_type_2, ordered_label_list_type_2)
 
     label_list.extend(l1)
-    #label_list.extend(l2)
+    label_list.extend(l2)
     value_list.extend(v1)
-    #value_list.extend(v2)
+    value_list.extend(v2)
 
     write_to_sheet(label_list, value_list, service, spreadsheetId, rangeName_personal)
     write_to_sheet(label_list, value_list, service, spreadsheetId, rangeName_all)
@@ -176,13 +179,13 @@ def find_personal_sheet():
 class SessionGoogle:
     def __init__(self, url_login, url_auth, login, pwd):
         self.ses = requests.session()
-        #login_html = self.ses.get(url_login)
-        #soup_login = BeautifulSoup(login_html.content).find('form').find_all('input')
+        login_html = self.ses.get(url_login)
+        soup_login = BeautifulSoup(login_html.content).find('form').find_all('input')
         my_dict = {}
-        # for u in soup_login:
-        #     if u.has_attr('value'):
-        #         my_dict[u['name']] = u['value']
-        #         # override the inputs without login and pwd:
+        for u in soup_login:
+            if u.has_attr('value'):
+                my_dict[u['name']] = u['value']
+                # override the inputs without login and pwd:
         my_dict['Email'] = login
         my_dict['Passwd'] = pwd
         self.ses.post(url_auth, data=my_dict)
