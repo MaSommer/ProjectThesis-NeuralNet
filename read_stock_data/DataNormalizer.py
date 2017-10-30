@@ -43,6 +43,8 @@ def normalize_with_max_and_seperate_neg_and_pos(data, min, max):
         return data/max
 
 def is_float_or_int(data):
+    if (data == None):
+        return False
     if (isinstance(data, int) or isinstance(data, float)):
         return True
     else:
