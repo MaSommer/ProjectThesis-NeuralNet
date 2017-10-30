@@ -32,7 +32,7 @@ def normalize_with_max_and_seperate_neg_and_pos(data, min, max, rank):
     if (max == 0.0):
         return 0
     if (data < 0):
-        if ((data or min) is None):
+        if (data is None):
             return 0
         if (not (is_float_or_int(data) or is_float_or_int(min))):
             print("Rank: " + str(rank) + "Data: " + str(data)+ " Min: " + str(min))
