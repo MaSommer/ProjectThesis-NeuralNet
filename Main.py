@@ -6,30 +6,23 @@ import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
 import copy
-import os
-import numpy as np
-import StockResult as res
-import NetworkManager as nm
-import matplotlib.pyplot as plt
-import numpy as np
-import ExcelFormatter as excel
-import HyperParamResult as hpr
+import argparse
 
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
-hidden_layer_dimension = [500,30]
-time_lags = 1
+hidden_layer_dimension = [60,40]
+time_lags = 2
 one_hot_vector_interval = [-0.005, 0.005]
 keep_probability_dropout =0.80
 
  #Data set specific
 from_date =  "01.01.2012"
-number_of_trading_days = 1000
+number_of_trading_days = 40
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 2
-epochs = 40
-number_of_stocks =100
+number_of_networks = 1
+epochs = 10
+number_of_stocks =2
 
 
  #Training specific
@@ -38,13 +31,21 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 20
+nr_of_runs = 10
 global_run_nr = 1
 
 
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
+
+# parser = argparse.ArgumentParser()
+# parser.add_argument('user_name')
+# parser.add_argument('user_pwd')
+# usr_pwd = parser.parse_args()
+# print(usr_pwd)
+# username = getattr(usr_pwd,'user_name')
+# pwd = getattr(usr_pwd,'user_pwd')
 
 for time_lag in range(0, time_lags):
     for run_nr in range(1, nr_of_runs+1):
