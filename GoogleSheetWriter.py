@@ -9,11 +9,7 @@ from oauth2client.file import Storage
 
 import requests
 import BeautifulSoup
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
+
 
 
 # If modifying these scopes, delete your previously saved credentials
@@ -44,24 +40,25 @@ def get_credentials():
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
-        if flags:
-            credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatibility with Python 2.6
-            credentials = tools.run(flow, store)
+        credentials = tools.run(flow, store)
+        # if flags:
+        #     credentials = tools.run_flow(flow, store, flags)
+        # else: # Needed only for compatibility with Python 2.6
+        #     credentials = tools.run(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2):
+def main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2, google_usr, google_pwd):
     """Shows basic usage of the Sheets API.
 
     Creates a Sheets API service object and prints the names and majors of
     students in a sample spreadsheet:
     https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
     """
-    # url_login = "https://accounts.google.com/ServiceLogin"
-    # url_auth = "https://accounts.google.com/ServiceLoginAuth"
-    # session = SessionGoogle(url_login, url_auth, "martymasommah@gmail.com")
-    # print(session.get("http://plus.google.com"))
+    url_login = "https://accounts.google.com/ServiceLogin"
+    url_auth = "https://accounts.google.com/ServiceLoginAuth"
+    session = SessionGoogle(url_login, url_auth, google_usr, google_pwd)
+    print(session.get("http://plus.google.com"))
 
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -176,22 +173,22 @@ def find_personal_sheet():
     f.close()
     return personal_sheet
 
-# class SessionGoogle:
-#     def __init__(self, url_login, url_auth, login, pwd):
-#         self.ses = requests.session()
-#         # login_html = self.ses.get(url_login)
-#         # soup_login = BeautifulSoup(login_html.content).find('form').find_all('input')
-#         my_dict = {}
-#         # for u in soup_login:
-#         #     if u.has_attr('value'):
-#         #         my_dict[u['name']] = u['value']
-#         #         # override the inputs without login and pwd:
-#         my_dict['Email'] = login
-#         my_dict['Passwd'] = pwd
-#         self.ses.post(url_auth, data=my_dict)
-#
-#     def get(self, URL):
-#         return self.ses.get(URL).text
+class SessionGoogle:
+    def __init__(self, url_login, url_auth, login, pwd):
+        self.ses = requests.session()
+        login_html = self.ses.get(url_login)
+        #soup_login = BeautifulSoup(login_html.content).find('form').find_all('input')
+        my_dict = {}
+        # for u in soup_login:
+        #     if u.has_attr('value'):
+        #         my_dict[u['name']] = u['value']
+        #         # override the inputs without login and pwd:
+        my_dict['Email'] = login
+        my_dict['Passwd'] = pwd
+        self.ses.post(url_auth, data=my_dict)
+
+    def get(self, URL):
+        return self.ses.get(URL).text
 
 
 # hyp1 = {}
