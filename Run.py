@@ -32,7 +32,9 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, soft_label, soft_label_percent):
+                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, soft_label, soft_label_percent, run_description):
+
+        self.run_description = run_description
 
         #Start timer
         self.start_time = time.time()
@@ -584,6 +586,7 @@ class Run():
         #"from_date", "number_of_trading_days", "attributes_input",
         #"learning_rate", "minibatch_size")
         dict = {}
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "run_description", self.run_description))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "activation_functions", self.activation_functions))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "hidden_layer_dimension", self.hidden_layer_dimensions))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time_lags", self.time_lags))
