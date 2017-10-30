@@ -41,7 +41,7 @@ def get_credentials():
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
         if credentials is None or credentials.invalid:
-            flags = argparse.parse_args('--auth_host_name localhost --logging_level INFO'.split())
+            flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
             credentials = tools.run_flow(flow, store, flags)
         else: # Needed only for compatibility with Python 2.6
             credentials = tools.run(flow, store)
