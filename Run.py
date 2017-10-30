@@ -18,6 +18,7 @@ import HyperParamResult as hpr
 import GoogleSheetWriter as gsw
 
 from mpi4py import MPI as MPI
+from time import gmtime, strftime
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
@@ -586,6 +587,7 @@ class Run():
         #"from_date", "number_of_trading_days", "attributes_input",
         #"learning_rate", "minibatch_size")
         dict = {}
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time", strftime("%Y-%m-%d %H:%M:%S", gmtime())))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "run_description", self.run_description))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "activation_functions", self.activation_functions))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "hidden_layer_dimension", self.hidden_layer_dimensions))
