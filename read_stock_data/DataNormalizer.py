@@ -32,9 +32,12 @@ def normalize_with_max_and_seperate_neg_and_pos(data, min, max):
         return 0
     if (data < 0):
         if (not data.isdigit() or not min.isdigit()):
+            print("Data: " + data + " Min: " + min)
             return 0
         return -data/min
     else:
         if (not data.isdigit() or not max.isdigit()):
+            print("Data: " + data + " Max: " + max)
+
             return 0
         return data/max
