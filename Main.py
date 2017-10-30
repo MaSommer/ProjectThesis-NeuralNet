@@ -10,7 +10,7 @@ import argparse
 
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
-hidden_layer_dimension = [40,30]
+hidden_layer_dimension = [400,30]
 time_lags = 3
 one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout = [0.80, 0.50] #first element is input layer and second is hidden layers
@@ -21,7 +21,7 @@ number_of_trading_days = 2000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 4
-epochs = 1
+epochs = 40
 number_of_stocks = 100
 
 
