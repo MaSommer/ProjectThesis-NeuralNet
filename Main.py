@@ -19,7 +19,7 @@ import HyperParamResult as hpr
 activation_functions = ["relu", "relu", "relu", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [500,40]
 time_lags = 1
-one_hot_vector_interval = [-0.005, 0.005]
+one_hot_vector_interval = [-0.003, 0.003]
 keep_probability_dropout =0.80
 
  #Data set specific
