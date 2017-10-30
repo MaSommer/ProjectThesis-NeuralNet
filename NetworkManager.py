@@ -12,7 +12,7 @@ import sys
 
 class NetworkManager():
 
-    def __init__(self, main, selectedFTSE100, stock_nr, run_nr, soft_label, soft_label_percent):
+    def __init__(self, main, selectedFTSE100, stock_nr, run_nr, soft_label = False, soft_label_percent = 1.0):
         self.selectedFTSE100 = selectedFTSE100
         self.sp500 = main.sp500
 

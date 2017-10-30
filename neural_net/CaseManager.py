@@ -4,7 +4,7 @@ import copy as copy
 
 class CaseManager():
 
-    def __init__(self, cases, time_lag, validation_fraction=0.1, test_fraction=0.1, one_hot_vector_interval = [-0.000,0.000], sotf_label = False, soft_label_percent = 1.0):
+    def __init__(self, cases, time_lag, validation_fraction=0.1, test_fraction=0.1, one_hot_vector_interval = [-0.000,0.000], soft_label = False, soft_label_percent = 1.0):
         self.cases = cases[time_lag:len(cases)]
         self.time_lag = time_lag
         self.validation_fraction = validation_fraction
