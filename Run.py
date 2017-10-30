@@ -32,7 +32,7 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500):
+                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, soft_label, soft_label_percent):
 
         #Start timer
         self.start_time = time.time()
@@ -65,6 +65,8 @@ class Run():
         self.learning_method = "gradient_decent"                #TODO: er det progget inn andre loesninger?
         self.softmax = True
         self.epochs = epochs
+        self.soft_label = soft_label
+        self.soft_label_percent = soft_label_percent
 
         #Delete?
         self.one_hot_size = 3                                   #Brukes i NetworkManager
@@ -135,7 +137,7 @@ class Run():
             #self.print_portfolio_return_graph()
 
     def generate_network_manager(self, selected, stock_nr, rank):
-        network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr)
+        network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr, self.soft_label, self.soft_label_percent)
         stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs,
                                                       rank=rank)
         self.add_to_stock_results(stock_result, network_manager)

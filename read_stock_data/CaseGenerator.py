@@ -10,6 +10,7 @@ class CaseGenerator():
         self.one_hot_size = one_hot_size
         self.days_input_data = []
         self.days_output_data = []
+        self.days_return_data = []
         self.addZeros(input_data, output_data, time_lags)
         # print("Output len: " + str(len(output_data[0])))
         # print("Input len: " + str(len(input_data[0])))
@@ -28,6 +29,7 @@ class CaseGenerator():
             self.days_input_data.append(empty_day_list_input)
             empty_day_list_output.extend(np.zeros(self.one_hot_size))
             self.days_output_data.append(empty_day_list_output)
+            self.days_return_data.append(0.0)
 
     def add_data(self, input_data, output_data, output_normalized_data, time_lags):
         number_of_days = len(output_data[0])
@@ -47,15 +49,18 @@ class CaseGenerator():
             self.days_input_data.append(day_input_data)
             one_hot_vector = self.generate_one_hot_vector(output_data[0][day_nr][0])
             self.days_output_data.append(one_hot_vector)
-            # day_output_data = output_data[0][day_nr]
-            case = [self.days_input_data, self.days_output_data, output_data[0][day_nr][0]]
+            self.days_return_data.append(output_data[0][day_nr][0])
+
+            case = [self.days_input_data, self.days_output_data, output_data[0][day_nr][0], self.days_return_data]
 
             day_nr += 1
             self.cases.append(case)
             self.days_input_data = copy.deepcopy(self.days_input_data)
             self.days_output_data = copy.deepcopy(self.days_output_data)
+            self.days_return_data = copy.deepcopy(self.days_return_data)
             del self.days_input_data[0]
             del self.days_output_data[0]
+            del self.days_return_data[0]
 
     def generate_one_hot_vector(self, data):
         if (data < self.one_hot_vector_interval[0]):
