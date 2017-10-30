@@ -45,10 +45,11 @@ class NetworkManager():
 
     def build_networks(self, number_of_networks=10, epochs=40, rank = 0):
         attributes_output = ["ret"]
+        print("\nSTARTED PROCESS" + "\t\tProcessor #" + str(rank) + " stock #" + str(self.stock_nr) + "\t\tRun nr#" + str(self.run_nr))
         lftse100 = pi.InputPortolfioInformation(self.selectedFTSE100, attributes_output, self.fromDate, "LFTSE100wReturn.txt", 1,
                                                 self.number_of_trading_days, normalize_method="minmax",
                                                 one_hot_vector_interval=self.one_hot_vector_interval, is_output=True,
-                                                start_time=self.start_time)
+                                                start_time=self.start_time, rank=rank)
         if (lftse100.ended_up_being_to_many_NA_values == True):
             return None
 
@@ -68,7 +69,6 @@ class NetworkManager():
         seperator0 = 0
         self.stock_result = res.StockResult(self.start_time, self.stock_nr)
         start_day_testing = 0
-        print("\nSTARTED PROCESS" + "\t\tProcessor #" + str(rank) + " stock #" + str(self.stock_nr) + "\t\tRun nr#" + str(self.run_nr))
         for network_nr in range(0, number_of_networks):
             separator1 = int(round(len(cases) * fraction_of_cases_for_one_network)) + seperator0
             if (network_nr == number_of_networks - 1):

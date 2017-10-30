@@ -1,4 +1,5 @@
 import re
+import sys
 
 
 def normailize_regular(inputPortfolioInformation, attributeDataForRow, previous_attribute_data_for_row,
@@ -27,21 +28,26 @@ def normalize_with_min_max(data, min, max):
         return 0
     return (data-min)/(max-min)
 
-def normalize_with_max_and_seperate_neg_and_pos(data, min, max):
+def normalize_with_max_and_seperate_neg_and_pos(data, min, max, rank):
     if (max == 0.0):
         return 0
     if (data < 0):
         if ((data or min) is None):
             return 0
         if (not (is_float_or_int(data) or is_float_or_int(min))):
-            print("Data: " + data + " Min: " + min)
+            print("Rank: " + str(rank) + "Data: " + str(data)+ " Min: " + str(min))
             return 0
-        return -data/min
+        try:
+            return -data/min
+        except TypeError as te:
+            print("Rank: " + str(rank) + "Data: " + str(data)+ " Min: " + str(min))
+            sys.exit(1)
+
     else:
         if ((data or max) is None):
             return 0
         if (not (is_float_or_int(data) or is_float_or_int(max))):
-            print("Data: " + data + " Max: " + max)
+            print("Rank: " + str(rank) + "Data: " + str(data)+ " Min: " + str(min))
             return 0
         return data/max
 
