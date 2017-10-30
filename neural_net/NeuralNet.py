@@ -68,6 +68,7 @@ class NeuralNet():
         #layer_size = [input, h1, h2, h3, output]
         # i er layer nr i og outsize er storrelsen paa layer nr i
         for layer_index,number_of_neurons in enumerate(self.layer_dimensions[1:]):
+            print (layer_index)
             layer = l.Layer(self, layer_index, input_variables, input_size, number_of_neurons, self.time_lags)
 
             act_func = self.get_activation_function(layer_index)
@@ -75,7 +76,10 @@ class NeuralNet():
             self.layers.append(layer)
 
             cell = tf.contrib.rnn.BasicRNNCell(num_units, activation=act_func)
-            drop_cell = tf.contrib.rnn.DropoutWrapper(cell, input_keep_prob=self.keep_probability_for_dropout)
+            if (layer_index == 0): #indicates that it is the first hidden layer
+                drop_cell = tf.contrib.rnn.DropoutWrapper(cell, input_keep_prob=self.keep_probability_for_dropout[0])
+            else:
+                drop_cell = tf.contrib.rnn.DropoutWrapper(cell, input_keep_prob=self.keep_probability_for_dropout[1])
 
             self.cells.append(cell)
             self.drop_cells.append(drop_cell)
