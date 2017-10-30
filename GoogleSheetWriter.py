@@ -9,7 +9,7 @@ from oauth2client.file import Storage
 
 import requests
 import BeautifulSoup
-
+import argparse
 
 
 # If modifying these scopes, delete your previously saved credentials
@@ -40,11 +40,11 @@ def get_credentials():
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
-        credentials = tools.run(flow, store)
-        # if flags:
-        #     credentials = tools.run_flow(flow, store, flags)
-        # else: # Needed only for compatibility with Python 2.6
-        #     credentials = tools.run(flow, store)
+        if credentials is None or credentials.invalid:
+            flags = argparse.parse_args('--auth_host_name localhost --logging_level INFO'.split())
+            credentials = tools.run_flow(flow, store, flags)
+        else: # Needed only for compatibility with Python 2.6
+            credentials = tools.run(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
 
@@ -176,7 +176,7 @@ def find_personal_sheet():
 class SessionGoogle:
     def __init__(self, url_login, url_auth, login, pwd):
         self.ses = requests.session()
-        login_html = self.ses.get(url_login)
+        #login_html = self.ses.get(url_login)
         #soup_login = BeautifulSoup(login_html.content).find('form').find_all('input')
         my_dict = {}
         # for u in soup_login:

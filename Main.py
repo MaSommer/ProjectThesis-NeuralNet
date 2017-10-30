@@ -6,7 +6,7 @@ import neural_net.CaseManager as cm
 import neural_net.NeuralNet as nn
 import time
 import copy
-import sys
+import argparse
 
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
@@ -39,9 +39,13 @@ selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-usrnm_and_pwd = sys.argv[1:]
-username = usrnm_and_pwd[0]
-pwd = usrnm_and_pwd[1]
+parser = argparse.ArgumentParser()
+parser.add_argument('user_name')
+parser.add_argument('user_pwd')
+usr_pwd = parser.parse_args()
+print(usr_pwd)
+username = getattr(usr_pwd,'user_name')
+pwd = getattr(usr_pwd,'user_pwd')
 
 for time_lag in range(0, time_lags):
     for run_nr in range(1, nr_of_runs+1):
