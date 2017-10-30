@@ -22,7 +22,7 @@ attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 1
 epochs = 10
-number_of_stocks =2
+number_of_stocks =4
 
 
  #Training specific
@@ -33,6 +33,8 @@ rf_rate = 1.02
 
 nr_of_runs = 10
 global_run_nr = 1
+soft_label = True
+soft_label_percent = 1.0
 
 
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
@@ -52,7 +54,7 @@ for time_lag in range(0, time_lags):
         time_start = time.time()
         test = run.Run(activation_functions, hidden_layer_dimension, time_lag, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                    from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                   learning_rate, minibatch_size, epochs, rf_rate, global_run_nr, copy.deepcopy(sp500))
+                   learning_rate, minibatch_size, epochs, rf_rate, global_run_nr, copy.deepcopy(sp500), sotf_label, soft_label_percent)
         test.run_portfolio_in_parallell()
         time_end = time.time()
         print("--- Run " + str(global_run_nr) + " took %s seconds ---" % (time_end - time_start))
