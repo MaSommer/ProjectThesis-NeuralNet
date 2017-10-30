@@ -195,6 +195,20 @@ class Run():
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_long_ratio", sharpe_ratios[2]))
 
         #The accuracy and precision
+        estimated_map =  self.generate_total_estimated()
+        actual_map =  self.generate_total_actual()
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "estimated_up", estimated_map["up"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "actual_up", actual_map["up"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "estimated_stay", estimated_map["stay"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "actual_stay", actual_map["stay"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "estimated_down", estimated_map["down"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "actual_down", actual_map["down"]))
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
         self.add_precision_to_result_dict(ordered_label_list_for_hyp_type_1)
@@ -227,6 +241,24 @@ class Run():
     def define_key_and_put_in_dict(self, dict, key, value):
         dict[key] = value
         return key
+
+    def generate_total_estimated(self):
+        total_estimated_map = {}
+        for classification in self.stock_results[0].over_all_estimated_map:
+            tot_estimated_number = 0
+            for stock_result in self.stock_results:
+                tot_estimated_number += stock_result.over_all_estimated_map[classification]
+                total_estimated_map[classification] = tot_estimated_number
+        return total_estimated_map
+
+    def generate_total_actual(self):
+        total_actual_map = {}
+        for classification in self.stock_results[0].over_all_actual_map:
+            tot_actual_number = 0
+            for stock_result in self.stock_results:
+                tot_actual_number += stock_result.over_all_actual_map[classification]
+                total_actual_map[classification] = tot_actual_number
+        return total_actual_map
 
     def generate_tot_accuracy(self):
         total_acc = 0
