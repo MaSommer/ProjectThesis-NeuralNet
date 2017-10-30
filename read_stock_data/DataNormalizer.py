@@ -31,13 +31,19 @@ def normalize_with_max_and_seperate_neg_and_pos(data, min, max):
     if (max == 0):
         return 0
     if (data < 0):
-        if (not data.isdigit() or not min.isdigit()):
+        if (not (is_float_or_int(data) or is_float_or_int(min))):
             print("Data: " + data + " Min: " + min)
             return 0
         return -data/min
     else:
-        if (not data.isdigit() or not max.isdigit()):
+        if (not (is_float_or_int(data) or is_float_or_int(max))):
             print("Data: " + data + " Max: " + max)
 
             return 0
         return data/max
+
+def is_float_or_int(data):
+    if (isinstance(data, int) or isinstance(data, float)):
+        return True
+    else:
+        return False
