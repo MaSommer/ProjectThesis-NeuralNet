@@ -12,7 +12,7 @@ class CaseManager():
         self.training_fraction = 1 - (validation_fraction+test_fraction)
         self.one_hot_interval = one_hot_vector_interval
         self.organize_cases()
-        #self.replace_one_hot_with_soft_labels_linear(0.5)
+        self.replace_one_hot_with_soft_labels_linear(1.0)
 
 #this method defines what is training_cases, test_cases and validation_cases
     def organize_cases(self):
