@@ -32,7 +32,9 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, soft_label, soft_label_percent):
+                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, soft_label, soft_label_percent, run_description):
+
+        self.run_description = run_description
 
         #Start timer
         self.start_time = time.time()
@@ -152,8 +154,11 @@ class Run():
 
         ordered_label_list_for_hyp_type_1 = []
 
-        self.result_dict = {}
+        # The hyperparameters
+        hyper_param_dict = self.generate_hyper_param_dict(ordered_label_list_for_hyp_type_1)
 
+        #The results
+        self.result_dict = {}
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
         ordered_label_list_for_hyp_type_1.append(
@@ -186,13 +191,10 @@ class Run():
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_long_ratio", sharpe_ratios[2]))
 
-
+        #The accuracy and precision
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
         self.add_precision_to_result_dict(ordered_label_list_for_hyp_type_1)
-
-        # The hyperparameters
-        hyper_param_dict = self.generate_hyper_param_dict(ordered_label_list_for_hyp_type_1)
 
         stock_results_dict = {}
         ordered_label_list_for_hyp_type_2 = []
@@ -208,11 +210,6 @@ class Run():
             self.define_key_and_put_in_dict(stock_results_dict, "Stock_short_return",
                                             self.generate_stock_short_returns()))
 
-        #Per stock data:
-        # stock_results_dict["Stock_returns"] = self.generate_stock_return_list()
-        # stock_results_dict["Stock_accuracies"] = self.generate_stock_accuracies()
-        # stock_results_dict["Stock_long_return"] = self.generate_stock_long_returns()
-        # stock_results_dict["Stock_short_return"] = self.generate_stock_short_returns()
 
         portfolio_dict = {}
         ordered_label_list_for_hyp_type_2.append(
@@ -589,6 +586,7 @@ class Run():
         #"from_date", "number_of_trading_days", "attributes_input",
         #"learning_rate", "minibatch_size")
         dict = {}
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "run_description", self.run_description))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "activation_functions", self.activation_functions))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "hidden_layer_dimension", self.hidden_layer_dimensions))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time_lags", self.time_lags))
