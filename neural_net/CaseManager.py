@@ -4,7 +4,7 @@ import copy as copy
 
 class CaseManager():
 
-    def __init__(self, cases, time_lag, validation_fraction=0.1, test_fraction=0.1, one_hot_vector_interval = [-0.000,0.000]):
+    def __init__(self, cases, time_lag, validation_fraction=0.1, test_fraction=0.1, one_hot_vector_interval = [-0.000,0.000], soft_label = False, soft_label_percent = 1.0):
         self.cases = cases[time_lag:len(cases)]
         self.time_lag = time_lag
         self.validation_fraction = validation_fraction
@@ -12,7 +12,8 @@ class CaseManager():
         self.training_fraction = 1 - (validation_fraction+test_fraction)
         self.one_hot_interval = one_hot_vector_interval
         self.organize_cases()
-        self.replace_one_hot_with_soft_labels_linear(0.5)
+        if(soft_label):
+            self.replace_one_hot_with_soft_labels_linear(soft_label_percent)
 
 #this method defines what is training_cases, test_cases and validation_cases
     def organize_cases(self):
