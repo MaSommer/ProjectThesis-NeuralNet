@@ -1,4 +1,4 @@
-
+import re
 
 
 def normailize_regular(inputPortfolioInformation, attributeDataForRow, previous_attribute_data_for_row,
@@ -28,7 +28,7 @@ def normalize_with_min_max(data, min, max):
     return (data-min)/(max-min)
 
 def normalize_with_max_and_seperate_neg_and_pos(data, min, max):
-    if (max == 0):
+    if (max == 0.0):
         return 0
     if (data < 0):
         if (not (is_float_or_int(data) or is_float_or_int(min))):
@@ -45,7 +45,12 @@ def normalize_with_max_and_seperate_neg_and_pos(data, min, max):
 def is_float_or_int(data):
     if (data == None):
         return False
-    if (isinstance(data, int) or isinstance(data, float)):
+    elif (not (isinstance(data, int) or isinstance(data, float))):
+        return False
+    elif(data != "" and (re.match("^\d+?\.\d+?$", data) is not None or data.isdigit())):
         return True
+    elif (len(data) > 0 and data[0] == "-"):
+        if (data[1:len(data)] != "" and (re.match("^\d+?\.\d+?$", data[1:len(data)]) is not None or data[1:len(output)].isdigit())):
+            return True
     else:
         return False
