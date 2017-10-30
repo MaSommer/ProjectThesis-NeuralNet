@@ -12,7 +12,7 @@ import sys
 
 class NetworkManager():
 
-    def __init__(self, main, selectedFTSE100, stock_nr, run_nr):
+    def __init__(self, main, selectedFTSE100, stock_nr, run_nr, soft_label = False, soft_label_percent = 1.0):
         self.selectedFTSE100 = selectedFTSE100
         self.sp500 = main.sp500
 
@@ -35,6 +35,8 @@ class NetworkManager():
         self.hidden_layer_dimensions = main.hidden_layer_dimensions
         self.day_list = []
         self.run_nr = run_nr
+        self.soft_label = soft_label
+        self.soft_label_percent = soft_label_percent
 
         self.keep_probability_for_dropout = main.keep_probability_for_dropout
 
@@ -72,7 +74,7 @@ class NetworkManager():
             if (network_nr == number_of_networks - 1):
                 separator1 = len(cases)
             case_manager = cm.CaseManager(cases[seperator0:separator1], self.time_lags, validation_fraction=0.0,
-                                          test_fraction=0.10)
+                                          test_fraction=0.10, one_hot_vector_interval = self.one_hot_vector_interval, soft_label = self.soft_label, soft_label_percent=self.soft_label_percent)
             start_day_testing += len(case_manager.get_training_cases()) + len(case_manager.get_validation_cases())
 
             end_day_testing = start_day_testing + len(case_manager.get_testing_cases())
