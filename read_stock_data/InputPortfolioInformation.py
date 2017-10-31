@@ -22,7 +22,7 @@ class InputPortolfioInformation:
 
     def __init__(self, selectedStocks, attributes, fromDate, filename, number_of_attributes,
                  number_of_trading_days, normalize_method=None, one_hot_vector_interval=[0,0], is_output=False,
-                 start_time=time.time()):
+                 start_time=time.time(), rank=0):
         self.is_output = is_output
         self.normalize_method = normalize_method
         self.start_time = start_time
@@ -44,6 +44,7 @@ class InputPortolfioInformation:
         self.ended_up_being_to_many_NA_values = False
 
         self.defineGlobalAttributes()
+        self.rank = rank
 
         self.readFile(filename)
 
@@ -148,7 +149,7 @@ class InputPortolfioInformation:
 
                     min, max = self.find_min_and_max(data, key)
                     #norm_data = normalizer.normalize_with_min_max(copy.deepcopy(data), min, max)
-                    norm_data = normalizer.normalize_with_max_and_seperate_neg_and_pos(copy.deepcopy(data), min, max)
+                    norm_data = normalizer.normalize_with_max_and_seperate_neg_and_pos(copy.deepcopy(data), min, max, self.rank)
                     self.portfolio_data[datatype][daydata][attributedata] = data
                     self.normalized_portfolio_data[datatype][daydata][attributedata] = norm_data
 

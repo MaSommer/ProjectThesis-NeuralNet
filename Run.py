@@ -18,6 +18,7 @@ import HyperParamResult as hpr
 import GoogleSheetWriter as gsw
 
 from mpi4py import MPI as MPI
+from time import gmtime, strftime
 
 #Standarized names for activation_functions:    "relu" - Rectified linear unit
 #                                               "sigmoid" - Sigmoid
@@ -160,7 +161,9 @@ class Run():
         #The results
         self.result_dict = {}
         ordered_label_list_for_hyp_type_1.append(
-            self.define_key_and_put_in_dict(self.result_dict, "tot_acc", self.generate_tot_accuracy()))
+            self.define_key_and_put_in_dict(self.result_dict, "tot_training_acc", self.generate_tot_training_accuracy()))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "tot_test_acc", self.generate_tot_accuracy()))
         ordered_label_list_for_hyp_type_1.append(
             self.define_key_and_put_in_dict(self.result_dict, "tot_prec", self.generate_tot_precision()))
 
@@ -192,6 +195,20 @@ class Run():
             self.define_key_and_put_in_dict(self.result_dict, "sharpe_long_ratio", sharpe_ratios[2]))
 
         #The accuracy and precision
+        estimated_map =  self.generate_total_estimated()
+        actual_map =  self.generate_total_actual()
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "estimated_up", estimated_map["up"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "actual_up", actual_map["up"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "estimated_stay", estimated_map["stay"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "actual_stay", actual_map["stay"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "estimated_down", estimated_map["down"]))
+        ordered_label_list_for_hyp_type_1.append(
+            self.define_key_and_put_in_dict(self.result_dict, "actual_down", actual_map["down"]))
         self.aggregate_counter_table = self.get_aggregate_counter_table() # calculated here so it just have to be done once for precision and accuracy
         self.add_accuracy_to_result_dict(ordered_label_list_for_hyp_type_1)
         self.add_precision_to_result_dict(ordered_label_list_for_hyp_type_1)
@@ -225,6 +242,24 @@ class Run():
         dict[key] = value
         return key
 
+    def generate_total_estimated(self):
+        total_estimated_map = {}
+        for classification in self.stock_results[0].over_all_estimated_map:
+            tot_estimated_number = 0
+            for stock_result in self.stock_results:
+                tot_estimated_number += stock_result.over_all_estimated_map[classification]
+                total_estimated_map[classification] = tot_estimated_number
+        return total_estimated_map
+
+    def generate_total_actual(self):
+        total_actual_map = {}
+        for classification in self.stock_results[0].over_all_actual_map:
+            tot_actual_number = 0
+            for stock_result in self.stock_results:
+                tot_actual_number += stock_result.over_all_actual_map[classification]
+                total_actual_map[classification] = tot_actual_number
+        return total_actual_map
+
     def generate_tot_accuracy(self):
         total_acc = 0
         for stock_result in self.stock_results:
@@ -241,6 +276,12 @@ class Run():
                     print(str(targets[i])+"\t"+str(predicted[i])+"\t"+str(actual_returns[i]))
 
         return total_acc/float(len(self.stock_results))
+
+    def generate_tot_training_accuracy(self):
+        tot_acc = 0
+        for stock_result in self.stock_results:
+            tot_acc += stock_result.tot_traning_acc
+        return tot_acc/float(len(self.stock_results))
 
     def generate_tot_precision(self):
         total_prec = 0
@@ -586,6 +627,7 @@ class Run():
         #"from_date", "number_of_trading_days", "attributes_input",
         #"learning_rate", "minibatch_size")
         dict = {}
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time", strftime("%Y-%m-%d %H:%M:%S", gmtime())))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "run_description", self.run_description))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "activation_functions", self.activation_functions))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "hidden_layer_dimension", self.hidden_layer_dimensions))
