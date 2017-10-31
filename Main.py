@@ -9,7 +9,7 @@ import copy
 import argparse
 
 
-activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
+activation_functions = ["relu", "relu", "relu", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [400,30]
 time_lags = 3
 one_hot_vector_interval = [-0.000, 0.000]
@@ -20,7 +20,7 @@ from_date =  "01.01.2009"
 number_of_trading_days = 2000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 4
+number_of_networks = 3
 epochs = 40
 number_of_stocks = 100
 
@@ -33,7 +33,7 @@ rf_rate = 1.02
 
 nr_of_runs = 10
 global_run_nr = 1
-soft_label = False
+soft_label = True
 soft_label_percent = 1.0
 
 
