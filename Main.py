@@ -31,7 +31,7 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 10
+nr_of_runs = 1
 global_run_nr = 1
 soft_label = False
 soft_label_percent = 1.0
@@ -50,6 +50,8 @@ run_description = "Testing hyperparam time_lags 0 --> 2 and one hot interval [-0
 # print(usr_pwd)
 # username = getattr(usr_pwd,'user_name')
 # pwd = getattr(usr_pwd,'user_pwd')
+
+one_hot_vectors = 4
 
 for time_lag in range(0, time_lags):
     start_one_hot = 0.000
