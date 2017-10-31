@@ -12,7 +12,7 @@ import argparse
 activation_functions = ["relu", "relu", "relu", "relu", "relu", "tanh"]
 hidden_layer_dimension = [400,30]
 time_lags = 3
-one_hot_vector_interval = [-0.000, 0.000]
+one_hot_vector_interval = [-0.002, 0.002]
 keep_probability_dropout = [0.80, 0.50] #first element is input layer and second is hidden layers
 
  #Data set specific
