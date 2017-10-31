@@ -17,12 +17,12 @@ keep_probability_dropout = [0.80, 0.50] #first element is input layer and second
 
  #Data set specific
 from_date =  "01.01.2009"
-number_of_trading_days = 400
+number_of_trading_days = 2000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 1
+number_of_networks = 3
 epochs = 40
-number_of_stocks = 12
+number_of_stocks = 100
 
 
  #Training specific
@@ -41,7 +41,7 @@ selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-run_description = "Testing hyperparam time_lags 0 --> 2 and one hot interval [-0,0] --> [-0.01, 0.01]"
+run_description = "Testing hyperparam time_lags 0 --> 2 and one hot interval [-0,0] --> [-0.01, 0.01], "
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
