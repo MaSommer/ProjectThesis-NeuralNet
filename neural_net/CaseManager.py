@@ -151,14 +151,14 @@ class CaseManager():
         ninty_percent_index_down = int(len(interval_down) * x_percent)
 
         for i in range(ninty_percent_index_up, len(interval_up)):
-            if (interval_down[i] is None):
-                continue
+            #if (interval_down[i] is None):
+            #    continue
             up_sum += interval_up[i]
             up_count += 1
 
         for i in range(0, ninty_percent_index_down):
-            if(interval_down[i] is None):
-                continue
+           # if(interval_down[i] is None):
+           #     continue
             down_sum += interval_down[i]
             down_count += 1
 
