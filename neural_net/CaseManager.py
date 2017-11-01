@@ -164,6 +164,7 @@ class CaseManager():
 
         averages["up_top_x_percent_avg"] = float(up_sum/up_count)
         averages["down_low_x_percent_avg"] = float(down_sum/down_count)
+        print(averages)
 
         return averages
 
