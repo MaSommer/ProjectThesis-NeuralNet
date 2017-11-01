@@ -157,8 +157,8 @@ class CaseManager():
             up_count += 1
 
         for i in range(0, ninty_percent_index_down):
-             if(interval_down[i] is None):
-                 continue
+            if(interval_down[i] is None):
+                continue
             down_sum += interval_down[i]
             down_count += 1
 
