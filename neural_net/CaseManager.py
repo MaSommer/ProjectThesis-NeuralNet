@@ -87,7 +87,6 @@ class CaseManager():
         soft_label = [0.0, 0.0, 0.0]
 
         base_prob_up = 0.5
-        print("up: " + str(x_percent_avgs))
         extra_prob_up = min((1-base_prob_up)*(ret/x_percent_avgs["up_top_x_percent_avg"]), (1-base_prob_up))
 
         stay_prob = (1-base_prob_up) - extra_prob_up
@@ -102,7 +101,6 @@ class CaseManager():
         soft_label = [0.0, 0.0, 0.0]
 
         base_prob_down = 0.5
-        print("DOWN: " + str(x_percent_avgs))
 
         extra_prob_down = min((1 - base_prob_down) * (ret / x_percent_avgs["down_low_x_percent_avg"]), (1-base_prob_down))
 
