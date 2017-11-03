@@ -102,6 +102,8 @@ class CaseManager():
         soft_label = [0.0, 0.0, 0.0]
 
         base_prob_down = 0.5
+        if(x_percent_avgs is None):
+            print("SKAFKAKJOASFJONSFLJANSDFKJBSJKFBAJKSBFJKASBFJKBSFBASFKJB")
 
         extra_prob_down = min((1 - base_prob_down) * (ret / x_percent_avgs["down_low_x_percent_avg"]), (1-base_prob_down))
 
@@ -177,6 +179,11 @@ class CaseManager():
         averages["down_low_x_percent_avg"] = b
         if(b is None):
             averages["down_low_x_percent_avg"] = 0
+
+        if(averages is None):
+            averages = {}
+            averages["down_low_x_percent_avg"] = 0
+            averages["up_top_x_percent_avg"] = 0
 
         return averages
 
