@@ -166,8 +166,16 @@ class CaseManager():
                 down_sum += interval_down[i]
                 down_count += 1
 
-        averages["up_top_x_percent_avg"] = float(up_sum/up_count)
-        averages["down_low_x_percent_avg"] = float(down_sum/down_count)
+        d= float(up_sum/up_count)
+        averages["up_top_x_percent_avg"] = d
+        if(d is None):
+            averages["up_top_x_percent_avg"] = 0
+
+        b = float(down_sum/down_count)
+
+        averages["down_low_x_percent_avg"] = b
+        if(b is None):
+            averages["down_low_x_percent_avg"] = 0
 
         return averages
 
