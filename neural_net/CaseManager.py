@@ -34,6 +34,7 @@ class CaseManager():
 
         returns_per_interval = self.generate_categorized_returns_lists()
         x_percent_avgs = self.find_top_x_avgs(returns_per_interval, x_percent) #0.1 to get 10% of extremes up and down
+        print("\n\n\n\n" + str(x_percent_avgs) + "\n\n\n")
         for case in self.training_cases:
             for i in range(0, len(case[1])):                #for ever one_hot_vector in case due to timelags
                 case_ret = case[3][i]     #case[3] has the corresponding returns for the one_hot_vectors
