@@ -152,12 +152,14 @@ class CaseManager():
 
         for i in range(ninty_percent_index_up, len(interval_up)):
             if (interval_up[i] is None):
+                print(interval_up[i])
                 continue
             up_sum += interval_up[i]
             up_count += 1
 
         for i in range(0, ninty_percent_index_down):
             if(interval_down[i] is None):
+                print(interval_down[i])
                 continue
             down_sum += interval_down[i]
             down_count += 1
