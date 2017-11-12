@@ -11,8 +11,8 @@ import argparse
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [400,30]
-time_lags = 3
-one_hot_vector_interval = [-0.002, 0.002]
+time_lags = 0
+one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout = [0.80, 0.50] #first element is input layer and second is hidden layers
 
  #Data set specific
@@ -41,7 +41,7 @@ selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-run_description = "Testing hyperparam time_lags 0 --> 2 and one hot interval [-0,0] --> [-0.01, 0.01]"
+run_description = "Hidden layer dimensions with 2 layers, 250 --> 750 on first and 0 --> 140 on second"
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
@@ -51,17 +51,15 @@ run_description = "Testing hyperparam time_lags 0 --> 2 and one hot interval [-0
 # username = getattr(usr_pwd,'user_name')
 # pwd = getattr(usr_pwd,'user_pwd')
 
-for time_lag in range(0, time_lags):
-    start_one_hot = 0.000
-    for i in range(0, 5):
-        one_hot_vector_interval = [-start_one_hot, start_one_hot]
+for layer_1_size in range(250, 750, 50):
+    for layer_2_size in range(0, 140, 20):
+        hidden_layer_dimension = [layer_1_size, layer_2_size]
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
-            test = run.Run(activation_functions, hidden_layer_dimension, time_lag, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
+            test = run.Run(activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                            from_date, number_of_trading_days, attributes_input, number_of_stocks,
                            learning_rate, minibatch_size, epochs, rf_rate, global_run_nr, copy.deepcopy(sp500), soft_label, soft_label_percent, run_description)
             test.run_portfolio_in_parallell()
             time_end = time.time()
             print("--- Run " + str(global_run_nr) + " took %s seconds ---" % (time_end - time_start))
             global_run_nr += 1
-        start_one_hot += 0.002
