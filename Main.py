@@ -52,7 +52,7 @@ run_description = "Hidden layer dimensions with 2 layers, 250 --> 750 on first a
 # pwd = getattr(usr_pwd,'user_pwd')
 
 for layer_1_size in range(250, 750, 50):
-    for layer_2_size in range(40, 140, 20):
+    for layer_2_size in range(60, 140, 20):
         hidden_layer_dimension = [layer_1_size, layer_2_size]
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
