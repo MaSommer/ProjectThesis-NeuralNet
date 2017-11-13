@@ -17,12 +17,12 @@ keep_probability_dropout = [0.80, 0.50] #first element is input layer and second
 
  #Data set specific
 from_date =  "01.01.2009"
-number_of_trading_days = 100
+number_of_trading_days = 2000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 1
+number_of_networks = 4
 epochs = 40
-number_of_stocks = 72
+number_of_stocks = 100
 
 
  #Training specific
@@ -53,15 +53,15 @@ run_description = "Testing hyperparam time_lags 0 --> 2 and one hot interval [-0
 
 one_hot_vectors = 4
 
-for time_lag in range(2, time_lags):
+for time_lag in range(0, time_lags):
     start_one_hot = 0.000
     counter = 0 # to stard in the middle
     for i in range(0, 5):
-        if(time_lag == 2):
-            if(counter < 2):
-                start_one_hot += 0.002
-                counter += 1
-                continue
+        # if(time_lag == 2):
+        #     if(counter < 2):
+        #         start_one_hot += 0.002
+        #         counter += 1
+        #         continue
         one_hot_vector_interval = [-start_one_hot, start_one_hot]
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
