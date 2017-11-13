@@ -9,7 +9,7 @@ import copy
 import argparse
 
 
-activation_functions = ["relu", "relu", "relu", "tanh", "tanh", "tanh"]
+activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [400,30]
 time_lags = 3
 one_hot_vector_interval = [-0.000, 0.000]
