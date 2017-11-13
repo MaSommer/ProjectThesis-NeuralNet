@@ -38,7 +38,7 @@ soft_label_percent = 1.0
 
 
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500.txt", 7,
+sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500_new.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
 run_description = "Hidden layer dimensions with 2 layers, 250 --> 750 on first and 0 --> 140 on second"
