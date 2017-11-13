@@ -52,6 +52,8 @@ class NetworkManager():
                                                 start_time=self.start_time, rank=rank)
         if (lftse100.ended_up_being_to_many_NA_values == True):
             return None
+        if (self.stock_nr==62 ):
+            return None
 
         # selectedSP500 = ssr.readSelectedStocks("TestInput.txt")
         # selectedFTSE100 = ssr.readSelectedStocks("TestOutput.txt")
