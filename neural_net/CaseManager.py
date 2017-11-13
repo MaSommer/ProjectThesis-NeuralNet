@@ -34,9 +34,12 @@ class CaseManager():
 
         returns_per_interval = self.generate_categorized_returns_lists()
         x_percent_avgs = self.find_top_x_avgs(returns_per_interval, x_percent) #0.1 to get 10% of extremes up and down
-        print("\n\n\n" + str(x_percent_avgs) + "\n\n\n")
+        if(x_percent_avgs is None):
+            x_percent_avgs = {}
+            x_percent_avgs["down_low_x_percent_avg"] = 0
+            x_percent_avgs["up_top_x_percent_avg"] = 0
 
-
+        print("\n\n\n\n" + str(x_percent_avgs) + "\n\n\n")
         for case in self.training_cases:
             for i in range(0, len(case[1])):                #for ever one_hot_vector in case due to timelags
                 case_ret = case[3][i]     #case[3] has the corresponding returns for the one_hot_vectors
@@ -104,6 +107,8 @@ class CaseManager():
         soft_label = [0.0, 0.0, 0.0]
 
         base_prob_down = 0.5
+        if(x_percent_avgs is None):
+            print("SKAFKAKJOASFJONSFLJANSDFKJBSJKFBAJKSBFJKASBFJKBSFBASFKJB")
 
         extra_prob_down = min((1 - base_prob_down) * (ret / x_percent_avgs["down_low_x_percent_avg"]), (1-base_prob_down))
 
@@ -154,15 +159,36 @@ class CaseManager():
         ninty_percent_index_down = int(len(interval_down) * x_percent)
 
         for i in range(ninty_percent_index_up, len(interval_up)):
-            up_sum += interval_up[i]
-            up_count += 1
+            if (interval_up[i] is None):
+                print(interval_up[i])
+                continue
+            else:
+                up_sum += interval_up[i]
+                up_count += 1
 
         for i in range(0, ninty_percent_index_down):
-            down_sum += interval_down[i]
-            down_count += 1
+            if(interval_down[i] is None):
+                print(interval_down[i])
+                continue
+            else:
+                down_sum += interval_down[i]
+                down_count += 1
 
-        averages["up_top_x_percent_avg"] = float(up_sum/up_count)
-        averages["down_low_x_percent_avg"] = float(down_sum/down_count)
+        d= float(up_sum/up_count)
+        averages["up_top_x_percent_avg"] = d
+        if(d is None):
+            averages["up_top_x_percent_avg"] = 0
+
+        b = float(down_sum/down_count)
+
+        averages["down_low_x_percent_avg"] = b
+        if(b is None):
+            averages["down_low_x_percent_avg"] = 0
+
+        if(averages is None):
+            averages = {}
+            averages["down_low_x_percent_avg"] = 0
+            averages["up_top_x_percent_avg"] = 0
 
         return averages
 
