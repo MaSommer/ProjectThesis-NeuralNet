@@ -11,7 +11,7 @@ import argparse
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [400,30]
-time_lags = 3
+time_lags = 2
 one_hot_vector_interval = [-0.002, 0.002]
 keep_probability_dropout = [0.80, 0.50] #first element is input layer and second is hidden layers
 
@@ -33,7 +33,7 @@ rf_rate = 1.02
 
 nr_of_runs = 10
 global_run_nr = 1
-soft_label = False
+soft_label = True
 soft_label_percent = 1.0
 
 
