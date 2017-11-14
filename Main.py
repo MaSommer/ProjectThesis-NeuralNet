@@ -18,7 +18,7 @@ keep_probability_dropout = [0.80, 0.50] #first element is input layer and second
 
  #Data set specific
 from_date =  "01.01.2009"
-number_of_trading_days = 100
+number_of_trading_days = 2000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 4
