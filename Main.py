@@ -32,7 +32,7 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 2
+nr_of_runs = 10
 global_run_nr = 10
 soft_label = True
 soft_label_percent = 1.0
