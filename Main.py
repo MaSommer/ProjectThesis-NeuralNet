@@ -11,8 +11,8 @@ import argparse
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [400,30]
-time_lags = 3
-one_hot_vector_interval = [-0.000, 0.000]
+time_lags = 2
+one_hot_vector_interval = [-0.002, 0.002]
 keep_probability_dropout = [0.80, 0.50] #first element is input layer and second is hidden layers
 
  #Data set specific
@@ -20,7 +20,7 @@ from_date =  "01.01.2009"
 number_of_trading_days = 2000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 4
+number_of_networks = 3
 epochs = 40
 number_of_stocks = 100
 
@@ -33,15 +33,15 @@ rf_rate = 1.02
 
 nr_of_runs = 10
 global_run_nr = 1
-soft_label = False
+soft_label = True
 soft_label_percent = 1.0
 
 
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500.txt", 7,
+sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500_new.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-run_description = "Testing hyperparam time_lags 0 --> 2 and one hot interval [-0,0] --> [-0.01, 0.01]"
+run_description = "Softlabel, timelag: 0 and 1, one-hot-vector 0-->0.01"
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
@@ -55,7 +55,13 @@ one_hot_vectors = 4
 
 for time_lag in range(0, time_lags):
     start_one_hot = 0.000
+    counter = 0 # to stard in the middle
     for i in range(0, 5):
+        # if(time_lag == 2):
+        #     if(counter < 2):
+        #         start_one_hot += 0.002
+        #         counter += 1
+        #         continue
         one_hot_vector_interval = [-start_one_hot, start_one_hot]
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()

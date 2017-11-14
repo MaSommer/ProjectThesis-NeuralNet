@@ -52,6 +52,9 @@ class NetworkManager():
                                                 start_time=self.start_time, rank=rank)
         if (lftse100.ended_up_being_to_many_NA_values == True):
             return None
+        if (self.stock_nr == 62):
+            return None
+
 
         # selectedSP500 = ssr.readSelectedStocks("TestInput.txt")
         # selectedFTSE100 = ssr.readSelectedStocks("TestOutput.txt")
@@ -73,8 +76,11 @@ class NetworkManager():
             separator1 = int(round(len(cases) * fraction_of_cases_for_one_network)) + seperator0
             if (network_nr == number_of_networks - 1):
                 separator1 = len(cases)
+
+            print("\n\n" + "Stock nr: " + str(self.stock_nr))
             case_manager = cm.CaseManager(cases[seperator0:separator1], self.time_lags, validation_fraction=0.0,
                                           test_fraction=0.10, one_hot_vector_interval = self.one_hot_vector_interval, soft_label = self.soft_label, soft_label_percent=self.soft_label_percent)
+            print("-----------Casemanager for stock nr: " + str(self.stock_nr) + " done---------------")
             start_day_testing += len(case_manager.get_training_cases()) + len(case_manager.get_validation_cases())
 
             end_day_testing = start_day_testing + len(case_manager.get_testing_cases())
