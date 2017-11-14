@@ -39,7 +39,7 @@ class CaseManager():
             x_percent_avgs["down_low_x_percent_avg"] = 0
             x_percent_avgs["up_top_x_percent_avg"] = 0
 
-        print("\n\n\n\n" + str(x_percent_avgs) + "\n\n\n")
+        #print("\n\n\n\n" + str(x_percent_avgs) + "\n\n\n")
         for case in self.training_cases:
             for i in range(0, len(case[1])):                #for ever one_hot_vector in case due to timelags
                 case_ret = case[3][i]     #case[3] has the corresponding returns for the one_hot_vectors
@@ -160,7 +160,7 @@ class CaseManager():
 
         for i in range(ninty_percent_index_up, len(interval_up)):
             if (interval_up[i] is None):
-                print(interval_up[i])
+                #print(interval_up[i])
                 continue
             else:
                 up_sum += interval_up[i]
@@ -168,7 +168,7 @@ class CaseManager():
 
         for i in range(0, ninty_percent_index_down):
             if(interval_down[i] is None):
-                print(interval_down[i])
+                #print(interval_down[i])
                 continue
             else:
                 down_sum += interval_down[i]

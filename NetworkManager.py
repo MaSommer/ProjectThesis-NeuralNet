@@ -79,7 +79,7 @@ class NetworkManager():
                 separator1 = len(cases)
             case_manager = cm.CaseManager(cases[seperator0:separator1], self.time_lags_sp, validation_fraction=0.0,
                                           test_fraction=0.10, one_hot_vector_interval = self.one_hot_vector_interval, soft_label = self.soft_label, soft_label_percent=self.soft_label_percent)
-            print("-----------Casemanager for stock nr: " + str(self.stock_nr) + " done---------------")
+            #print("-----------Casemanager for stock nr: " + str(self.stock_nr) + " done---------------")
             start_day_testing += len(case_manager.get_training_cases()) + len(case_manager.get_validation_cases())
 
             end_day_testing = start_day_testing + len(case_manager.get_testing_cases())
