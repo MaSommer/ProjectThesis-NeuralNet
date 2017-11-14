@@ -4,9 +4,9 @@ import copy as copy
 
 class CaseManager():
 
-    def __init__(self, cases, time_lag, validation_fraction=0.1, test_fraction=0.1, one_hot_vector_interval = [-0.000,0.000], soft_label = False, soft_label_percent = 1.0):
-        self.cases = cases[time_lag:len(cases)]
-        self.time_lag = time_lag
+    def __init__(self, cases, time_lags_sp, validation_fraction=0.1, test_fraction=0.1, one_hot_vector_interval = [-0.000, 0.000], soft_label = False, soft_label_percent = 1.0):
+        self.cases = cases[time_lags_sp:len(cases)]
+        self.time_lags_sp = time_lags_sp
         self.validation_fraction = validation_fraction
         self.test_fraction = test_fraction
         self.training_fraction = 1 - (validation_fraction+test_fraction)
@@ -21,7 +21,7 @@ class CaseManager():
         separator2 = int(separator1 + round(len(self.cases) * self.validation_fraction))
 
         #skips the first cases due to time lag
-        self.training_cases = self.cases[self.time_lag:separator1]
+        self.training_cases = self.cases[self.time_lags_sp:separator1]
         self.validation_cases = self.cases[separator1:separator2]
         self.testing_cases = self.cases[separator2:]
 
@@ -39,7 +39,7 @@ class CaseManager():
             x_percent_avgs["down_low_x_percent_avg"] = 0
             x_percent_avgs["up_top_x_percent_avg"] = 0
 
-        print("\n\n\n\n" + str(x_percent_avgs) + "\n\n\n")
+        #print("\n\n\n\n" + str(x_percent_avgs) + "\n\n\n")
         for case in self.training_cases:
             for i in range(0, len(case[1])):                #for ever one_hot_vector in case due to timelags
                 case_ret = case[3][i]     #case[3] has the corresponding returns for the one_hot_vectors
@@ -160,7 +160,7 @@ class CaseManager():
 
         for i in range(ninty_percent_index_up, len(interval_up)):
             if (interval_up[i] is None):
-                print(interval_up[i])
+                #print(interval_up[i])
                 continue
             else:
                 up_sum += interval_up[i]
@@ -168,7 +168,7 @@ class CaseManager():
 
         for i in range(0, ninty_percent_index_down):
             if(interval_down[i] is None):
-                print(interval_down[i])
+                #print(interval_down[i])
                 continue
             else:
                 down_sum += interval_down[i]

@@ -31,7 +31,7 @@ from time import gmtime, strftime
 
 class Run():
 
-    def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
+    def __init__(self, activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
                  learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, soft_label, soft_label_percent, run_description):
 
@@ -47,7 +47,8 @@ class Run():
         #Network specific
         self.activation_functions = activation_functions        #["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
         self.hidden_layer_dimensions = hidden_layer_dimension   #[100,50]
-        self.time_lags = time_lags                              #3
+        self.time_lags_sp = time_lags_sp                              #3
+        self.time_lags_ftse = time_lags_ftse                          #3
         self.one_hot_vector_interval = one_hot_vector_interval  #[-0.000, 0.000]
         self.keep_probability_for_dropout = keep_probability_dropout #0.80
         self.number_of_networks = number_of_networks
@@ -631,7 +632,9 @@ class Run():
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "run_description", self.run_description))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "activation_functions", self.activation_functions))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "hidden_layer_dimension", self.hidden_layer_dimensions))
-        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time_lags", self.time_lags))
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time_lags_sp", self.time_lags_sp))
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time_lags_ftse", self.time_lags_ftse))
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "softlabel", self.soft_label))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "one_hot_vector_interval", self.one_hot_vector_interval))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "keep_probability_dropout", self.keep_probability_for_dropout))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "from_date", self.fromDate))
