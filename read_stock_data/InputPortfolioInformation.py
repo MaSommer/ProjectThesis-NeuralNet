@@ -203,6 +203,8 @@ class InputPortolfioInformation:
 #TODO: concider not using 0.0 as value when NA. Check out encode-decoder framework!
     def getDataPoint(self, rowCell):
         output = self.convertDigitWithoutComma(rowCell)
+        if (output is None):
+            return 0.0
         if (output != "" and (re.match("^\d+?\.\d+?$", output) is not None or output.isdigit())):
             return self.return_float(output)
         elif(len(output) > 0 and output[0] == "-"):
