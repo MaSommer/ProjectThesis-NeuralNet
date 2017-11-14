@@ -10,19 +10,20 @@ import argparse
 
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
-hidden_layer_dimension = [400,30]
-time_lags = 0
+hidden_layer_dimension = [100,30]
+time_lags_sp = 1
+time_lags_ftse = 10
 one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout = [0.80, 0.50] #first element is input layer and second is hidden layers
 
  #Data set specific
 from_date =  "01.01.2009"
-number_of_trading_days = 2000
+number_of_trading_days = 100
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 4
-epochs = 40
-number_of_stocks = 100
+epochs = 10
+number_of_stocks = 2
 
 
  #Training specific
@@ -56,7 +57,7 @@ for layer_1_size in range(250, 750, 50):
         hidden_layer_dimension = [layer_1_size, layer_2_size]
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
-            test = run.Run(activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
+            test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                            from_date, number_of_trading_days, attributes_input, number_of_stocks,
                            learning_rate, minibatch_size, epochs, rf_rate, global_run_nr, copy.deepcopy(sp500), soft_label, soft_label_percent, run_description)
             test.run_portfolio_in_parallell()
