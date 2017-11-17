@@ -11,7 +11,7 @@ import argparse
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [400,30]
-time_lags_sp = 1
+time_lags_sp = 0
 time_lags_ftse = 10
 one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout = [0.8, 0.5] #first element is input layer and second is hidden layers
