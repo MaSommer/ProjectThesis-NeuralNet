@@ -14,7 +14,7 @@ hidden_layer_dimension = [400,30]
 time_lags_sp = 0
 time_lags_ftse = 10
 one_hot_vector_interval = [-0.000, 0.000]
-keep_probability_dropout = [0.8, 0.5] #first element is input layer and second is hidden layers
+keep_probability_dropout = [1.0, 1.0] #first element is input layer and second is hidden layers
 
  #Data set specific
 from_date =  "01.07.2008"
@@ -42,7 +42,7 @@ selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500_new.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-run_description = "New date 01.07.2008 and one hot vector 0.000 -> 0.006 with 0.003 in step. Soft label = True"
+run_description = "Keep probability 1.0 and one hot vector 0.000 -> 0.006 with 0.003 in step. Soft label = [True, false]"
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
