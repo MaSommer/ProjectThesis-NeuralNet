@@ -14,7 +14,7 @@ hidden_layer_dimension = [400,30]
 time_lags_sp = 0
 time_lags_ftse = 10
 one_hot_vector_interval = [-0.000, 0.000]
-keep_probability_dropout = [1.0, 1.0] #first element is input layer and second is hidden layers
+#keep_probability_dropout = [1.0, 1.0] #first element is input layer and second is hidden layers
 
  #Data set specific
 from_date =  "01.07.2008"
@@ -62,7 +62,7 @@ for soft_label in soft_label_list:
         for keep_prob_h2 in range(5):
             for run_nr in range(1, nr_of_runs+1):
                 time_start = time.time()
-                test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, keep_probability_dropout,
+                test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, start_keep_prob,
                                from_date, number_of_trading_days, attributes_input, number_of_stocks,
                                learning_rate, minibatch_size, epochs, rf_rate, global_run_nr, copy.deepcopy(sp500), soft_label, soft_label_percent, run_description)
                 test.run_portfolio_in_parallell()
