@@ -59,7 +59,7 @@ start_one_hot_interval = [-0.00, 0.00]
 for soft_label in soft_label_list:
     start_keep_prob = [0.40, 0.40]
     for keep_prob_h1 in range(3):
-        for keep_prob_h2 in range(5):
+        for keep_prob_h2 in range(7):
             for run_nr in range(1, nr_of_runs+1):
                 time_start = time.time()
                 test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, start_keep_prob,
