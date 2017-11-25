@@ -14,7 +14,7 @@ hidden_layer_dimension = [400,30]
 time_lags_sp = 0
 time_lags_ftse = 10
 one_hot_vector_interval = [-0.000, 0.000]
-#keep_probability_dropout = [1.0, 1.0] #first element is input layer and second is hidden layers
+keep_probability_dropout = [0.4, 0.6, 0.6] #first element is input layer and second is hidden layers
 
  #Data set specific
 from_date =  "01.07.2008"
@@ -42,7 +42,7 @@ selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500_new.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-run_description = "Keep probability 1.0 and one hot vector 0.000 -> 0.006 with 0.003 in step. Soft label = [True, false]"
+run_description = "Different layer sizes"
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
@@ -52,25 +52,39 @@ run_description = "Keep probability 1.0 and one hot vector 0.000 -> 0.006 with 0
 # username = getattr(usr_pwd,'user_name')
 # pwd = getattr(usr_pwd,'user_pwd')
 
-soft_label_list = [False]
+soft_label_list = [True, False]
 start_one_hot_interval = [-0.00, 0.00]
 
+h1_start = 200
+h2_start = 0
+h3_start = 0
 
 for soft_label in soft_label_list:
-    start_keep_prob = [0.60, 0.40]
-    for keep_prob_h1 in range(2):
-        for keep_prob_h2 in range(6):
-            for run_nr in range(1, nr_of_runs+1):
-                time_start = time.time()
-                test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, start_keep_prob,
-                               from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                               learning_rate, minibatch_size, epochs, rf_rate, global_run_nr, copy.deepcopy(sp500), soft_label, soft_label_percent, run_description)
-                test.run_portfolio_in_parallell()
-                time_end = time.time()
-                print("--- Run " + str(global_run_nr) + " took %s seconds ---" % (time_end - time_start))
-                global_run_nr += 1
-            start_keep_prob[1] += 0.10
-        start_keep_prob[0] += 0.20
-        start_keep_prob[1] = 0.40
+    for h1 in range(5):
+        hidden_layer_dimension = [h1_start]
+        for h2 in range(5):
+            for h3 in range(4):
+                for run_nr in range(1, nr_of_runs+1):
+                    time_start = time.time()
+                    test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, keep_probability_dropout,
+                                   from_date, number_of_trading_days, attributes_input, number_of_stocks,
+                                   learning_rate, minibatch_size, epochs, rf_rate, global_run_nr, copy.deepcopy(sp500), soft_label, soft_label_percent, run_description)
+                    test.run_portfolio_in_parallell()
+                    time_end = time.time()
+                    print("--- Run " + str(global_run_nr) + " took %s seconds ---" % (time_end - time_start))
+                    global_run_nr += 1
+                if (h2 != 0):
+                    h3_start += 5
+                    hidden_layer_dimension = [h1_start, h2_start, h3_start]
+                else:
+                    break
+            h2_start += 20
+            hidden_layer_dimension = [h1_start, h2_start]
+        h1_start += 100
+    h1_start = 200
+    h2_start = 20
+    h3_start = 5
+
+
 
 
