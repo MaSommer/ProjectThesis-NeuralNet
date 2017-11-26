@@ -42,7 +42,7 @@ selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500_new.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-run_description = "Different layer sizes"
+run_description = "Different learning rates and different epochs"
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
@@ -59,33 +59,21 @@ h1_start = 300
 h2_start = 0
 h3_start = 0
 
+learning_rates = [0.05, 0.02, 0.01, 0,005, 0,001]
+epochs = [20, 40, 60, 80]
+
 for soft_label in soft_label_list:
-    for h1 in range(5):
-        hidden_layer_dimension = [h1_start]
-        for h2 in range(5):
-            for h3 in range(4):
-                for run_nr in range(1, nr_of_runs+1):
-                    time_start = time.time()
-                    test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, keep_probability_dropout,
-                                   from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                                   learning_rate, minibatch_size, epochs, rf_rate, global_run_nr, copy.deepcopy(sp500), soft_label, soft_label_percent, run_description)
-                    test.run_portfolio_in_parallell()
-                    time_end = time.time()
-                    print("--- Run " + str(global_run_nr) + " took %s seconds ---" % (time_end - time_start))
-                    global_run_nr += 1
-                if (h2 != 0):
-                    h3_start += 5
-                    hidden_layer_dimension = [h1_start, h2_start, h3_start]
-                else:
-                    break
-            h2_start += 20
-            h3_start = 5
-            hidden_layer_dimension = [h1_start, h2_start]
-        h1_start += 100
-        h2_start = 20
-    h1_start = 300
-    h2_start = 20
-    h3_start = 5
+    for learning_rate in learning_rates:
+        for epoch in epochs:
+            for run_nr in range(1, nr_of_runs+1):
+                time_start = time.time()
+                test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, keep_probability_dropout,
+                               from_date, number_of_trading_days, attributes_input, number_of_stocks,
+                               learning_rate, minibatch_size, epoch, rf_rate, global_run_nr, copy.deepcopy(sp500), soft_label, soft_label_percent, run_description)
+                test.run_portfolio_in_parallell()
+                time_end = time.time()
+                print("--- Run " + str(global_run_nr) + " took %s seconds ---" % (time_end - time_start))
+                global_run_nr += 1
 
 
 
