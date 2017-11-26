@@ -55,7 +55,7 @@ run_description = "Different layer sizes"
 soft_label_list = [True, False]
 start_one_hot_interval = [-0.00, 0.00]
 
-h1_start = 200
+h1_start = 300
 h2_start = 0
 h3_start = 0
 
@@ -83,7 +83,7 @@ for soft_label in soft_label_list:
             hidden_layer_dimension = [h1_start, h2_start]
         h1_start += 100
         h2_start = 20
-    h1_start = 200
+    h1_start = 300
     h2_start = 20
     h3_start = 5
 
