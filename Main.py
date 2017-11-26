@@ -79,11 +79,14 @@ for soft_label in soft_label_list:
                 else:
                     break
             h2_start += 20
+            h3_start = 5
             hidden_layer_dimension = [h1_start, h2_start]
         h1_start += 100
+        h2_start = 20
     h1_start = 200
     h2_start = 20
     h3_start = 5
+
 
 
 
