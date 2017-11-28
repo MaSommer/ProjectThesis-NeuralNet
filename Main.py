@@ -59,7 +59,7 @@ h1_start = 300
 h2_start = 0
 h3_start = 0
 
-learning_rates = [0.05, 0.02, 0.01, 0,005, 0,001]
+learning_rates = [0.01, 0.005, 0.001]
 epochs = [20, 40, 60, 80]
 
 for soft_label in soft_label_list:
