@@ -66,7 +66,7 @@ def main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_t
     spreadsheetId = '1ihqE4vwFsiHE9IMnE2WsCI9MUZki_sIdvrkVniQcvno'
     personal_sheet = find_personal_sheet()
     rangeName_personal = personal_sheet + '!A1'
-    rangeName_all = 'all_results!A1'
+    #rangeName_all = 'all_results!A1'
 
     label_list = []
     value_list = []
@@ -80,7 +80,7 @@ def main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_t
     value_list.extend(v2)
 
     write_to_sheet(label_list, value_list, service, spreadsheetId, rangeName_personal)
-    write_to_sheet(label_list, value_list, service, spreadsheetId, rangeName_all)
+    #write_to_sheet(label_list, value_list, service, spreadsheetId, rangeName_all)
 
 
 
