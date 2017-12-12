@@ -12,7 +12,7 @@ import sys
 
 class NetworkManager():
 
-    def __init__(self, run, selectedFTSE100, stock_nr, run_nr, soft_label = False, soft_label_percent = 1.0):
+    def __init__(self, run, selectedFTSE100, stock_nr, run_nr, rf_rate, soft_label = False, soft_label_percent = 1.0):
         self.selectedFTSE100 = selectedFTSE100
         self.sp500 = run.sp500
 
@@ -38,6 +38,7 @@ class NetworkManager():
         self.run_nr = run_nr
         self.soft_label = soft_label
         self.soft_label_percent = soft_label_percent
+        self.rf_rate = rf_rate
 
         self.keep_probability_for_dropout = run.keep_probability_for_dropout
 
@@ -71,7 +72,7 @@ class NetworkManager():
         cases = case_generator.cases
         fraction_of_cases_for_one_network = float(1.0 / float(number_of_networks))
         seperator0 = 0
-        self.stock_result = res.StockResult(self.start_time, self.stock_nr)
+        self.stock_result = res.StockResult(self.start_time, self.stock_nr, self.rf_rate)
         start_day_testing = 0
         for network_nr in range(0, number_of_networks):
             separator1 = int(round(len(cases) * fraction_of_cases_for_one_network)) + seperator0
