@@ -63,7 +63,7 @@ def main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_t
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
 
-    spreadsheetId = '1ihqE4vwFsiHE9IMnE2WsCI9MUZki_sIdvrkVniQcvno'
+    spreadsheetId = '1sZBr9N0umnWHSNIK0aNwpY85MUJrBKevxywERW1'
     personal_sheet = find_personal_sheet()
     rangeName_personal = personal_sheet + '!A1'
     #rangeName_all = 'all_results!A1'
