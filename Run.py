@@ -227,12 +227,12 @@ class Run():
         ordered_label_list_for_hyp_type_2.append(
             self.define_key_and_put_in_dict(stock_results_dict, "Stock_sharpe_ratio",
                                             self.generate_stock_return_list()))
-        # ordered_label_list_for_hyp_type_2.append(
-        #     self.define_key_and_put_in_dict(stock_results_dict, "Stock_long_return",
-        #                                     self.generate_stock_long_returns()))
-        # ordered_label_list_for_hyp_type_2.append(
-        #     self.define_key_and_put_in_dict(stock_results_dict, "Stock_short_return",
-        #                                     self.generate_stock_short_returns()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_long_return",
+                                            self.generate_stock_long_returns()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_short_return",
+                                            self.generate_stock_short_returns()))
 
 
         portfolio_dict = {}
