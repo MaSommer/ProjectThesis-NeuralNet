@@ -141,7 +141,7 @@ class Run():
             #self.print_portfolio_return_graph()
 
     def generate_network_manager(self, selected, stock_nr, rank):
-        network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr, self.soft_label, self.soft_label_percent)
+        network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr, self.rf_rate, self.soft_label, self.soft_label_percent)
         stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs,
                                                       rank=rank)
         self.add_to_stock_results(stock_result, network_manager)
@@ -221,6 +221,12 @@ class Run():
         ordered_label_list_for_hyp_type_2.append(
             self.define_key_and_put_in_dict(stock_results_dict, "Stock_returns",
                                             self.generate_stock_return_list()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_sd",
+                                            self.generate_stock_sd_list()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_sharpe_ratio",
+                                            self.generate_stock_sharpe_ratio_list()))
         ordered_label_list_for_hyp_type_2.append(
             self.define_key_and_put_in_dict(stock_results_dict, "Stock_long_return",
                                             self.generate_stock_long_returns()))
@@ -317,6 +323,18 @@ class Run():
         for stock_result in self.stock_results:
             stock_returns.append([stock_result.get_over_all_return(), stock_result.stock_nr])
         return stock_returns
+
+    def generate_stock_sd_list(self):
+        stock_sds = []
+        for stock_result in self.stock_results:
+            stock_sds.append([stock_result.over_all_standard_deviation_on_day_return, stock_result.stock_nr])
+        return stock_sds
+
+    def generate_stock_sharpe_ratio_list(self):
+        stock_sharpe_ratios = []
+        for stock_result in self.stock_results:
+            stock_sharpe_ratios.append([stock_result.over_all_sharp_ratio, stock_result.stock_nr])
+        return stock_sharpe_ratios
 
     def generate_stock_accuracies(self):
         stock_accuracies = []
