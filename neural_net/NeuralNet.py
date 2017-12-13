@@ -167,7 +167,7 @@ class NeuralNet():
             #if (epoch == epochs):
                 #print("\t\tProcessor #" + str(self.rank) + "finished training net #" + str(self.network_nr) + " after \t %s seconds ---" % (time.time() - self.start_time))
         self.global_training_step += epochs
-        # flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
+        flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
         #                           title="",fig=not(continued))
 
     def run_one_step(self, operators, grabbed_vars=None, probed_vars=None, dir='probeview',

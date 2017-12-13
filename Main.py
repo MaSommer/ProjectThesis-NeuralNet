@@ -22,8 +22,8 @@ number_of_trading_days = 2000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 number_of_networks = 4
-epochs = 40
-number_of_stocks = 100
+epochs = 100
+number_of_stocks = 1
 
 
  #Training specific
@@ -32,7 +32,7 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 20
+nr_of_runs = 1
 global_run_nr = 1
 soft_label = True
 soft_label_percent = 1.0
