@@ -5,7 +5,7 @@ import Stringformatter as string_formatter
 
 class StockResult():
 
-    def __init__(self, start_time, stock_nr):
+    def __init__(self, start_time, stock_nr, rf_rate):
         self.stock_nr = stock_nr        #TODO: should be changed to stock name
         self.accuracies = []            #accuracies per period
         self.accuracy_info_list = []    # list of 3x3 dict with accuracy for different pairs of prediction_actualValue, for every net
@@ -38,6 +38,7 @@ class StockResult():
         self.actual_returns = []
 
         self.training_accuricies = []
+        self.rf_rate = rf_rate
 
     def get_counter_dictionaries(self):
         return self.counter_dictionaries
@@ -103,7 +104,24 @@ class StockResult():
 
         self.over_all_precision = self.generate_over_all_precision()
         self.tot_traning_acc = self.generate_tot_training_acc()
+
+        self.over_all_standard_deviation_on_day_return = self.generate_sd_on_day_returns()
+        self.over_all_sharp_ratio = self.generate_over_all_sharp_ratio()
         print("\n\n")
+
+    def generate_over_all_sharp_ratio(self):
+        return (self.over_all_return-self.rf_rate)/self.over_all_standard_deviation_on_day_return
+
+    def generate_sd_on_day_returns(self):
+        non_accumulated_day_returns = self.convert_accumulated_portfolio_return_to_day_returns(self.day_returns_list)
+        return np.std(non_accumulated_day_returns)
+
+    def convert_accumulated_portfolio_return_to_day_returns(self, accumulated_returns):
+        day_returns = []
+        for i in range(1, len(accumulated_returns)):
+            day_return = accumulated_returns[i]/accumulated_returns[i-1]
+            day_returns.append(day_return)
+        return day_returns
 
     def generate_tot_training_acc(self):
         tot_acc = 0

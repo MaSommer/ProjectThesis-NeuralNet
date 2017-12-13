@@ -31,7 +31,7 @@ from time import gmtime, strftime
 
 class Run():
 
-    def __init__(self, activation_functions, hidden_layer_dimension, time_lags, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
+    def __init__(self, activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
                  learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, soft_label, soft_label_percent, run_description):
 
@@ -47,7 +47,8 @@ class Run():
         #Network specific
         self.activation_functions = activation_functions        #["tanh", "tanh", "tanh", "tanh", "tanh", "sigmoid"]
         self.hidden_layer_dimensions = hidden_layer_dimension   #[100,50]
-        self.time_lags = time_lags                              #3
+        self.time_lags_sp = time_lags_sp                              #3
+        self.time_lags_ftse = time_lags_ftse                          #3
         self.one_hot_vector_interval = one_hot_vector_interval  #[-0.000, 0.000]
         self.keep_probability_for_dropout = keep_probability_dropout #0.80
         self.number_of_networks = number_of_networks
@@ -140,7 +141,7 @@ class Run():
             #self.print_portfolio_return_graph()
 
     def generate_network_manager(self, selected, stock_nr, rank):
-        network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr, self.soft_label, self.soft_label_percent)
+        network_manager = nm.NetworkManager(self, selected, stock_nr, self.run_nr, self.rf_rate, self.soft_label, self.soft_label_percent)
         stock_result = network_manager.build_networks(number_of_networks=self.number_of_networks, epochs=self.epochs,
                                                       rank=rank)
         self.add_to_stock_results(stock_result, network_manager)
@@ -220,6 +221,12 @@ class Run():
         ordered_label_list_for_hyp_type_2.append(
             self.define_key_and_put_in_dict(stock_results_dict, "Stock_returns",
                                             self.generate_stock_return_list()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_sd",
+                                            self.generate_stock_sd_list()))
+        ordered_label_list_for_hyp_type_2.append(
+            self.define_key_and_put_in_dict(stock_results_dict, "Stock_sharpe_ratio",
+                                            self.generate_stock_sharpe_ratio_list()))
         ordered_label_list_for_hyp_type_2.append(
             self.define_key_and_put_in_dict(stock_results_dict, "Stock_long_return",
                                             self.generate_stock_long_returns()))
@@ -316,6 +323,18 @@ class Run():
         for stock_result in self.stock_results:
             stock_returns.append([stock_result.get_over_all_return(), stock_result.stock_nr])
         return stock_returns
+
+    def generate_stock_sd_list(self):
+        stock_sds = []
+        for stock_result in self.stock_results:
+            stock_sds.append([stock_result.over_all_standard_deviation_on_day_return, stock_result.stock_nr])
+        return stock_sds
+
+    def generate_stock_sharpe_ratio_list(self):
+        stock_sharpe_ratios = []
+        for stock_result in self.stock_results:
+            stock_sharpe_ratios.append([stock_result.over_all_sharp_ratio, stock_result.stock_nr])
+        return stock_sharpe_ratios
 
     def generate_stock_accuracies(self):
         stock_accuracies = []
@@ -631,7 +650,9 @@ class Run():
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "run_description", self.run_description))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "activation_functions", self.activation_functions))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "hidden_layer_dimension", self.hidden_layer_dimensions))
-        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time_lags", self.time_lags))
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time_lags_sp", self.time_lags_sp))
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "time_lags_ftse", self.time_lags_ftse))
+        ordered_label_list.append(self.define_key_and_put_in_dict(dict, "softlabel", self.soft_label))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "one_hot_vector_interval", self.one_hot_vector_interval))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "keep_probability_dropout", self.keep_probability_for_dropout))
         ordered_label_list.append(self.define_key_and_put_in_dict(dict, "from_date", self.fromDate))
