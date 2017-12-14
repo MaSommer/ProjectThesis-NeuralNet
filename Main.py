@@ -17,7 +17,7 @@ one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout = [0.4, 0.6, 0.6] #first element is input layer and second is hidden layers
 
  #Data set specific
-from_date =  "01.07.2008"
+from_date =  "01.10.2008"
 number_of_trading_days = 2000
 attributes_input = ["op", "cp"]
 selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
@@ -32,7 +32,7 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 20
+nr_of_runs = 3
 global_run_nr = 1
 soft_label = True
 soft_label_percent = 1.0
@@ -59,9 +59,10 @@ h1_start = 300
 h2_start = 0
 h3_start = 0
 
-epochs = [40, 60, 80]
+epochs = [20, 50, 100]
+from_dates = ["01.10.2008", "01.04.2009"]
 
-for soft_label in soft_label_list:
+for from_dascrte in from_dates:
     for epoch in epochs:
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
