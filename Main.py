@@ -42,7 +42,7 @@ selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500_new.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-run_description = "SD and sharpe ratio for each stock"
+run_description = "Different dates"
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
