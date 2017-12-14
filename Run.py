@@ -77,7 +77,7 @@ class Run():
         self.initial_weight_range = [-1.0, 1.0]                 #TODO: fiks
         self.initial_bias_weight_range = [0.0, 0.0]             #TODO: fiks
         self.show_interval = None                               #Brukes i network manager
-        self.validation_interval = None                         #Brukes i network manager
+        self.validation_interval = 1                         #Brukes i network manager
 
         #Results
         self.portfolio_day_up_returns = []      #Describes the return on every trade on long-strategy
@@ -137,7 +137,7 @@ class Run():
             hyp_type_1 = [hyp[0], hyp[1]]
             hyp_type_2 = [hyp[2]]
             #excel.ExcelFormatter(hyp_type_1, hyp_type_2, ordered_label_list_type_1, line_number=self.run_nr) #prints to results.csv file
-            gsw.main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2)
+            #gsw.main(hyp_type_1, hyp_type_2, ordered_label_list_type_1, ordered_label_list_type_2)
             #self.print_portfolio_return_graph()
 
     def generate_network_manager(self, selected, stock_nr, rank):

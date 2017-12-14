@@ -167,8 +167,22 @@ class NeuralNet():
             #if (epoch == epochs):
                 #print("\t\tProcessor #" + str(self.rank) + "finished training net #" + str(self.network_nr) + " after \t %s seconds ---" % (time.time() - self.start_time))
         self.global_training_step += epochs
-        flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
-        #                           title="",fig=not(continued))
+        loss_train = []
+        epochs_train = []
+        for i in range(len(self.error_history)):
+            loss_train.append(self.error_history[i][1])
+            epochs_train.append(self.error_history[i][0])
+        loss_validation = []
+        epochs_validation = []
+        for i in range(len(self.validation_history)):
+            loss_validation.append(self.validation_history[i][1])
+            epochs_validation.append(self.validation_history[i][0])
+        PLT.plot(epochs_train, loss_train)
+        PLT.plot(epochs_validation, loss_validation)
+        PLT.show()
+        #flt.plot_training_history(self.error_history,self.validation_history,xtitle="Epoch",ytitle="Error",
+        #                          title="",fig=not(continued))
+        k = input("string:")
 
     def run_one_step(self, operators, grabbed_vars=None, probed_vars=None, dir='probeview',
                   session=None, feed_dict=None, step=1, show_interval=1):
@@ -199,7 +213,7 @@ class NeuralNet():
         feeder = {self.inputs: inputs, self.targets: targets}
 
         acc_and_correct_pred, grabvals, _ = self.run_one_step(
-            [accuracy, correct_pred, trans_output_print, trans_target_print], self.monitored_variables, self.probes,
+            [accuracy, correct_pred, trans_output_print, trans_target_print], self.loss, self.probes,
             session=sess, feed_dict=feeder, show_interval=None)
         #print('%s Set Accuracy = %f ' % (msg, acc_and_correct_pred[0]) + " on test size: " + str(len(cases)))
         if (is_training):
@@ -209,7 +223,7 @@ class NeuralNet():
             self.testing_size = float((len(cases)))
 
             self.results = res.NeuralNetResults(self, acc_and_correct_pred[2], acc_and_correct_pred[3], returns)
-        return accuracy
+        return accuracy, grabvals
 
     def convert_tensor_list_to_list(self, tensor_info):
         tensor_string = str(tensor_info)
@@ -299,8 +313,8 @@ class NeuralNet():
         if self.validation_interval and (epoch % self.validation_interval == 0):
             cases = self.case_manager.get_validation_cases()
             if len(cases) > 0:
-                error = self.do_testing(sess,cases,msg='Validation Testing')
-                self.validation_history.append((epoch,error))
+                error, grabvals = self.do_testing(sess,cases,msg='Validation Testing')
+                self.validation_history.append((epoch,grabvals))
 
     def display_grabvars(self, grabbed_vals, grabbed_vars,step=1):
         names = [x.name for x in grabbed_vars];
