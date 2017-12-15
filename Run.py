@@ -33,7 +33,7 @@ class Run():
 
     def __init__(self, activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, one_hot_vector_interval, number_of_networks, keep_probability_dropout,
                  from_date, number_of_trading_days, attributes_input, number_of_stocks,
-                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, soft_label, soft_label_percent, run_description):
+                 learning_rate, minibatch_size, epochs, rf_rate, run_nr, sp500, selectedFTSE, soft_label, soft_label_percent, run_description):
 
         self.run_description = run_description
 
@@ -62,6 +62,7 @@ class Run():
         #self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
         #                                     self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
         self.sp500 = sp500
+        self.selectedFTSE = selectedFTSE
         #Training specific
         self.learning_rate = learning_rate                      #0.1
         self.minibatch_size = minibatch_size                    #10
@@ -100,7 +101,7 @@ class Run():
         if (rank == 0):
             print("\n\n\n------------------------------ RUN NR " + str(self.run_nr) + " ------------------------------")
             selectedFTSE100 = self.generate_selected_list()
-            delegated = self.delegate_stock_nr(number_of_cores, self.number_of_stocks)
+            delegated = self.delegate_stock_nr_in_correct_way(number_of_cores)
 
             for prosessor_index in range(1, number_of_cores):
                 stock_information_for_processor = [delegated[prosessor_index], copy.deepcopy(selectedFTSE100)]
@@ -305,6 +306,20 @@ class Run():
             index = nr % processors
             delegated[index].append(nr)
         return delegated
+
+    def delegate_stock_nr_in_correct_way(self, processors):
+        delegated = []
+        for n in range(processors):
+            delegated.append([])
+
+        processor_recieved = 0
+        for nr in range(len(self.selectedFTSE)):
+            if (self.selectedFTSE[nr] == 1):
+                index = processor_recieved % processors
+                delegated[index].append(nr)
+                processor_recieved += 1
+        return  delegated
+
 
     def generate_stock_long_returns(self):
         ret = []
