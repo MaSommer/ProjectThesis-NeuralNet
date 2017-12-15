@@ -46,7 +46,7 @@ selectedFTSE = [0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	0
                 0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	1,	0,	1,	0,	0,	0,	0,	0,	0,
                 1,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	0,	0,	1,	0,	1,	1,	0,	0]
 
-run_description = "Spisset portofolio"
+run_description = "Different time lags"
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
