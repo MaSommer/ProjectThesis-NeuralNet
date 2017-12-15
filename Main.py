@@ -59,14 +59,15 @@ h1_start = 300
 h2_start = 0
 h3_start = 0
 
-epochs = [20, 50, 100]
-from_dates = ["01.04.2009"]
+epochs = [40]
+from_dates = ["01.07.2008"]
+time_lags_sp = [1, 2]
 
-for from_date in from_dates:
+for time_lag_sp in time_lags_sp:
     for epoch in epochs:
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
-            test = run.Run(activation_functions, hidden_layer_dimension, time_lags_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, keep_probability_dropout,
+            test = run.Run(activation_functions, hidden_layer_dimension, time_lag_sp, time_lags_ftse, start_one_hot_interval, number_of_networks, keep_probability_dropout,
                            from_date, number_of_trading_days, attributes_input, number_of_stocks,
                            learning_rate, minibatch_size, epoch, rf_rate, global_run_nr, copy.deepcopy(sp500), soft_label, soft_label_percent, run_description)
             test.run_portfolio_in_parallell()
