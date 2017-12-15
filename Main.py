@@ -60,9 +60,9 @@ h2_start = 0
 h3_start = 0
 
 epochs = [20, 50, 100]
-from_dates = ["01.10.2008", "01.04.2009"]
+from_dates = ["01.04.2009"]
 
-for from_dascrte in from_dates:
+for from_date in from_dates:
     for epoch in epochs:
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
