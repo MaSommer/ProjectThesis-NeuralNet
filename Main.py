@@ -42,9 +42,9 @@ selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500_new.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
 
-selectedFTSE = [0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	0,	1,	0,	1,	0,	0,	1,	1,	1,	1,	1,	1,
-                0,	0,	0,	0,	0,	0,	1,	0,	0,	0,	1,	0,	0,	0,	1,	0,	0,	0,	0,	0,	0,	1,	0,	1,	0,	0,	0,	0,	0,	0,
-                1,	0,	0,	0,	0,	0,	0,	0,	1,	1,	0,	0,	1,	1,	1,	0,	0,	0,	0,	0,	0,	1,	1,	1,	0,	1,	1,	0,	0,	1,	0,	1,	1,	0,	0]
+selectedFTSE = [1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
+                1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
+                1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,]
 
 run_description = "Different time lags"
 
@@ -66,9 +66,9 @@ h3_start = 0
 
 epochs = [40]
 from_dates = ["01.04.2008", "15.06.2008", "01.09.2008", "15.11.2008", "01.02.2009"]
-time_lags_sp = [0]
+time_lags_sp = [1, 2, 3, 4]
 
-for from_date in from_dates:
+for time_lag_sp in time_lags_sp:
     for epoch in epochs:
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
