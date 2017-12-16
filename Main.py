@@ -68,7 +68,7 @@ epochs = [40]
 from_dates = ["01.04.2008", "01.08.2008", "01.09.2008", "01.11.2008", "01.12.2008"]
 time_lags_sp = [1, 2, 3, 4]
 
-for time_lags_sp in time_lags_sp:
+for time_lag_sp in time_lags_sp:
     for epoch in epochs:
         for run_nr in range(1, nr_of_runs+1):
             time_start = time.time()
