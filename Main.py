@@ -32,7 +32,7 @@ minibatch_size = 10
 
 rf_rate = 1.02
 
-nr_of_runs = 5
+nr_of_runs = 25
 global_run_nr = 1
 soft_label = True
 soft_label_percent = 1.0
@@ -66,7 +66,7 @@ h3_start = 0
 
 epochs = [40]
 from_dates = ["01.04.2008", "15.06.2008", "01.09.2008", "15.11.2008", "01.02.2009"]
-time_lags_sp = [1, 2, 3, 4]
+time_lags_sp = [1]
 
 for time_lag_sp in time_lags_sp:
     for epoch in epochs:
