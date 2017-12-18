@@ -12,7 +12,7 @@ import argparse
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
 hidden_layer_dimension = [300, 40]
 time_lag_sp = 0
-time_lags_ftse = 10
+time_lags_ftse = 0
 one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout = [0.4, 0.6, 0.6] #first element is input layer and second is hidden layers
 
@@ -46,7 +46,7 @@ selectedFTSE = [1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1
                 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
                 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,]
 
-run_description = "Testing 1 in time lag for the best run"
+run_description = "FTSE time lag 0"
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('user_name')
@@ -66,7 +66,7 @@ h3_start = 0
 
 epochs = [40]
 from_dates = ["01.04.2008", "15.06.2008", "01.09.2008", "15.11.2008", "01.02.2009"]
-time_lags_sp = [1]
+time_lags_sp = [0]
 
 for time_lag_sp in time_lags_sp:
     for epoch in epochs:
