@@ -60,7 +60,7 @@ class Run():
         #self.selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
         self.number_of_stocks = number_of_stocks
         #self.sp500 = pi.InputPortolfioInformation(self.selectedSP500, self.attributes_input, self.fromDate, "S&P500.txt", 7,
-        #                                     self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
+        #                                      self.number_of_trading_days, normalize_method="minmax", start_time=self.start_time)
         self.sp500 = sp500
         self.selectedFTSE = selectedFTSE
         #Training specific

@@ -10,20 +10,19 @@ import argparse
 
 
 activation_functions = ["tanh", "tanh", "tanh", "tanh", "tanh", "tanh"]
-hidden_layer_dimension = [300, 40]
-time_lag_sp = 0
+hidden_layer_dimension = [10]
+time_lag_sp = 2
 time_lags_ftse = 0
 one_hot_vector_interval = [-0.000, 0.000]
 keep_probability_dropout = [0.4, 0.6, 0.6] #first element is input layer and second is hidden layers
 
  #Data set specific
 from_date =  "01.10.2008"
-number_of_trading_days = 2000
+number_of_trading_days = 20
 attributes_input = ["op", "cp"]
-selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
-number_of_networks = 4
+number_of_networks = 1
 epochs = 40
-number_of_stocks = 100
+number_of_stocks = 2
 
 
  #Training specific
@@ -37,10 +36,11 @@ global_run_nr = 1
 soft_label = True
 soft_label_percent = 1.0
 
-
-selectedSP500 = ssr.readSelectedStocks("S&P500.txt")
+selectedSP500 = ssr.readSelectedStocks("S&P500v2.txt")
 sp500 = pi.InputPortolfioInformation(selectedSP500, attributes_input, from_date, "S&P500_new.txt", 7,
                                      number_of_trading_days, normalize_method="minmax", start_time=time.time())
+
+
 
 selectedFTSE = [1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
                 1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
@@ -66,7 +66,7 @@ h3_start = 0
 
 epochs = [40]
 from_dates = ["01.04.2008", "15.06.2008", "01.09.2008", "15.11.2008", "01.02.2009"]
-time_lags_sp = [0]
+time_lags_sp = [1]
 
 for time_lag_sp in time_lags_sp:
     for epoch in epochs:

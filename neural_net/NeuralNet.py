@@ -54,6 +54,7 @@ class NeuralNet():
         self.training_acc= 0
         self.test_acc = 0
 
+        #with tf.device('/device:GPU:0'):
         self.build_network()
 
 
